@@ -376,17 +376,14 @@ function closeModal(){document.getElementById('modal-bg').classList.remove('open
 document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target===document.getElementById('modal-bg'))closeModal();});
 
 // INIT — carica sempre da Firebase
-const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/69bebe9fc3097a1dd5474534';
-const JSONBIN_KEY = '$2a$10$gXgphr9XBY92bNmMg9f1bu2BRbOA5QAh1t7QiehkDHciiIygBxYUK';
+const NPOINT_URL = 'https://api.npoint.io/a2f4934d9244484040e1';
 
 async function loadFromFirebase(){
   try {
-    const res = await fetch(JSONBIN_URL+'/latest', {
-      headers: {'X-Master-Key': JSONBIN_KEY}
-    });
+    const res = await fetch(NPOINT_URL);
     const json = await res.json();
-    if(json && json.record && json.record.categories){
-      D = json.record;
+    if(json && json.categories){
+      D = json;
       startApp();
     } else {
       showImportOverlay();
