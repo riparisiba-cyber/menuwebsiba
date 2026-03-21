@@ -497,8 +497,7 @@ function defaultData(){
   };
 }
 
-const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/69bebe9fc3097a1dd5474534';
-const JSONBIN_KEY = '$2a$10$gXgphr9XBY92bNmMg9f1bu2BRbOA5QAh1t7QiehkDHciiIygBxYUK';
+const NPOINT_URL = 'https://api.npoint.io/a2f4934d9244484040e1';
 
 let D = defaultData();
 let editCatId=null,editDishId=null,editProfileId=null;
@@ -508,11 +507,8 @@ let prevVisible=true,curDev='mobile',prevTimer=null;
 async function loadFromFirebase(){
   try {
     document.getElementById('sync-lbl').textContent='Caricamento...';
-    const res = await fetch(JSONBIN_URL+'/latest', {
-      headers: {'X-Master-Key': JSONBIN_KEY}
-    });
-    const json = await res.json();
-    if(json && json.record) D = json.record;
+    const res = await fetch(NPOINT_URL);
+    D = await res.json();
     updateCounts();
     schedulePreview();
     document.getElementById('sync-lbl').textContent='Caricato ✓';
@@ -526,12 +522,9 @@ async function loadFromFirebase(){
 async function save(){
   try {
     document.getElementById('sync-lbl').textContent='Salvataggio...';
-    await fetch(JSONBIN_URL, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': JSONBIN_KEY
-      },
+    await fetch(NPOINT_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(D)
     });
     updateCounts();schedulePreview();
