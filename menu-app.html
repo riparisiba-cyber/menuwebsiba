@@ -151,12 +151,30 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 
 <!-- IMPORT OVERLAY (shown if no data) -->
 <div class="import-overlay" id="import-overlay">
-  <div style="font-size:3rem;">📋</div>
-  <h2>Carica il Menu</h2>
-  <p>Incolla qui il JSON esportato dal Back Office per caricare il menu del ristorante</p>
-  <textarea class="import-textarea" id="import-json" placeholder='Incolla qui il JSON del menu...'></textarea>
-  <button class="fchip active" style="padding:.6rem 2rem;font-size:.9rem;" onclick="importJSON()">Carica Menu</button>
-  <button style="background:none;border:none;color:rgba(255,255,255,.35);font-size:.8rem;cursor:pointer;margin-top:-.5rem;" onclick="loadDemo()">oppure usa il menu demo</button>
+  <div style="font-size:3rem;">🔗</div>
+  <h2>Connetti al Menu</h2>
+  <p>Inserisci il <strong style="color:var(--gold2);">Blob ID</strong> che trovi nel Backoffice → Impostazioni → Codice Sync</p>
+  <input
+    id="import-blobid"
+    placeholder="Es: 1234567890123456789"
+    style="width:100%;max-width:420px;padding:.7rem 1rem;border-radius:10px;border:1.5px solid rgba(184,134,11,.4);background:rgba(255,255,255,.08);color:white;font-family:'Outfit',sans-serif;font-size:1rem;outline:none;text-align:center;letter-spacing:.04em;"
+    oninput="this.style.borderColor=this.value.length>5?'var(--gold2)':'rgba(184,134,11,.4)'"
+  >
+  <button class="fchip active" style="padding:.65rem 2.2rem;font-size:.92rem;" onclick="connectBlobId()">🔗 Connetti</button>
+
+  <div style="display:flex;align-items:center;gap:.75rem;width:100%;max-width:420px;margin:.2rem 0;">
+    <div style="flex:1;height:1px;background:rgba(255,255,255,.12);"></div>
+    <span style="font-size:.75rem;color:rgba(255,255,255,.3);">oppure</span>
+    <div style="flex:1;height:1px;background:rgba(255,255,255,.12);"></div>
+  </div>
+
+  <details style="width:100%;max-width:420px;">
+    <summary style="font-size:.8rem;color:rgba(245,230,176,.45);cursor:pointer;text-align:center;list-style:none;">Incolla JSON manualmente ▾</summary>
+    <textarea class="import-textarea" id="import-json" placeholder='Incolla qui il JSON del menu...' style="margin-top:.75rem;"></textarea>
+    <button class="fchip active" style="padding:.5rem 1.5rem;font-size:.84rem;margin-top:.5rem;width:100%;" onclick="importJSON()">Carica da JSON</button>
+  </details>
+
+  <button style="background:none;border:none;color:rgba(255,255,255,.25);font-size:.75rem;cursor:pointer;margin-top:.25rem;" onclick="loadDemo()">usa il menu demo</button>
 </div>
 
 <!-- MAIN APP -->
@@ -250,6 +268,31 @@ function loadDemo(){
   };
   localStorage.setItem('menuAppData',JSON.stringify(D));
   startApp();
+}
+
+async function connectBlobId(){
+  const raw = document.getElementById('import-blobid').value.trim();
+  if(!raw){ alert('Inserisci il Blob ID.'); return; }
+  // Extract just the ID in case they pasted a full URL
+  const id = raw.split('/').pop().replace(/\D/g,'').trim() || raw.trim();
+  const btn = event.target;
+  btn.textContent = 'Connessione...'; btn.disabled = true;
+  try{
+    const res = await fetch('https://jsonblob.com/api/jsonBlob/' + id, {
+      headers: { Accept: 'application/json' }
+    });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if(!data || !data.settings) throw new Error('Dati non validi');
+    localStorage.setItem(BLOB_ID_KEY, id);
+    D = data;
+    localStorage.setItem(LS_KEY, JSON.stringify(D));
+    startApp();
+    startAutoSync(id);
+  }catch(e){
+    btn.textContent = '🔗 Connetti'; btn.disabled = false;
+    alert('Blob ID non trovato o non valido.\nControlla il codice in Backoffice → Impostazioni → Codice Sync.\n\nDettaglio: ' + e.message);
+  }
 }
 
 function importJSON(){
@@ -445,25 +488,70 @@ function openDish(id){
 function closeModal(){document.getElementById('modal-bg').classList.remove('open');document.body.style.overflow='';}
 document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target===document.getElementById('modal-bg'))closeModal();});
 
-// INIT — legge da localStorage (scritto dal backoffice)
+// ── SYNC REMOTO via jsonblob.com ──
+const JSONBLOB_BASE = 'https://jsonblob.com/api/jsonBlob/';
+const BLOB_ID_KEY = 'menuSyncBlobId';
 const LS_KEY = 'menuAppData';
+let syncInterval = null;
 
-function loadFromFirebase(){
+function getBlobId(){
+  return localStorage.getItem(BLOB_ID_KEY) || null;
+}
+
+async function loadFromRemote(blobId){
+  const res = await fetch(JSONBLOB_BASE + blobId, {
+    headers: { Accept: 'application/json' }
+  });
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  return await res.json();
+}
+
+async function initApp(){
+  const blobId = getBlobId();
+  if(blobId){
+    try{
+      const data = await loadFromRemote(blobId);
+      if(data && data.settings){
+        D = data;
+        localStorage.setItem(LS_KEY, JSON.stringify(D));
+        startApp();
+        startAutoSync(blobId);
+        return;
+      }
+    }catch(e){ console.warn('Sync remoto fallito:', e); }
+  }
+  // Fallback localStorage
   const cached = localStorage.getItem(LS_KEY);
   if(cached){
-    try{ D=JSON.parse(cached); startApp(); return; }catch(e){}
+    try{
+      D = JSON.parse(cached);
+      startApp();
+      if(blobId) startAutoSync(blobId);
+      return;
+    }catch(e){}
   }
+  // Nessun dato
   showImportOverlay();
+}
+
+function startAutoSync(blobId){
+  if(syncInterval) clearInterval(syncInterval);
+  syncInterval = setInterval(async ()=>{
+    try{
+      const data = await loadFromRemote(blobId);
+      if(data && data.settings){ D = data; renderMenu(); }
+    }catch(e){}
+  }, 30000);
 }
 
 function showImportOverlay(){
   setTimeout(()=>{
     document.getElementById('splash').classList.add('hidden');
-    document.getElementById('import-overlay').style.display='flex';
-  },1600);
+    document.getElementById('import-overlay').style.display = 'flex';
+  }, 1600);
 }
 
-loadFromFirebase();
+initApp();
 </script>
 </body>
 </html>
