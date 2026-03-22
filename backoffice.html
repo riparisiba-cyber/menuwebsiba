@@ -331,13 +331,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);heigh
     <div style="margin-top:1.1rem;display:flex;gap:.6rem;"><button class="btn btn-gold" onclick="saveSettings()">💾 Salva Impostazioni</button></div>
   </div>
   <div class="ss">
-    <h3><span>🔑</span> Codice Sync</h3>
-    <p style="font-size:.8rem;color:var(--tx2);margin-bottom:.85rem;">Usa questo codice nell'app cliente per caricare il menu.</p>
+    <h3><span>🔑</span> Codice Sync (Blob ID)</h3>
+    <p style="font-size:.8rem;color:var(--tx2);margin-bottom:.85rem;">Inserisci questo ID nell'app cliente per caricare il menu su qualsiasi dispositivo. Viene creato automaticamente al primo salvataggio.</p>
     <div style="display:flex;gap:.6rem;align-items:center;">
-      <code style="background:var(--sur2);padding:.5rem .85rem;border-radius:7px;font-size:.92rem;letter-spacing:.12em;border:1px solid var(--bdr2);flex:1;" id="sync-code"></code>
+      <code style="background:var(--sur2);padding:.5rem .85rem;border-radius:7px;font-size:.78rem;letter-spacing:.06em;border:1px solid var(--bdr2);flex:1;word-break:break-all;" id="sync-code"></code>
       <button class="btn btn-ghost btn-sm" onclick="copySyncCode()">📋 Copia</button>
-      <button class="btn btn-danger btn-sm" onclick="regenCode()">🔄</button>
     </div>
+    <p style="font-size:.72rem;color:var(--tx3);margin-top:.6rem;">⚠️ Non rigenerare l'ID — i clienti con il vecchio ID non potrebbero più caricare il menu.</p>
   </div>
 </div>
 
@@ -511,45 +511,104 @@ function defaultData(){
   };
 }
 
-const NPOINT_URL = 'https://api.npoint.io/a2f4934d9244484040e1';
+// ── SYNC REMOTO via jsonblob.com (CORS aperto, gratuito, no auth) ──
+// L'ID blob viene creato automaticamente al primo avvio e salvato in localStorage
+const BLOB_ID_KEY = 'menuSyncBlobId';
+const JSONBLOB_BASE = 'https://jsonblob.com/api/jsonBlob/';
+
+function getSyncUrl(){
+  const id = localStorage.getItem(BLOB_ID_KEY);
+  return id ? JSONBLOB_BASE + id : null;
+}
+
+async function createBlob(data){
+  const res = await fetch('https://jsonblob.com/api/jsonBlob', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+    body: JSON.stringify(data)
+  });
+  if(!res.ok) throw new Error('Blob creation failed: ' + res.status);
+  // jsonblob returns the blob URL in the Location header
+  const location = res.headers.get('Location');
+  if(!location) throw new Error('No Location header in response');
+  const id = location.split('/').pop();
+  localStorage.setItem(BLOB_ID_KEY, id);
+  // Also store sync code for menu-app
+  data.settings.syncBlobId = id;
+  localStorage.setItem('menuAppData', JSON.stringify(data));
+  return id;
+}
 
 let D = defaultData();
 let editCatId=null,editDishId=null,editProfileId=null;
 let prevVisible=true,curDev='mobile',prevTimer=null;
 
-// Carica dati da Firebase all'avvio
 async function loadFromFirebase(){
-  try {
-    document.getElementById('sync-lbl').textContent='Caricamento...';
-    const res = await fetch(NPOINT_URL);
-    D = await res.json();
-    updateCounts();
-    schedulePreview();
-    document.getElementById('sync-lbl').textContent='Caricato ✓';
-    renderAll();
-  } catch(e){
-    console.error('Errore caricamento JSONBin:', e);
-    document.getElementById('sync-lbl').textContent='Errore caricamento ✗';
+  const lbl = document.getElementById('sync-lbl');
+  // 1. Prova a caricare dal blob remoto se esiste già
+  const url = getSyncUrl();
+  if(url){
+    try {
+      lbl.textContent = 'Caricamento...';
+      const res = await fetch(url, {headers:{Accept:'application/json'}});
+      if(res.ok){
+        const data = await res.json();
+        if(data && data.settings){ D = data; }
+      }
+      lbl.textContent = 'Sincronizzato ✓';
+    } catch(e){
+      console.warn('Caricamento remoto fallito, uso locale:', e);
+    }
+  } else {
+    // Nessun blob ancora: prova localStorage (vecchi dati), poi crea il blob
+    const cached = localStorage.getItem('menuAppData');
+    if(cached){ try{ D = JSON.parse(cached); }catch(e){} }
+    lbl.textContent = 'Creazione endpoint sync...';
+    try {
+      await createBlob(D);
+      lbl.textContent = 'Endpoint creato ✓';
+      toast('Endpoint sync creato! Copia il codice in Impostazioni.', 'ok');
+    } catch(e){
+      console.error('Errore creazione blob:', e);
+      lbl.textContent = 'Sync offline';
+    }
   }
+  updateCounts();
+  schedulePreview();
+  renderAll();
 }
 
 async function save(){
-  // Salva sempre su localStorage (condiviso con menu-app sulla stessa origine)
   localStorage.setItem('menuAppData', JSON.stringify(D));
+  const lbl = document.getElementById('sync-lbl');
+  let url = getSyncUrl();
+  // Se non esiste ancora il blob, crealo
+  if(!url){
+    try {
+      lbl.textContent = 'Creazione endpoint...';
+      await createBlob(D);
+      url = getSyncUrl();
+    } catch(e){
+      console.error('Errore creazione blob:', e);
+      updateCounts(); schedulePreview();
+      lbl.textContent = '⚠️ Solo locale';
+      return;
+    }
+  }
   try {
-    document.getElementById('sync-lbl').textContent='Salvataggio...';
-    await fetch(NPOINT_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+    lbl.textContent = 'Salvataggio...';
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
       body: JSON.stringify(D)
     });
-    updateCounts();schedulePreview();
-    document.getElementById('sync-lbl').textContent='Salvato '+new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    updateCounts(); schedulePreview();
+    lbl.textContent = 'Sincronizzato su tutti i dispositivi ✓ ' + new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
   } catch(e){
     console.error('Errore salvataggio remoto:', e);
-    // Salvo solo in locale se il remoto fallisce
-    updateCounts();schedulePreview();
-    document.getElementById('sync-lbl').textContent='Salvato in locale '+new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    updateCounts(); schedulePreview();
+    lbl.textContent = '⚠️ Solo locale — verifica connessione';
   }
 }
 function updateCounts(){
@@ -971,7 +1030,7 @@ function loadSettings(){
   document.getElementById('s-name').value=s.name||'';
   document.getElementById('s-tagline').value=s.tagline||'';
   document.getElementById('s-desc').value=s.desc||'';
-  document.getElementById('sync-code').textContent=s.syncCode||'—';
+  document.getElementById('sync-code').textContent = localStorage.getItem(BLOB_ID_KEY) || '(verrà creato al primo salvataggio)';
   document.getElementById('s-logo-url').value=(s.logoImg&&!s.logoImg.startsWith('data:'))?s.logoImg:'';
   document.getElementById('s-logo-emoji').value=s.logoImg?'':s.logo||'';
   updateLogoPrev(s.logoImg||s.logo||'🍽');
@@ -1012,7 +1071,11 @@ function saveSettings(){
   D.settings.orderLabel=document.getElementById('s-order-label').value.trim()||'Ordina Online';
   save();toast('Impostazioni salvate!','ok');
 }
-function copySyncCode(){navigator.clipboard.writeText(D.settings.syncCode||'');toast('Codice copiato!');}
+function copySyncCode(){
+  const id = localStorage.getItem(BLOB_ID_KEY)||'';
+  if(!id){toast('Salva prima i dati per generare l\'ID sync','err');return;}
+  navigator.clipboard.writeText(id).then(()=>toast('ID sync copiato!')).catch(()=>toast('ID: '+id));
+}
 function regenCode(){if(!confirm('Rigenerare?'))return;D.settings.syncCode='MENU-'+Math.random().toString(36).slice(2,8).toUpperCase();save();loadSettings();toast('Rigenerato!');}
 function exportData(){const j=JSON.stringify(D,null,2);navigator.clipboard.writeText(j).then(()=>toast('JSON copiato!')).catch(()=>alert(j));}
 function downloadJSON(){const b=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='menu-data.json';a.click();toast('File scaricato!');}
@@ -1033,3 +1096,5 @@ loadFromFirebase();
 </script>
 </body>
 </html>
+
+
