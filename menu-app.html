@@ -1,1 +1,561 @@
 
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FDFAF4;
+  --cream:#F5EFE0;
+  --dark:#1C1710;
+  --dark2:#2A221A;
+  --gold:#B8860B;
+  --gold2:#D4A017;
+  --gold-light:#F5E6B0;
+  --text:#2C2416;
+  --text2:#6B5A3E;
+  --text3:#A89070;
+  --border:rgba(184,134,11,0.18);
+  --border2:rgba(0,0,0,0.08);
+  --surface:rgba(255,255,255,0.85);
+  --red:#C0392B;
+  --green:#2E7D52;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* SPLASH / LOADER */
+#splash{position:fixed;inset:0;background:var(--dark);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;transition:opacity .5s;}
+#splash.hidden{opacity:0;pointer-events:none;}
+.splash-logo{font-size:3.5rem;animation:pulse 1.5s infinite;}
+.splash-name{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:#F5E6B0;letter-spacing:.06em;}
+.splash-bar{width:200px;height:2px;background:rgba(255,255,255,.1);border-radius:50px;overflow:hidden;margin-top:.5rem;}
+.splash-fill{height:100%;background:var(--gold2);border-radius:50px;animation:load 1.5s ease forwards;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes load{from{width:0}to{width:100%}}
+
+/* HERO */
+.hero{position:relative;min-height:55vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:2.5rem 1.5rem;overflow:hidden;background:var(--dark);}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 0%,rgba(184,134,11,.25),transparent 60%),radial-gradient(ellipse at 70% 100%,rgba(184,134,11,.12),transparent 50%);z-index:0;}
+.hero-grain{position:absolute;inset:0;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");z-index:0;}
+.hero-content{position:relative;z-index:1;text-align:center;width:100%;max-width:600px;}
+.hero-logo{font-size:3rem;margin-bottom:.5rem;display:block;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,8vw,3.8rem);color:#F5E6B0;line-height:1.1;margin-bottom:.6rem;}
+.hero-sub{font-size:.9rem;color:rgba(245,230,176,.6);letter-spacing:.18em;text-transform:uppercase;margin-bottom:1.5rem;}
+.hero-divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);margin:0 auto;}
+
+/* STICKY HEADER */
+.sticky-hdr{position:sticky;top:0;z-index:50;background:rgba(253,250,244,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+
+/* SEARCH */
+.search-wrap{padding:.75rem 1rem;display:flex;align-items:center;gap:.5rem;}
+.search-inner{flex:1;display:flex;align-items:center;gap:.6rem;background:white;border:1.5px solid var(--border);border-radius:50px;padding:.55rem 1rem;}
+.search-inner input{flex:1;border:none;background:none;font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--text);outline:none;}
+.search-inner input::placeholder{color:var(--text3);}
+.search-icon{color:var(--text3);font-size:.9rem;}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:.5rem;overflow-x:auto;padding:.5rem 1rem .75rem;scrollbar-width:none;}
+.filter-bar::-webkit-scrollbar{display:none;}
+.fchip{white-space:nowrap;padding:.35rem 1rem;border-radius:50px;font-size:.8rem;font-weight:500;cursor:pointer;transition:all .18s;border:1.5px solid var(--border);color:var(--text2);background:white;}
+.fchip.active,.fchip:hover{background:var(--dark);color:var(--gold-light);border-color:var(--dark);}
+
+/* MENU BODY */
+.menu-body{padding:0 0 6rem;max-width:800px;margin:0 auto;}
+
+/* SECTION */
+.menu-section{padding:1.75rem 1rem 0;}
+.section-hdr{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;}
+.section-icon{font-size:1.5rem;}
+.section-name{font-family:'Cormorant Garamond',serif;font-size:1.55rem;color:var(--dark);}
+.section-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+
+/* DISH CARDS */
+.dishes-list{display:flex;flex-direction:column;gap:.75rem;}
+.dish-card{background:white;border-radius:14px;border:1px solid var(--border2);overflow:hidden;display:flex;cursor:pointer;transition:transform .18s,box-shadow .18s;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.dish-card:hover,.dish-card:active{transform:scale(.99);box-shadow:0 4px 16px rgba(0,0,0,.1);}
+.dish-card.unavail{opacity:.55;}
+.dish-media{width:90px;min-width:90px;height:90px;overflow:hidden;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:2.2rem;position:relative;flex-shrink:0;}
+.dish-media img{width:100%;height:100%;object-fit:cover;}
+.dish-body{flex:1;padding:.75rem .9rem;display:flex;flex-direction:column;gap:.3rem;min-width:0;}
+.dish-header{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;}
+.dish-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:var(--dark);line-height:1.2;}
+.dish-price{font-size:1.1rem;font-weight:600;color:var(--gold);white-space:nowrap;font-family:'Cormorant Garamond',serif;}
+.dish-desc{font-size:.78rem;color:var(--text2);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.dish-footer{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.1rem;}
+.al-mini{font-size:.62rem;padding:.1rem .35rem;border-radius:3px;background:#FEF3C7;color:#92400E;font-weight:500;}
+.badge-feat{font-size:.62rem;padding:.1rem .35rem;border-radius:3px;background:rgba(184,134,11,.1);color:var(--gold);font-weight:600;letter-spacing:.04em;}
+.badge-unavail{font-size:.62rem;padding:.1rem .35rem;border-radius:3px;background:#fee2e2;color:#991b1b;font-weight:500;}
+.badge-tag{font-size:.62rem;padding:.1rem .35rem;border-radius:3px;background:#E8F5E9;color:#2E7D52;font-weight:500;}
+
+/* ALT CARD STYLE (featured) */
+.dish-card.feat{border-color:rgba(184,134,11,.3);background:linear-gradient(135deg,#FFFDF5,white);}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;z-index:200;background:rgba(28,23,16,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;}
+.modal-bg.open{display:flex;}
+@media(min-width:600px){.modal-bg{align-items:center;}}
+.modal-sheet{background:var(--bg);width:100%;max-width:520px;border-radius:20px 20px 0 0;max-height:92vh;overflow-y:auto;animation:slideUp .28s cubic-bezier(.34,1.56,.64,1);}
+@media(min-width:600px){.modal-sheet{border-radius:20px;animation:fadeIn .22s ease;}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.modal-img{height:240px;overflow:hidden;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:5rem;position:relative;}
+.modal-img img{width:100%;height:100%;object-fit:cover;}
+.modal-close-btn{position:absolute;top:1rem;right:1rem;background:rgba(28,23,16,.5);backdrop-filter:blur(4px);border:none;color:white;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;}
+.modal-info{padding:1.5rem 1.5rem 2rem;}
+.modal-cat{font-size:.72rem;text-transform:uppercase;letter-spacing:.15em;color:var(--text3);margin-bottom:.4rem;}
+.modal-name{font-family:'Cormorant Garamond',serif;font-size:2rem;line-height:1.1;margin-bottom:.3rem;}
+.modal-price{font-size:1.8rem;color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:600;margin-bottom:1rem;}
+.modal-desc{font-size:.9rem;color:var(--text2);line-height:1.6;margin-bottom:1.25rem;}
+.modal-meta{display:flex;gap:1.5rem;margin-bottom:1.25rem;}
+.meta-item{display:flex;flex-direction:column;align-items:center;gap:.2rem;}
+.meta-val{font-size:1.1rem;font-weight:600;color:var(--dark);}
+.meta-lbl{font-size:.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;}
+.modal-al-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);margin-bottom:.6rem;}
+.al-list{display:flex;gap:.4rem;flex-wrap:wrap;}
+.al-full{padding:.25rem .65rem;border-radius:6px;font-size:.78rem;background:#FEF3C7;color:#92400E;font-weight:500;border:1px solid #FDE68A;}
+
+/* EMPTY */
+.empty{text-align:center;padding:4rem 1rem;color:var(--text3);}
+.empty .ico{font-size:3rem;margin-bottom:.75rem;opacity:.4;}
+
+/* LOAD ERROR */
+.import-overlay{position:fixed;inset:0;background:var(--dark);z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.25rem;padding:2rem;}
+.import-overlay.hidden{display:none;}
+.import-overlay h2{font-family:'Cormorant Garamond',serif;color:var(--gold-light);font-size:1.8rem;}
+.import-overlay p{color:rgba(245,230,176,.6);font-size:.9rem;text-align:center;max-width:400px;}
+.import-textarea{width:100%;max-width:500px;height:120px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:.75rem;color:white;font-family:'Outfit',sans-serif;font-size:.82rem;resize:none;outline:none;}
+.import-textarea:focus{border-color:var(--gold2);}
+
+/* FOOTER */
+.menu-footer{text-align:center;padding:2rem 1rem;color:var(--text3);font-size:.75rem;}
+/* CTA BUTTONS */
+.cta-bar{display:flex;gap:.75rem;justify-content:center;margin-top:1.25rem;flex-wrap:wrap;}
+.btn-cta{display:inline-flex;align-items:center;gap:.45rem;padding:.65rem 1.6rem;border-radius:50px;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .18s;border:none;}
+.btn-cta-primary{background:var(--gold);color:#fff;}
+.btn-cta-primary:hover{filter:brightness(1.12);transform:translateY(-1px);}
+.btn-cta-secondary{background:transparent;color:var(--gold);border:2px solid var(--gold);}
+.btn-cta-secondary:hover{background:var(--gold);color:#fff;transform:translateY(-1px);}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo" id="splash-logo">🍽</div>
+  <div class="splash-name" id="splash-name">Menu</div>
+  <div class="splash-bar"><div class="splash-fill"></div></div>
+</div>
+
+<!-- IMPORT OVERLAY (shown if no data) -->
+<div class="import-overlay" id="import-overlay">
+  <div style="font-size:3rem;">🔗</div>
+  <h2>Connetti al Menu</h2>
+  <p>Inserisci il <strong style="color:var(--gold2);">Blob ID</strong> che trovi nel Backoffice → Impostazioni → Codice Sync</p>
+  <input
+    id="import-blobid"
+    placeholder="Bin ID (es: 6849a2f3abc123...)"
+    style="width:100%;max-width:420px;padding:.7rem 1rem;border-radius:10px;border:1.5px solid rgba(184,134,11,.4);background:rgba(255,255,255,.08);color:white;font-family:'Outfit',monospace;font-size:.9rem;outline:none;text-align:center;letter-spacing:.04em;"
+    oninput="this.style.borderColor=this.value.length>5?'var(--gold2)':'rgba(184,134,11,.4)'"
+  >
+  <input
+    id="import-apikey"
+    placeholder="API Key JSONBin (opzionale se bin è pubblico)"
+    type="password"
+    style="width:100%;max-width:420px;padding:.6rem 1rem;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:rgba(255,255,255,.7);font-family:'Outfit',monospace;font-size:.8rem;outline:none;text-align:center;"
+  >
+  <button class="fchip active" style="padding:.65rem 2.2rem;font-size:.92rem;" onclick="connectBlobId()">🔗 Connetti</button>
+
+  <div style="display:flex;align-items:center;gap:.75rem;width:100%;max-width:420px;margin:.2rem 0;">
+    <div style="flex:1;height:1px;background:rgba(255,255,255,.12);"></div>
+    <span style="font-size:.75rem;color:rgba(255,255,255,.3);">oppure</span>
+    <div style="flex:1;height:1px;background:rgba(255,255,255,.12);"></div>
+  </div>
+
+  <details style="width:100%;max-width:420px;">
+    <summary style="font-size:.8rem;color:rgba(245,230,176,.45);cursor:pointer;text-align:center;list-style:none;">Incolla JSON manualmente ▾</summary>
+    <textarea class="import-textarea" id="import-json" placeholder='Incolla qui il JSON del menu...' style="margin-top:.75rem;"></textarea>
+    <button class="fchip active" style="padding:.5rem 1.5rem;font-size:.84rem;margin-top:.5rem;width:100%;" onclick="importJSON()">Carica da JSON</button>
+  </details>
+
+  <button style="background:none;border:none;color:rgba(255,255,255,.25);font-size:.75rem;cursor:pointer;margin-top:.25rem;" onclick="loadDemo()">usa il menu demo</button>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:none;">
+  <!-- HERO -->
+  <div class="hero" id="app-hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grain"></div>
+    <div class="hero-content">
+      <div id="app-logo-wrap" style="margin-bottom:.75rem;"></div>
+      <h1 class="hero-title" id="app-title">Il Ristorante</h1>
+      <p class="hero-sub" id="app-sub">Menu</p>
+      <div class="hero-divider"></div>
+      <div class="cta-bar" id="cta-bar"></div>
+    </div>
+  </div>
+
+  <!-- STICKY -->
+  <div class="sticky-hdr">
+    <div class="search-wrap">
+      <div class="search-inner">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="Cerca nel menu..." oninput="renderMenu()">
+      </div>
+    </div>
+    <div class="filter-bar" id="filter-bar"></div>
+  </div>
+
+  <!-- MENU -->
+  <div class="menu-body" id="menu-body"></div>
+
+  <div class="menu-footer">Scorri per scoprire tutti i piatti · Chiedi al cameriere per informazioni</div>
+</div>
+
+<!-- DISH MODAL -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal-sheet">
+    <div class="modal-img" id="m-img">
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-info">
+      <div class="modal-cat" id="m-cat"></div>
+      <div class="modal-name" id="m-name"></div>
+      <div class="modal-price" id="m-price"></div>
+      <p class="modal-desc" id="m-desc"></p>
+      <div class="modal-meta" id="m-meta"></div>
+      <div id="m-al-wrap">
+        <div class="modal-al-title">Allergeni</div>
+        <div class="al-list" id="m-al"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let D=null;
+let activeCat='all';
+
+// Try load from localStorage
+function tryLoad(){
+  const stored=localStorage.getItem('menuAppData');
+  if(stored){try{D=JSON.parse(stored);return true;}catch(e){}}
+  return false;
+}
+
+function loadDemo(){
+  D={
+    settings:{name:'Trattoria Da Nonna',tagline:'Sapori di una volta dal 1958',logo:'🫕',color:'#B8860B'},
+    categories:[
+      {id:'c1',name:'Antipasti',icon:'🥗',desc:'',order:1,active:true},
+      {id:'c2',name:'Primi',icon:'🍝',desc:'',order:2,active:true},
+      {id:'c3',name:'Secondi',icon:'🥩',desc:'',order:3,active:true},
+      {id:'c4',name:'Contorni',icon:'🥦',desc:'',order:4,active:true},
+      {id:'c5',name:'Dolci',icon:'🍰',desc:'',order:5,active:true},
+      {id:'c6',name:'Bevande',icon:'🍷',desc:'',order:6,active:true},
+    ],
+    dishes:[
+      {id:'d1',name:'Bruschetta al Pomodoro',cat:'c1',price:6.50,desc:'Pane tostato con pomodorini freschi, basilico e olio EVO del Lazio',allergens:['Glutine'],available:true,featured:false,emoji:'🍅',img:'',tags:'vegano',kcal:180,time:5},
+      {id:'d2',name:'Carpaccio di Manzo',cat:'c1',price:11.00,desc:'Fettine sottili di manzo con rucola, scaglie di parmigiano e limone',allergens:['Latte'],available:true,featured:true,emoji:'🥩',img:'',tags:'',kcal:220,time:5},
+      {id:'d3',name:'Tagliatelle al Ragù',cat:'c2',price:13.00,desc:'Pasta fresca all\'uovo con ragù di carne macinata cotto lentamente per 4 ore con verdure di stagione',allergens:['Glutine','Uova','Latte'],available:true,featured:true,emoji:'🍝',img:'',tags:'',kcal:520,time:15},
+      {id:'d4',name:'Risotto ai Funghi Porcini',cat:'c2',price:14.50,desc:'Riso carnaroli con funghi porcini freschi, burro mantecato e parmigiano reggiano DOP',allergens:['Latte'],available:true,featured:false,emoji:'🍄',img:'',tags:'vegetariano',kcal:480,time:20},
+      {id:'d5',name:'Gnocchi al Pomodoro',cat:'c2',price:10.00,desc:'Gnocchi di patate fatti in casa con salsa di pomodoro fresco e basilico',allergens:['Glutine','Uova'],available:false,featured:false,emoji:'🥔',img:'',tags:'vegetariano',kcal:410,time:12},
+      {id:'d6',name:'Branzino alla Griglia',cat:'c3',price:18.00,desc:'Filetto di branzino fresco grigliato con erbe aromatiche, limone e olio d\'oliva',allergens:['Pesce'],available:true,featured:false,emoji:'🐟',img:'',tags:'',kcal:290,time:20},
+      {id:'d7',name:'Bistecca alla Fiorentina',cat:'c3',price:28.00,desc:'T-bone di Chianina al sangue, sale grosso e rosmarino. Min. 600g',allergens:[],available:true,featured:true,emoji:'🥩',img:'',tags:'',kcal:650,time:15},
+      {id:'d8',name:'Patate Arrosto',cat:'c4',price:4.50,desc:'Patate al forno con rosmarino, aglio e olio EVO',allergens:[],available:true,featured:false,emoji:'🥔',img:'',tags:'vegano',kcal:180,time:0},
+      {id:'d9',name:'Tiramisù della Casa',cat:'c5',price:7.00,desc:'La nostra ricetta originale: mascarpone fresco, savoiardi al caffè e cacao amaro in polvere',allergens:['Latte','Uova','Glutine'],available:true,featured:true,emoji:'🍰',img:'',tags:'',kcal:380,time:0},
+      {id:'d10',name:'Panna Cotta ai Frutti di Bosco',cat:'c5',price:6.50,desc:'Panna cotta cremosa con coulis di frutti di bosco freschi',allergens:['Latte'],available:true,featured:false,emoji:'🍮',img:'',tags:'',kcal:310,time:0},
+      {id:'d11',name:'Vino della Casa (calice)',cat:'c6',price:4.00,desc:'Rosso o bianco, produzione locale',allergens:['Anidride solforosa'],available:true,featured:false,emoji:'🍷',img:'',tags:'',kcal:null,time:null},
+      {id:'d12',name:'Acqua (1L)',cat:'c6',price:2.00,desc:'Naturale o frizzante',allergens:[],available:true,featured:false,emoji:'💧',img:'',tags:'',kcal:0,time:null},
+    ]
+  };
+  localStorage.setItem('menuAppData',JSON.stringify(D));
+  startApp();
+}
+
+async function connectBlobId(){
+  const raw = document.getElementById('import-blobid').value.trim();
+  if(!raw){ alert('Inserisci il Bin ID.'); return; }
+  const id = raw.replace(/\s/g,'');
+  const apiKeyInput = document.getElementById('import-apikey');
+  const apiKey = apiKeyInput ? apiKeyInput.value.trim() : '';
+  if(apiKey) localStorage.setItem(JSONBIN_KEY_KEY, apiKey);
+
+  const btn = document.querySelector('#import-overlay .fchip.active');
+  const origText = btn.textContent;
+  btn.textContent = 'Connessione...'; btn.disabled = true;
+  try{
+    const key = getApiKey();
+    const headers = key ? { 'X-Master-Key': key } : {};
+    const res = await fetch(JSONBIN_BASE + id + '/latest', { headers });
+    const json = await res.json();
+    if(!res.ok) throw new Error(json?.message || 'HTTP ' + res.status);
+    const data = json?.record ?? json;
+    if(!data || !data.settings) throw new Error('Dati non validi nel bin');
+    localStorage.setItem(BLOB_ID_KEY, id);
+    D = data;
+    localStorage.setItem(LS_KEY, JSON.stringify(D));
+    startApp();
+    startAutoSync(id);
+  }catch(e){
+    btn.textContent = origText; btn.disabled = false;
+    alert('Connessione fallita.\n\n' + e.message + '\n\nControlla:\n1. Il Bin ID è corretto?\n2. Hai inserito la API Key se il bin è privato?');
+  }
+}
+
+function importJSON(){
+  try{
+    const raw=document.getElementById('import-json').value.trim();
+    D=JSON.parse(raw);
+    localStorage.setItem('menuAppData',JSON.stringify(D));
+    startApp();
+  }catch(e){
+    alert('JSON non valido. Riprova.');
+  }
+}
+
+function startApp(){
+  document.getElementById('import-overlay').classList.add('hidden');
+  document.getElementById('app').style.display='block';
+  // hero
+  const s=D.settings;
+  document.getElementById('splash-logo').textContent=s.logo||'🍽';
+  document.getElementById('splash-name').textContent=s.name||'Menu';
+  // hero logo: image or emoji
+  const logoWrap=document.getElementById('app-logo-wrap');
+  if(s.logoImg){
+    logoWrap.innerHTML=`<img src="${s.logoImg}" alt="logo" style="max-height:90px;max-width:200px;object-fit:contain;filter:drop-shadow(0 2px 12px rgba(0,0,0,.4));">`;
+  } else {
+    logoWrap.innerHTML=`<span style="font-size:3rem;display:block;">${s.logo||'🍽'}</span>`;
+  }
+  document.getElementById('app-title').textContent=s.name||'Il Ristorante';
+  document.getElementById('app-sub').textContent=s.tagline||'';
+  document.title=s.name||'Menu';
+  // ── TEMA COMPLETO ──
+  function hexRgb(hex){
+    const h=hex.replace('#','');
+    return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];
+  }
+  function rgba(hex,a){const[r,g,b]=hexRgb(hex);return`rgba(${r},${g},${b},${a})`;}
+  function shade(hex,amt){
+    const[r,g,b]=hexRgb(hex);
+    const cl=v=>Math.min(255,Math.max(0,v+Math.round(255*amt/100)));
+    return'#'+[cl(r),cl(g),cl(b)].map(v=>v.toString(16).padStart(2,'0')).join('');
+  }
+  function luminance(hex){const[r,g,b]=hexRgb(hex);return(r*0.299+g*0.587+b*0.114);}
+
+  const css=document.documentElement.style;
+
+  if(s.color){
+    const c=s.color;
+    css.setProperty('--gold',       c);
+    css.setProperty('--gold2',      shade(c,10));
+    css.setProperty('--gold-light', rgba(c,0.15));
+    css.setProperty('--border',     rgba(c,0.25));
+  }
+
+  if(s.bgColor){
+    const bg=s.bgColor;
+    const dark=luminance(bg)<128;
+    css.setProperty('--bg',     bg);
+    css.setProperty('--cream',  shade(bg, dark ? 6 : -4));
+    css.setProperty('--dark',   dark ? shade(bg,14) : '#1C1710');
+    css.setProperty('--dark2',  dark ? shade(bg,20) : '#2A221A');
+    css.setProperty('--text',   dark ? '#F0EDE6' : '#2C2416');
+    css.setProperty('--text2',  dark ? '#B0A898' : '#6B5A3E');
+    css.setProperty('--text3',  dark ? '#706860' : '#A89070');
+    css.setProperty('--border2',dark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.08)');
+    css.setProperty('--surface',dark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.85)');
+    // sticky header
+    document.querySelector('.sticky-hdr').style.background=dark
+      ? 'rgba('+hexRgb(bg).join(',')+',0.94)'
+      : 'rgba(253,250,244,0.92)';
+    // hero
+    document.getElementById('app-hero').style.background=dark ? shade(bg,12) : '#1C1710';
+    // chip attivi (filtri e sticky)
+    const activeStyle=`.fchip.active,.fchip:hover{background:${dark?shade(bg,18):'#1C1710'};color:var(--gold-light);border-color:${dark?shade(bg,25):'#1C1710'};}`;
+    let st=document.getElementById('_dyn_style');
+    if(!st){st=document.createElement('style');st.id='_dyn_style';document.head.appendChild(st);}
+    st.textContent=activeStyle;
+  }
+  // CTA buttons
+  const ctaBar = document.getElementById('cta-bar');
+  ctaBar.innerHTML = '';
+  if(s.bookUrl){
+    const a = document.createElement('a');
+    a.href = s.bookUrl; a.target = '_blank'; a.rel = 'noopener';
+    a.className = 'btn-cta btn-cta-primary';
+    a.innerHTML = '📅 ' + (s.bookLabel||'Prenota');
+    ctaBar.appendChild(a);
+  }
+  if(s.orderUrl){
+    const a = document.createElement('a');
+    a.href = s.orderUrl; a.target = '_blank'; a.rel = 'noopener';
+    a.className = 'btn-cta btn-cta-secondary';
+    a.innerHTML = '🛒 ' + (s.orderLabel||'Ordina Online');
+    ctaBar.appendChild(a);
+  }
+  renderMenu();
+  // hide splash
+  setTimeout(()=>document.getElementById('splash').classList.add('hidden'),1800);
+}
+
+function renderMenu(){
+  const search=(document.getElementById('search-input').value||'').toLowerCase();
+  const cats=D.categories.filter(c=>c.active).sort((a,b)=>a.order-b.order);
+
+  // filter bar
+  const fb=document.getElementById('filter-bar');
+  const usedCats=new Set(D.dishes.map(d=>d.cat));
+  fb.innerHTML=`<div class="fchip ${activeCat==='all'?'active':''}" onclick="setCat('all')">Tutti</div>`
+    +cats.filter(c=>usedCats.has(c.id)).map(c=>`<div class="fchip ${activeCat===c.id?'active':''}" onclick="setCat('${c.id}')">${c.icon} ${c.name}</div>`).join('');
+
+  const filtered=D.dishes.filter(d=>{
+    const inCat=activeCat==='all'||d.cat===activeCat;
+    const inS=!search||d.name.toLowerCase().includes(search)||(d.desc||'').toLowerCase().includes(search)||(d.tags||'').toLowerCase().includes(search);
+    return inCat&&inS;
+  });
+
+  const body=document.getElementById('menu-body');
+  if(!filtered.length){body.innerHTML='<div class="empty"><div class="ico">🔍</div><p>Nessun piatto trovato</p></div>';return;}
+
+  const showCats=activeCat==='all'?cats.filter(c=>filtered.some(d=>d.cat===c.id)):[cats.find(c=>c.id===activeCat)].filter(Boolean);
+  body.innerHTML=showCats.map(cat=>{
+    const dishes=filtered.filter(d=>d.cat===cat.id);
+    if(!dishes.length)return'';
+    const catHdr=cat.img
+      ?`<div style="width:100%;height:100px;overflow:hidden;position:relative;margin-bottom:1.1rem;border-radius:12px;">
+          <img src="${cat.img}" style="width:100%;height:100%;object-fit:cover;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to right,rgba(28,23,16,.68),transparent);"></div>
+          <div style="position:absolute;bottom:.75rem;left:1rem;display:flex;align-items:center;gap:.55rem;">
+            <span style="font-size:1.3rem;">${cat.icon}</span>
+            <span style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.4rem;color:#F5E6B0;font-weight:600;text-shadow:0 1px 6px rgba(0,0,0,.5);">${cat.name}</span>
+          </div>
+        </div>`
+      :`<div class="section-hdr">
+          <span class="section-icon">${cat.icon}</span>
+          <span class="section-name">${cat.name}</span>
+          <div class="section-line"></div>
+        </div>`;
+    return`<div class="menu-section">
+      ${catHdr}
+      <div class="dishes-list">${dishes.map(dishCard).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+function dishCard(d){
+  const thumb=d.img?`<img src="${d.img}" alt="${d.name}">`:`<span>${d.emoji||'🍽'}</span>`;
+  const als=(d.allergens||[]).slice(0,3).map(a=>`<span class="al-mini">${a}</span>`).join('');
+  const moreAl=(d.allergens||[]).length>3?`<span class="al-mini">+${d.allergens.length-3}</span>`:'';
+  const tags=(d.tags||'').split(',').filter(t=>t.trim()).slice(0,2).map(t=>`<span class="badge-tag">${t.trim()}</span>`).join('');
+  return`<div class="dish-card ${d.featured?'feat':''} ${!d.available?'unavail':''}" onclick="openDish('${d.id}')">
+    <div class="dish-media">${thumb}</div>
+    <div class="dish-body">
+      <div class="dish-header">
+        <div class="dish-name">${d.name}</div>
+        <div class="dish-price">€${Number(d.price).toFixed(2)}</div>
+      </div>
+      <div class="dish-desc">${d.desc||''}</div>
+      <div class="dish-footer">
+        ${d.featured?'<span class="badge-feat">★ Consigliato</span>':''}
+        ${!d.available?'<span class="badge-unavail">Non disp.</span>':''}
+        ${tags}${als}${moreAl}
+      </div>
+    </div>
+  </div>`;
+}
+
+function setCat(id){activeCat=id;renderMenu();}
+
+function openDish(id){
+  const d=D.dishes.find(x=>x.id===id);if(!d)return;
+  const cat=D.categories.find(c=>c.id===d.cat);
+  // img
+  const mi=document.getElementById('m-img');
+  mi.innerHTML=`<button class="modal-close-btn" onclick="closeModal()">✕</button>${d.img?`<img src="${d.img}" alt="${d.name}">`:`<span style="font-size:5rem">${d.emoji||'🍽'}</span>`}`;
+  document.getElementById('m-cat').textContent=cat?`${cat.icon} ${cat.name}`:'';
+  document.getElementById('m-name').textContent=d.name;
+  document.getElementById('m-price').textContent='€'+Number(d.price).toFixed(2);
+  document.getElementById('m-desc').textContent=d.desc||'';
+  // meta
+  const meta=document.getElementById('m-meta');
+  const items=[];
+  if(d.kcal) items.push({v:d.kcal+'kcal',l:'Calorie'});
+  if(d.time) items.push({v:d.time+'min',l:'Preparazione'});
+  if(!d.available) items.push({v:'⚠️',l:'Non disponibile'});
+  meta.innerHTML=items.length?items.map(i=>`<div class="meta-item"><div class="meta-val">${i.v}</div><div class="meta-lbl">${i.l}</div></div>`).join(''):'';
+  // allergens
+  const als=d.allergens||[];
+  const aw=document.getElementById('m-al-wrap');
+  aw.style.display=als.length?'block':'none';
+  document.getElementById('m-al').innerHTML=als.map(a=>`<span class="al-full">${a}</span>`).join('');
+  document.getElementById('modal-bg').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){document.getElementById('modal-bg').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target===document.getElementById('modal-bg'))closeModal();});
+
+// ── SYNC REMOTO via JSONBin.io ──
+const JSONBIN_BASE  = 'https://api.jsonbin.io/v3/b/';
+const BLOB_ID_KEY   = 'menuSyncBlobId';
+const JSONBIN_KEY_KEY = 'menuSyncApiKey';
+const LS_KEY = 'menuAppData';
+let syncInterval = null;
+
+function getBlobId(){ return localStorage.getItem(BLOB_ID_KEY) || ''; }
+function getApiKey(){ return localStorage.getItem(JSONBIN_KEY_KEY) || ''; }
+
+async function loadFromRemote(id){
+  const key = getApiKey();
+  const headers = key ? { 'X-Master-Key': key } : {};
+  const res = await fetch(JSONBIN_BASE + id + '/latest', { headers });
+  const json = await res.json();
+  if(!res.ok) throw new Error(json?.message || 'HTTP ' + res.status);
+  return json?.record ?? json;
+}
+
+async function initApp(){
+  const id = getBlobId();
+  if(id){
+    try{
+      const data = await loadFromRemote(id);
+      if(data && data.settings){
+        D = data;
+        localStorage.setItem(LS_KEY, JSON.stringify(D));
+        startApp();
+        startAutoSync(id);
+        return;
+      }
+    }catch(e){ console.warn('Sync remoto fallito:', e); }
+  }
+  // Fallback localStorage
+  const cached = localStorage.getItem(LS_KEY);
+  if(cached){
+    try{ D = JSON.parse(cached); startApp(); if(id) startAutoSync(id); return; }catch(e){}
+  }
+  showImportOverlay();
+}
+
+function startAutoSync(id){
+  if(syncInterval) clearInterval(syncInterval);
+  syncInterval = setInterval(async ()=>{
+    try{ const data = await loadFromRemote(id); if(data?.settings){ D=data; renderMenu(); } }catch(e){}
+  }, 30000);
+}
+
+function showImportOverlay(){
+  setTimeout(()=>{
+    document.getElementById('splash').classList.add('hidden');
+    document.getElementById('import-overlay').style.display = 'flex';
+  }, 1600);
+}
+
+initApp();
+</script>
+</body>
+</html>
