@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -359,6 +358,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);heigh
         <button class="btn btn-gold btn-sm" onclick="saveBinId()">💾 Imposta</button>
       </div>
       <p style="font-size:.72rem;color:var(--tx3);margin-top:.5rem;">Hai già un Bin ID? Incollalo e clicca Imposta. Oppure salva le impostazioni per crearne uno automaticamente.</p>
+    </div>
+    <div style="margin-top:1.1rem;border-top:1px solid var(--bdr);padding-top:1rem;">
+      <label class="fl" style="margin-bottom:.6rem;display:block;">🔗 Link diretto Menu-App</label>
+      <p style="font-size:.78rem;color:var(--tx2);margin-bottom:.75rem;">Condividi questo link con i clienti — si apre il menu già connesso, su qualsiasi dispositivo, senza inserire nulla.</p>
+      <div style="display:flex;gap:.5rem;align-items:center;">
+        <input class="fi" id="menu-link-output" readonly placeholder="Inserisci Bin ID e API Key per generare il link..." style="flex:1;font-size:.72rem;color:var(--gold);">
+        <button class="btn btn-ghost btn-sm" onclick="copyMenuLink()">📋 Copia</button>
+        <button class="btn btn-gold btn-sm" onclick="generateMenuLink()">🔗 Genera</button>
+      </div>
+      <p style="font-size:.7rem;color:var(--tx3);margin-top:.45rem;">⚠️ Il link contiene la API Key — usalo solo su connessioni sicure (QR code, WhatsApp privato, ecc.)</p>
     </div>
   </div>
 </div>
@@ -1131,6 +1140,22 @@ function saveSettings(){
   D.settings.orderUrl=document.getElementById('s-order-url').value.trim();
   D.settings.orderLabel=document.getElementById('s-order-label').value.trim()||'Ordina Online';
   save();toast('Impostazioni salvate!','ok');
+}
+function generateMenuLink(){
+  const id = getBlobId();
+  const key = getApiKey();
+  if(!id){ toast('Imposta prima il Bin ID','err'); return; }
+  // Base URL: stessa origine del backoffice ma punta a menu-app.html
+  const base = window.location.href.replace('backoffice.html','menu-app.html').split('?')[0];
+  let url = base + '?bid=' + encodeURIComponent(id);
+  if(key) url += '&key=' + encodeURIComponent(key);
+  document.getElementById('menu-link-output').value = url;
+  toast('Link generato! Copialo e condividilo.','ok');
+}
+function copyMenuLink(){
+  const val = document.getElementById('menu-link-output').value;
+  if(!val || val.includes('Inserisci')){ toast('Genera prima il link','err'); return; }
+  navigator.clipboard.writeText(val).then(()=>toast('Link copiato!')).catch(()=>prompt('Copia questo link:', val));
 }
 function saveBinId(){
   const id = document.getElementById('s-binid').value.trim();
