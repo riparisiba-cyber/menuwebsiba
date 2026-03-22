@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -520,6 +519,20 @@ async function loadFromRemote(id){
 }
 
 async function initApp(){
+  // 1. Leggi parametri dall URL: ?bid=BINID&key=APIKEY
+  const params = new URLSearchParams(window.location.search);
+  const urlBid = params.get('bid') || params.get('id') || '';
+  const urlKey = params.get('key') || '';
+
+  // Se arrivano dall URL, salvali in localStorage e pulisci l URL
+  if(urlBid){ localStorage.setItem(BLOB_ID_KEY, urlBid); }
+  if(urlKey){ localStorage.setItem(JSONBIN_KEY_KEY, urlKey); }
+  if(urlBid || urlKey){
+    // Rimuovi i parametri dall URL per non esporre la key
+    const cleanUrl = window.location.pathname;
+    window.history.replaceState({}, '', cleanUrl);
+  }
+
   const id = getBlobId();
   if(id){
     try{
