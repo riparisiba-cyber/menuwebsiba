@@ -131,6 +131,13 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 
 /* FOOTER */
 .menu-footer{text-align:center;padding:2rem 1rem;color:var(--text3);font-size:.75rem;}
+/* CTA BUTTONS */
+.cta-bar{display:flex;gap:.75rem;justify-content:center;margin-top:1.25rem;flex-wrap:wrap;}
+.btn-cta{display:inline-flex;align-items:center;gap:.45rem;padding:.65rem 1.6rem;border-radius:50px;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .18s;border:none;}
+.btn-cta-primary{background:var(--gold);color:#fff;}
+.btn-cta-primary:hover{filter:brightness(1.12);transform:translateY(-1px);}
+.btn-cta-secondary{background:transparent;color:var(--gold);border:2px solid var(--gold);}
+.btn-cta-secondary:hover{background:var(--gold);color:#fff;transform:translateY(-1px);}
 </style>
 </head>
 <body>
@@ -163,6 +170,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
       <h1 class="hero-title" id="app-title">Il Ristorante</h1>
       <p class="hero-sub" id="app-sub">Menu</p>
       <div class="hero-divider"></div>
+      <div class="cta-bar" id="cta-bar"></div>
     </div>
   </div>
 
@@ -272,8 +280,70 @@ function startApp(){
   document.getElementById('app-title').textContent=s.name||'Il Ristorante';
   document.getElementById('app-sub').textContent=s.tagline||'';
   document.title=s.name||'Menu';
-  // theme color
-  if(s.color) document.documentElement.style.setProperty('--gold',s.color);
+  // ── TEMA COMPLETO ──
+  function hexRgb(hex){
+    const h=hex.replace('#','');
+    return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];
+  }
+  function rgba(hex,a){const[r,g,b]=hexRgb(hex);return`rgba(${r},${g},${b},${a})`;}
+  function shade(hex,amt){
+    const[r,g,b]=hexRgb(hex);
+    const cl=v=>Math.min(255,Math.max(0,v+Math.round(255*amt/100)));
+    return'#'+[cl(r),cl(g),cl(b)].map(v=>v.toString(16).padStart(2,'0')).join('');
+  }
+  function luminance(hex){const[r,g,b]=hexRgb(hex);return(r*0.299+g*0.587+b*0.114);}
+
+  const css=document.documentElement.style;
+
+  if(s.color){
+    const c=s.color;
+    css.setProperty('--gold',       c);
+    css.setProperty('--gold2',      shade(c,10));
+    css.setProperty('--gold-light', rgba(c,0.15));
+    css.setProperty('--border',     rgba(c,0.25));
+  }
+
+  if(s.bgColor){
+    const bg=s.bgColor;
+    const dark=luminance(bg)<128;
+    css.setProperty('--bg',     bg);
+    css.setProperty('--cream',  shade(bg, dark ? 6 : -4));
+    css.setProperty('--dark',   dark ? shade(bg,14) : '#1C1710');
+    css.setProperty('--dark2',  dark ? shade(bg,20) : '#2A221A');
+    css.setProperty('--text',   dark ? '#F0EDE6' : '#2C2416');
+    css.setProperty('--text2',  dark ? '#B0A898' : '#6B5A3E');
+    css.setProperty('--text3',  dark ? '#706860' : '#A89070');
+    css.setProperty('--border2',dark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.08)');
+    css.setProperty('--surface',dark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.85)');
+    // sticky header
+    document.querySelector('.sticky-hdr').style.background=dark
+      ? 'rgba('+hexRgb(bg).join(',')+',0.94)'
+      : 'rgba(253,250,244,0.92)';
+    // hero
+    document.getElementById('app-hero').style.background=dark ? shade(bg,12) : '#1C1710';
+    // chip attivi (filtri e sticky)
+    const activeStyle=`.fchip.active,.fchip:hover{background:${dark?shade(bg,18):'#1C1710'};color:var(--gold-light);border-color:${dark?shade(bg,25):'#1C1710'};}`;
+    let st=document.getElementById('_dyn_style');
+    if(!st){st=document.createElement('style');st.id='_dyn_style';document.head.appendChild(st);}
+    st.textContent=activeStyle;
+  }
+  // CTA buttons
+  const ctaBar = document.getElementById('cta-bar');
+  ctaBar.innerHTML = '';
+  if(s.bookUrl){
+    const a = document.createElement('a');
+    a.href = s.bookUrl; a.target = '_blank'; a.rel = 'noopener';
+    a.className = 'btn-cta btn-cta-primary';
+    a.innerHTML = '📅 ' + (s.bookLabel||'Prenota');
+    ctaBar.appendChild(a);
+  }
+  if(s.orderUrl){
+    const a = document.createElement('a');
+    a.href = s.orderUrl; a.target = '_blank'; a.rel = 'noopener';
+    a.className = 'btn-cta btn-cta-secondary';
+    a.innerHTML = '🛒 ' + (s.orderLabel||'Ordina Online');
+    ctaBar.appendChild(a);
+  }
   renderMenu();
   // hide splash
   setTimeout(()=>document.getElementById('splash').classList.add('hidden'),1800);
@@ -375,24 +445,15 @@ function openDish(id){
 function closeModal(){document.getElementById('modal-bg').classList.remove('open');document.body.style.overflow='';}
 document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target===document.getElementById('modal-bg'))closeModal();});
 
-// INIT — carica sempre da Firebase
-const NPOINT_URL = 'https://api.npoint.io/a2f4934d9244484040e1';
+// INIT — legge da localStorage (scritto dal backoffice)
+const LS_KEY = 'menuAppData';
 
-async function loadFromFirebase(){
-  try {
-    const res = await fetch(NPOINT_URL);
-    const json = await res.json();
-    if(json && json.categories){
-      D = json;
-      startApp();
-    } else {
-      showImportOverlay();
-    }
-  } catch(e){
-    console.error('Errore JSONBin:', e);
-    // fallback a localStorage se offline
-    if(tryLoad()){ startApp(); } else { showImportOverlay(); }
+function loadFromFirebase(){
+  const cached = localStorage.getItem(LS_KEY);
+  if(cached){
+    try{ D=JSON.parse(cached); startApp(); return; }catch(e){}
   }
+  showImportOverlay();
 }
 
 function showImportOverlay(){
