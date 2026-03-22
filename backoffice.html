@@ -314,6 +314,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);heigh
         </div>
       </div>
     </div>
+      <div class="f full" style="margin-top:.5rem;">
+        <label class="fl" style="font-size:.75rem;letter-spacing:.1em;">🔗 Tasto "Prenota" — URL</label>
+        <div style="display:flex;gap:.5rem;align-items:center;">
+          <input class="fi" id="s-book-url" placeholder="https://... (lascia vuoto per nascondere il tasto)">
+          <input class="fi" id="s-book-label" placeholder="Testo tasto" style="width:140px;" value="Prenota">
+        </div>
+      </div>
+      <div class="f full">
+        <label class="fl" style="font-size:.75rem;letter-spacing:.1em;">🛒 Tasto "Ordina" — URL</label>
+        <div style="display:flex;gap:.5rem;align-items:center;">
+          <input class="fi" id="s-order-url" placeholder="https://... (lascia vuoto per nascondere il tasto)">
+          <input class="fi" id="s-order-label" placeholder="Testo tasto" style="width:140px;" value="Ordina Online">
+        </div>
+      </div>
     <div style="margin-top:1.1rem;display:flex;gap:.6rem;"><button class="btn btn-gold" onclick="saveSettings()">💾 Salva Impostazioni</button></div>
   </div>
   <div class="ss">
@@ -520,6 +534,8 @@ async function loadFromFirebase(){
 }
 
 async function save(){
+  // Salva sempre su localStorage (condiviso con menu-app sulla stessa origine)
+  localStorage.setItem('menuAppData', JSON.stringify(D));
   try {
     document.getElementById('sync-lbl').textContent='Salvataggio...';
     await fetch(NPOINT_URL, {
@@ -530,8 +546,10 @@ async function save(){
     updateCounts();schedulePreview();
     document.getElementById('sync-lbl').textContent='Salvato '+new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
   } catch(e){
-    console.error('Errore salvataggio JSONBin:', e);
-    document.getElementById('sync-lbl').textContent='Errore salvataggio ✗';
+    console.error('Errore salvataggio remoto:', e);
+    // Salvo solo in locale se il remoto fallisce
+    updateCounts();schedulePreview();
+    document.getElementById('sync-lbl').textContent='Salvato in locale '+new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
   }
 }
 function updateCounts(){
@@ -966,6 +984,11 @@ function loadSettings(){
   br.innerHTML=BG_PRESETS.map(b=>`<div class="bg-sw ${curBg===b.val?'on':''}" style="background:${b.val};border-color:${curBg===b.val?'white':'transparent'};" onclick="pickBg('${b.val}',this)" title="${b.label}"></div>`).join('');
   document.getElementById('s-bg-custom').value=curBg;
   document.getElementById('s-bg-hex').value=curBg;
+  // CTA buttons
+  document.getElementById('s-book-url').value=s.bookUrl||'';
+  document.getElementById('s-book-label').value=s.bookLabel||'Prenota';
+  document.getElementById('s-order-url').value=s.orderUrl||'';
+  document.getElementById('s-order-label').value=s.orderLabel||'Ordina Online';
 }
 function updateLogoPrev(src){const w=document.getElementById('logo-prev');if(src&&(src.startsWith('http')||src.startsWith('data:'))){w.innerHTML=`<img src="${src}" style="width:100%;height:100%;object-fit:contain;padding:4px;">`;}else{w.innerHTML=`<span style="font-size:2.4rem;">${src||'🍽'}</span>`;}}
 function handleLogo(e){const f=e.target.files[0];if(!f)return;if(f.size>2*1024*1024){toast('Max 2MB','err');return;}const r=new FileReader();r.onload=ev=>{D.settings.logoImg=ev.target.result;document.getElementById('s-logo-url').value='';document.getElementById('s-logo-emoji').value='';updateLogoPrev(ev.target.result);schedulePreview();toast('Logo caricato! Salva.','ok');};r.readAsDataURL(f);}
@@ -983,6 +1006,10 @@ function saveSettings(){
   const emoji=document.getElementById('s-logo-emoji').value.trim();
   if(url){D.settings.logoImg=url;D.settings.logo='';}
   else if(emoji){D.settings.logoImg='';D.settings.logo=emoji;}
+  D.settings.bookUrl=document.getElementById('s-book-url').value.trim();
+  D.settings.bookLabel=document.getElementById('s-book-label').value.trim()||'Prenota';
+  D.settings.orderUrl=document.getElementById('s-order-url').value.trim();
+  D.settings.orderLabel=document.getElementById('s-order-label').value.trim()||'Ordina Online';
   save();toast('Impostazioni salvate!','ok');
 }
 function copySyncCode(){navigator.clipboard.writeText(D.settings.syncCode||'');toast('Codice copiato!');}
