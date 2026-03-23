@@ -138,6 +138,71 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .btn-cta-primary:hover{filter:brightness(1.12);transform:translateY(-1px);}
 .btn-cta-secondary{background:transparent;color:var(--gold);border:2px solid var(--gold);}
 .btn-cta-secondary:hover{background:var(--gold);color:#fff;transform:translateY(-1px);}
+.btn-cta-wa{background:#25D366;color:#fff;border:2px solid #25D366;}
+.btn-cta-wa:hover{background:#1ebe5d;transform:translateY(-1px);}
+
+/* ── MODE SWITCH ── */
+.mode-switch{display:flex;gap:.35rem;padding:.5rem 1rem .2rem;justify-content:center;}
+.mode-btn{flex:1;max-width:180px;padding:.48rem 1rem;border-radius:50px;font-size:.82rem;font-weight:600;border:1.5px solid var(--border);background:white;color:var(--text2);cursor:pointer;transition:all .18s;font-family:'Outfit',sans-serif;}
+.mode-btn.active{background:var(--dark);color:var(--gold-light);border-color:var(--dark);}
+
+/* ── COMPOSITE BADGE ── */
+.badge-comp{font-size:.62rem;padding:.1rem .35rem;border-radius:3px;background:rgba(167,139,250,.12);color:#7C5CFC;font-weight:600;}
+.dish-sections-preview{font-size:.72rem;color:var(--text3);margin-top:.18rem;line-height:1.4;}
+
+/* ── COMPOSITE MODAL SECTIONS ── */
+.comp-section-block{margin-bottom:1.1rem;}
+.comp-section-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);margin-bottom:.5rem;display:flex;align-items:center;justify-content:space-between;}
+.comp-section-req{font-size:.65rem;padding:.1rem .38rem;border-radius:10px;background:rgba(184,134,11,.1);color:var(--gold);font-weight:500;}
+.comp-option{display:flex;align-items:center;gap:.75rem;padding:.62rem .85rem;border-radius:10px;border:1.5px solid var(--border2);background:white;cursor:pointer;transition:all .16s;margin-bottom:.4rem;user-select:none;}
+.comp-option:hover{border-color:var(--gold);background:rgba(184,134,11,.04);}
+.comp-option.selected{border-color:var(--gold);background:rgba(184,134,11,.07);}
+.comp-option.selected .co-check{background:var(--gold);border-color:var(--gold);color:white;}
+.co-check{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;transition:all .15s;}
+.co-label{flex:1;font-size:.9rem;color:var(--dark);}
+.co-extra{font-size:.8rem;color:var(--text3);font-weight:500;}
+.comp-add-btn{width:100%;padding:.75rem;border-radius:12px;border:none;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .18s;margin-top:.5rem;}
+.comp-add-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ── CART BUTTON ── */
+.cart-fab{position:fixed;bottom:1.5rem;right:1.5rem;z-index:100;background:var(--dark);color:var(--gold-light);border:none;border-radius:50px;padding:.75rem 1.3rem;font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.55rem;box-shadow:0 6px 24px rgba(0,0,0,.28);transition:all .2s;transform:translateY(120px);opacity:0;}
+.cart-fab.visible{transform:none;opacity:1;}
+.cart-fab:hover{transform:scale(1.04);}
+.cart-fab .cf-badge{background:var(--gold);color:#000;border-radius:50px;padding:.08rem .52rem;font-size:.78rem;font-weight:700;min-width:22px;text-align:center;}
+
+/* ── CART SHEET ── */
+.cart-sheet{background:var(--bg);width:100%;max-width:520px;border-radius:20px 20px 0 0;max-height:88vh;overflow-y:auto;animation:slideUp .28s cubic-bezier(.34,1.56,.64,1);}
+@media(min-width:600px){.cart-sheet{border-radius:20px;animation:fadeIn .22s ease;}}
+.cart-header{padding:1.25rem 1.5rem .75rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border2);}
+.cart-header h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;}
+.cart-items{padding:.75rem 1.25rem;display:flex;flex-direction:column;gap:.6rem;}
+.cart-item{display:flex;align-items:flex-start;gap:.75rem;background:white;border-radius:10px;padding:.7rem .85rem;border:1px solid var(--border2);}
+.ci-emoji{font-size:1.5rem;flex-shrink:0;margin-top:.1rem;}
+.ci-body{flex:1;min-width:0;}
+.ci-name{font-size:.9rem;font-weight:600;color:var(--dark);}
+.ci-choices{font-size:.73rem;color:var(--text2);margin-top:.15rem;line-height:1.5;}
+.ci-price{font-size:.9rem;font-weight:600;color:var(--gold);white-space:nowrap;}
+.ci-qty{display:flex;align-items:center;gap:.5rem;margin-top:.4rem;}
+.qty-btn{width:26px;height:26px;border-radius:50%;border:1px solid var(--border2);background:white;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:all .13s;}
+.qty-btn:hover{border-color:var(--gold);color:var(--gold);}
+.qty-num{font-size:.88rem;font-weight:600;min-width:20px;text-align:center;}
+.cart-footer{padding:1rem 1.25rem 1.5rem;border-top:1px solid var(--border2);}
+.cart-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+.cart-total-label{font-size:.82rem;color:var(--text2);}
+.cart-total-val{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);}
+
+/* ── TABLE INPUT ── */
+.table-input-wrap{margin-bottom:.85rem;}
+.table-input-wrap label{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);display:block;margin-bottom:.38rem;}
+.table-input-wrap input,.table-input-wrap textarea{width:100%;padding:.6rem .85rem;border-radius:10px;border:1.5px solid var(--border2);background:white;font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--dark);outline:none;transition:border .13s;}
+.table-input-wrap input:focus,.table-input-wrap textarea:focus{border-color:var(--gold);}
+.table-input-wrap textarea{resize:none;min-height:70px;}
+
+/* ── ORDER SUCCESS ── */
+.order-success{text-align:center;padding:2rem 1.5rem;}
+.order-success .os-icon{font-size:3.5rem;margin-bottom:.75rem;}
+.order-success h3{font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:.5rem;}
+.order-success p{font-size:.88rem;color:var(--text2);line-height:1.6;}
 </style>
 </head>
 <body>
@@ -200,7 +265,11 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 
   <!-- STICKY -->
   <div class="sticky-hdr">
-    <div class="search-wrap">
+    <div class="mode-switch">
+      <button class="mode-btn active" id="mode-menu-btn" onclick="setMode('menu')">🍽 Menu</button>
+      <button class="mode-btn" id="mode-order-btn" onclick="setMode('order')">🛒 Ordina</button>
+    </div>
+    <div class="search-wrap" id="search-wrap">
       <div class="search-inner">
         <span class="search-icon">🔍</span>
         <input type="text" id="search-input" placeholder="Cerca nel menu..." oninput="renderMenu()">
@@ -215,6 +284,25 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   <div class="menu-footer">Scorri per scoprire tutti i piatti · Chiedi al cameriere per informazioni</div>
 </div>
 
+<!-- CART FAB -->
+<button class="cart-fab" id="cart-fab" onclick="openCart()">
+  🛒 <span id="cart-fab-label">Il tuo ordine</span>
+  <span class="cf-badge" id="cart-fab-count">0</span>
+</button>
+
+<!-- CART SHEET -->
+<div class="modal-bg" id="cart-modal-bg">
+  <div class="cart-sheet" id="cart-sheet">
+    <div class="cart-header">
+      <h3>🛒 Il tuo ordine</h3>
+      <button class="modal-close-btn" style="position:static;background:var(--border2);color:var(--text);" onclick="closeCart()">✕</button>
+    </div>
+    <div id="cart-content">
+      <!-- filled dynamically -->
+    </div>
+  </div>
+</div>
+
 <!-- DISH MODAL -->
 <div class="modal-bg" id="modal-bg">
   <div class="modal-sheet">
@@ -227,9 +315,22 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
       <div class="modal-price" id="m-price"></div>
       <p class="modal-desc" id="m-desc"></p>
       <div class="modal-meta" id="m-meta"></div>
+      <!-- COMPOSITE SECTIONS -->
+      <div id="m-comp-sections" style="display:none;margin-bottom:1.25rem;"></div>
       <div id="m-al-wrap">
         <div class="modal-al-title">Allergeni</div>
         <div class="al-list" id="m-al"></div>
+      </div>
+      <!-- ORDER MODE: add to cart button -->
+      <div id="m-cart-action" style="display:none;margin-top:1.25rem;">
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem;">
+          <button class="qty-btn" onclick="modalQtyChange(-1)">−</button>
+          <span class="qty-num" id="m-qty" style="font-size:1.1rem;">1</span>
+          <button class="qty-btn" onclick="modalQtyChange(1)">+</button>
+        </div>
+        <button class="comp-add-btn" id="m-add-btn" onclick="addToCart()" style="background:var(--dark);color:var(--gold-light);">
+          Aggiungi all'ordine · <span id="m-add-total">€0.00</span>
+        </button>
       </div>
     </div>
   </div>
@@ -238,6 +339,20 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 <script>
 let D=null;
 let activeCat='all';
+let appMode='menu'; // 'menu' | 'order'
+let cart=[]; // [{id, name, emoji, basePrice, qty, choices, totalPrice, _isComposite}]
+let currentModalItem=null; // {dish or composite, _isComposite}
+let modalQty=1;
+let modalSelections={}; // {sectionId: [optIds]}
+
+// ── MODE SWITCH ──
+function setMode(mode){
+  appMode=mode;
+  document.getElementById('mode-menu-btn').classList.toggle('active',mode==='menu');
+  document.getElementById('mode-order-btn').classList.toggle('active',mode==='order');
+  renderMenu();
+  updateCartFab();
+}
 
 // Try load from localStorage
 function tryLoad(){
@@ -260,16 +375,19 @@ function loadDemo(){
     dishes:[
       {id:'d1',name:'Bruschetta al Pomodoro',cat:'c1',price:6.50,desc:'Pane tostato con pomodorini freschi, basilico e olio EVO del Lazio',allergens:['Glutine'],available:true,featured:false,emoji:'🍅',img:'',tags:'vegano',kcal:180,time:5},
       {id:'d2',name:'Carpaccio di Manzo',cat:'c1',price:11.00,desc:'Fettine sottili di manzo con rucola, scaglie di parmigiano e limone',allergens:['Latte'],available:true,featured:true,emoji:'🥩',img:'',tags:'',kcal:220,time:5},
-      {id:'d3',name:'Tagliatelle al Ragù',cat:'c2',price:13.00,desc:'Pasta fresca all\'uovo con ragù di carne macinata cotto lentamente per 4 ore con verdure di stagione',allergens:['Glutine','Uova','Latte'],available:true,featured:true,emoji:'🍝',img:'',tags:'',kcal:520,time:15},
-      {id:'d4',name:'Risotto ai Funghi Porcini',cat:'c2',price:14.50,desc:'Riso carnaroli con funghi porcini freschi, burro mantecato e parmigiano reggiano DOP',allergens:['Latte'],available:true,featured:false,emoji:'🍄',img:'',tags:'vegetariano',kcal:480,time:20},
-      {id:'d5',name:'Gnocchi al Pomodoro',cat:'c2',price:10.00,desc:'Gnocchi di patate fatti in casa con salsa di pomodoro fresco e basilico',allergens:['Glutine','Uova'],available:false,featured:false,emoji:'🥔',img:'',tags:'vegetariano',kcal:410,time:12},
-      {id:'d6',name:'Branzino alla Griglia',cat:'c3',price:18.00,desc:'Filetto di branzino fresco grigliato con erbe aromatiche, limone e olio d\'oliva',allergens:['Pesce'],available:true,featured:false,emoji:'🐟',img:'',tags:'',kcal:290,time:20},
-      {id:'d7',name:'Bistecca alla Fiorentina',cat:'c3',price:28.00,desc:'T-bone di Chianina al sangue, sale grosso e rosmarino. Min. 600g',allergens:[],available:true,featured:true,emoji:'🥩',img:'',tags:'',kcal:650,time:15},
-      {id:'d8',name:'Patate Arrosto',cat:'c4',price:4.50,desc:'Patate al forno con rosmarino, aglio e olio EVO',allergens:[],available:true,featured:false,emoji:'🥔',img:'',tags:'vegano',kcal:180,time:0},
-      {id:'d9',name:'Tiramisù della Casa',cat:'c5',price:7.00,desc:'La nostra ricetta originale: mascarpone fresco, savoiardi al caffè e cacao amaro in polvere',allergens:['Latte','Uova','Glutine'],available:true,featured:true,emoji:'🍰',img:'',tags:'',kcal:380,time:0},
-      {id:'d10',name:'Panna Cotta ai Frutti di Bosco',cat:'c5',price:6.50,desc:'Panna cotta cremosa con coulis di frutti di bosco freschi',allergens:['Latte'],available:true,featured:false,emoji:'🍮',img:'',tags:'',kcal:310,time:0},
+      {id:'d3',name:'Tagliatelle al Ragù',cat:'c2',price:13.00,desc:"Pasta fresca all'uovo con ragù di carne cotto lentamente",allergens:['Glutine','Uova','Latte'],available:true,featured:true,emoji:'🍝',img:'',tags:'',kcal:520,time:15},
+      {id:'d4',name:'Risotto ai Funghi Porcini',cat:'c2',price:14.50,desc:'Riso carnaroli con porcini freschi, parmigiano DOP',allergens:['Latte'],available:true,featured:false,emoji:'🍄',img:'',tags:'vegetariano',kcal:480,time:20},
+      {id:'d6',name:'Branzino alla Griglia',cat:'c3',price:18.00,desc:'Filetto di branzino fresco grigliato con erbe e limone',allergens:['Pesce'],available:true,featured:false,emoji:'🐟',img:'',tags:'',kcal:290,time:20},
+      {id:'d9',name:'Tiramisù della Casa',cat:'c5',price:7.00,desc:'Mascarpone fresco, savoiardi al caffè e cacao amaro',allergens:['Latte','Uova','Glutine'],available:true,featured:true,emoji:'🍰',img:'',tags:'',kcal:380,time:0},
       {id:'d11',name:'Vino della Casa (calice)',cat:'c6',price:4.00,desc:'Rosso o bianco, produzione locale',allergens:['Anidride solforosa'],available:true,featured:false,emoji:'🍷',img:'',tags:'',kcal:null,time:null},
-      {id:'d12',name:'Acqua (1L)',cat:'c6',price:2.00,desc:'Naturale o frizzante',allergens:[],available:true,featured:false,emoji:'💧',img:'',tags:'',kcal:0,time:null},
+    ],
+    composites:[
+      {id:'cp1',name:'Poke Bowl',cat:'c1',price:13.00,desc:'Crea la tua poke bowl personalizzata',emoji:'🥣',available:true,sections:[
+        {id:'s1',name:'Base',min:1,max:1,options:[{id:'o1',name:'Riso bianco',price:0},{id:'o2',name:'Riso integrale',price:0},{id:'o3',name:'Insalata mista',price:0}]},
+        {id:'s2',name:'Proteina',min:1,max:2,options:[{id:'o4',name:'Salmone',price:2.50},{id:'o5',name:'Tonno',price:2.50},{id:'o6',name:'Pollo',price:1.50},{id:'o7',name:'Tofu',price:1.00}]},
+        {id:'s3',name:'Topping',min:0,max:4,options:[{id:'o8',name:'Edamame',price:0},{id:'o9',name:'Avocado',price:1.00},{id:'o10',name:'Cetriolo',price:0},{id:'o11',name:'Carote',price:0}]},
+        {id:'s4',name:'Salsa',min:1,max:2,options:[{id:'o13',name:'Ponzu',price:0},{id:'o14',name:'Sesamo',price:0},{id:'o15',name:'Sriracha',price:0}]},
+      ]}
     ]
   };
   localStorage.setItem('menuAppData',JSON.stringify(D));
@@ -302,7 +420,7 @@ async function connectBlobId(){
     startAutoSync(id);
   }catch(e){
     btn.textContent = origText; btn.disabled = false;
-    alert('Connessione fallita.\n\n' + e.message + '\n\nControlla:\n1. Il Bin ID è corretto?\n2. Hai inserito la API Key se il bin è privato?');
+    alert('Connessione fallita.\n\n' + e.message);
   }
 }
 
@@ -320,11 +438,9 @@ function importJSON(){
 function startApp(){
   document.getElementById('import-overlay').classList.add('hidden');
   document.getElementById('app').style.display='block';
-  // hero
   const s=D.settings;
   document.getElementById('splash-logo').textContent=s.logo||'🍽';
   document.getElementById('splash-name').textContent=s.name||'Menu';
-  // hero logo: image or emoji
   const logoWrap=document.getElementById('app-logo-wrap');
   if(s.logoImg){
     logoWrap.innerHTML=`<img src="${s.logoImg}" alt="logo" style="max-height:90px;max-width:200px;object-fit:contain;filter:drop-shadow(0 2px 12px rgba(0,0,0,.4));">`;
@@ -334,241 +450,624 @@ function startApp(){
   document.getElementById('app-title').textContent=s.name||'Il Ristorante';
   document.getElementById('app-sub').textContent=s.tagline||'';
   document.title=s.name||'Menu';
-  // ── TEMA COMPLETO ──
-  function hexRgb(hex){
-    const h=hex.replace('#','');
-    return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];
-  }
+
+  function hexRgb(hex){const h=hex.replace('#','');return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
   function rgba(hex,a){const[r,g,b]=hexRgb(hex);return`rgba(${r},${g},${b},${a})`;}
-  function shade(hex,amt){
-    const[r,g,b]=hexRgb(hex);
-    const cl=v=>Math.min(255,Math.max(0,v+Math.round(255*amt/100)));
-    return'#'+[cl(r),cl(g),cl(b)].map(v=>v.toString(16).padStart(2,'0')).join('');
-  }
+  function shade(hex,amt){const[r,g,b]=hexRgb(hex);const cl=v=>Math.min(255,Math.max(0,v+Math.round(255*amt/100)));return'#'+[cl(r),cl(g),cl(b)].map(v=>v.toString(16).padStart(2,'0')).join('');}
   function luminance(hex){const[r,g,b]=hexRgb(hex);return(r*0.299+g*0.587+b*0.114);}
 
   const css=document.documentElement.style;
-
   if(s.color){
     const c=s.color;
-    css.setProperty('--gold',       c);
-    css.setProperty('--gold2',      shade(c,10));
-    css.setProperty('--gold-light', rgba(c,0.15));
-    css.setProperty('--border',     rgba(c,0.25));
+    css.setProperty('--gold',c);
+    css.setProperty('--gold2',shade(c,10));
+    css.setProperty('--gold-light',rgba(c,0.15));
+    css.setProperty('--border',rgba(c,0.25));
   }
-
   if(s.bgColor){
     const bg=s.bgColor;
     const dark=luminance(bg)<128;
-    css.setProperty('--bg',     bg);
-    css.setProperty('--cream',  shade(bg, dark ? 6 : -4));
-    css.setProperty('--dark',   dark ? shade(bg,14) : '#1C1710');
-    css.setProperty('--dark2',  dark ? shade(bg,20) : '#2A221A');
-    css.setProperty('--text',   dark ? '#F0EDE6' : '#2C2416');
-    css.setProperty('--text2',  dark ? '#B0A898' : '#6B5A3E');
-    css.setProperty('--text3',  dark ? '#706860' : '#A89070');
-    css.setProperty('--border2',dark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.08)');
-    css.setProperty('--surface',dark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.85)');
-    // sticky header
-    document.querySelector('.sticky-hdr').style.background=dark
-      ? 'rgba('+hexRgb(bg).join(',')+',0.94)'
-      : 'rgba(253,250,244,0.92)';
-    // hero
-    document.getElementById('app-hero').style.background=dark ? shade(bg,12) : '#1C1710';
-    // chip attivi (filtri e sticky)
-    const activeStyle=`.fchip.active,.fchip:hover{background:${dark?shade(bg,18):'#1C1710'};color:var(--gold-light);border-color:${dark?shade(bg,25):'#1C1710'};}`;
+    css.setProperty('--bg',bg);
+    css.setProperty('--cream',shade(bg,dark?6:-4));
+    css.setProperty('--dark',dark?shade(bg,14):'#1C1710');
+    css.setProperty('--dark2',dark?shade(bg,20):'#2A221A');
+    css.setProperty('--text',dark?'#F0EDE6':'#2C2416');
+    css.setProperty('--text2',dark?'#B0A898':'#6B5A3E');
+    css.setProperty('--text3',dark?'#706860':'#A89070');
+    css.setProperty('--border2',dark?'rgba(255,255,255,0.09)':'rgba(0,0,0,0.08)');
+    css.setProperty('--surface',dark?'rgba(255,255,255,0.06)':'rgba(255,255,255,0.85)');
+    document.querySelector('.sticky-hdr').style.background=dark?'rgba('+hexRgb(bg).join(',')+',0.94)':'rgba(253,250,244,0.92)';
+    document.getElementById('app-hero').style.background=dark?shade(bg,12):'#1C1710';
+    const activeStyle=`.fchip.active,.fchip:hover,.mode-btn.active{background:${dark?shade(bg,18):'#1C1710'};color:var(--gold-light);border-color:${dark?shade(bg,25):'#1C1710'};}`;
     let st=document.getElementById('_dyn_style');
     if(!st){st=document.createElement('style');st.id='_dyn_style';document.head.appendChild(st);}
     st.textContent=activeStyle;
   }
-  // CTA buttons
-  const ctaBar = document.getElementById('cta-bar');
-  ctaBar.innerHTML = '';
-  if(s.bookUrl){
-    const a = document.createElement('a');
-    a.href = s.bookUrl; a.target = '_blank'; a.rel = 'noopener';
-    a.className = 'btn-cta btn-cta-primary';
-    a.innerHTML = '📅 ' + (s.bookLabel||'Prenota');
-    ctaBar.appendChild(a);
-  }
-  if(s.orderUrl){
-    const a = document.createElement('a');
-    a.href = s.orderUrl; a.target = '_blank'; a.rel = 'noopener';
-    a.className = 'btn-cta btn-cta-secondary';
-    a.innerHTML = '🛒 ' + (s.orderLabel||'Ordina Online');
-    ctaBar.appendChild(a);
-  }
+  const ctaBar=document.getElementById('cta-bar');
+  ctaBar.innerHTML='';
+  if(s.bookUrl){const a=document.createElement('a');a.href=s.bookUrl;a.target='_blank';a.rel='noopener';a.className='btn-cta btn-cta-primary';a.innerHTML='📅 '+(s.bookLabel||'Prenota');ctaBar.appendChild(a);}
+  if(s.waNumber){const a=document.createElement('a');a.href='https://wa.me/'+s.waNumber;a.target='_blank';a.rel='noopener';a.className='btn-cta btn-cta-wa';a.innerHTML='💬 '+(s.waLabel||'WhatsApp');ctaBar.appendChild(a);}
+
+  // ── FONT ──
+  const FONTS_D={
+    'Cormorant Garamond':"'Cormorant Garamond',Georgia,serif",'Playfair Display':"'Playfair Display',Georgia,serif",
+    'DM Serif Display':"'DM Serif Display',Georgia,serif",'Libre Baskerville':"'Libre Baskerville',Georgia,serif",
+    'Josefin Sans':"'Josefin Sans',sans-serif",'Montserrat':"'Montserrat',sans-serif"
+  };
+  const FONTS_B={
+    'Outfit':"'Outfit',sans-serif",'Lato':"'Lato',sans-serif",'Inter':"'Inter',sans-serif",
+    'Nunito':"'Nunito',sans-serif",'Source Sans 3':"'Source Sans 3',sans-serif",'DM Sans':"'DM Sans',sans-serif"
+  };
+  const GOOG_D={
+    'Cormorant Garamond':'Cormorant+Garamond:wght@400;600','Playfair Display':'Playfair+Display:wght@400;600',
+    'DM Serif Display':'DM+Serif+Display','Libre Baskerville':'Libre+Baskerville:wght@400;700',
+    'Josefin Sans':'Josefin+Sans:wght@400;600','Montserrat':'Montserrat:wght@400;600'
+  };
+  const GOOG_B={
+    'Outfit':'Outfit:wght@300;400;500;600','Lato':'Lato:wght@300;400;700','Inter':'Inter:wght@300;400;500;600',
+    'Nunito':'Nunito:wght@300;400;600','Source Sans 3':'Source+Sans+3:wght@300;400;600','DM Sans':'DM+Sans:wght@300;400;500;600'
+  };
+  const fdName=s.fontDisplay||'Cormorant Garamond';
+  const fbName=s.fontBody||'Outfit';
+  const fdCss=FONTS_D[fdName]||FONTS_D['Cormorant Garamond'];
+  const fbCss=FONTS_B[fbName]||FONTS_B['Outfit'];
+  // inject google fonts dynamically
+  const gfFamilies=[GOOG_D[fdName],GOOG_B[fbName]].filter(Boolean);
+  let gfLink=document.getElementById('_gf_app');
+  if(!gfLink){gfLink=document.createElement('link');gfLink.id='_gf_app';gfLink.rel='stylesheet';document.head.appendChild(gfLink);}
+  gfLink.href='https://fonts.googleapis.com/css2?'+gfFamilies.map(g=>'family='+g).join('&')+'&display=swap';
+  // apply font CSS variables
+  css.setProperty('--font-display',fdCss);
+  css.setProperty('--font-body',fbCss);
+  document.body.style.fontFamily=fbCss;
+
+  // ── BUTTON SHAPE ──
+  const btnShape=s.btnShape||'pill';
+  const btnRadius=btnShape==='pill'?'50px':btnShape==='rounded'?'10px':'4px';
+  const btnTxRaw=s.btnTextColor||'auto';
+  const accent2=s.color||'#B8860B';
+  function isColorDark2(hex){try{const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return(r*299+g*587+b*114)/1000<128;}catch(e){return false;}}
+  const btnTxColor=btnTxRaw==='auto'?(isColorDark2(accent2)?'#fff':'#000'):btnTxRaw;
+  // override .btn-cta styles via dynamic style tag
+  let btnSt=document.getElementById('_btn_style');
+  if(!btnSt){btnSt=document.createElement('style');btnSt.id='_btn_style';document.head.appendChild(btnSt);}
+  btnSt.textContent=`.btn-cta{border-radius:${btnRadius}!important;font-family:${fbCss}!important;} .btn-cta-primary{color:${btnTxColor}!important;} .comp-add-btn{border-radius:${btnRadius}!important;font-family:${fbCss}!important;} .mode-btn{font-family:${fbCss}!important;} .fchip{font-family:${fbCss}!important;}`;
+
+  // store resolved values globally for renderMenu
+  window._appFdCss=fdCss;
+  window._appFbCss=fbCss;
+  window._appLayout=s.menuLayout||'card';
+
   renderMenu();
-  // hide splash
   setTimeout(()=>document.getElementById('splash').classList.add('hidden'),1800);
 }
 
+// ── RENDER MENU ──
 function renderMenu(){
   const search=(document.getElementById('search-input').value||'').toLowerCase();
-  const cats=D.categories.filter(c=>c.active).sort((a,b)=>a.order-b.order);
+  const cats=(D.categories||[]).filter(c=>c.active).sort((a,b)=>a.order-b.order);
+  const composites=D.composites||[];
+  const layout=window._appLayout||'card';
+  const fdCss=window._appFdCss||"'Cormorant Garamond',serif";
+  const fbCss=window._appFbCss||"'Outfit',sans-serif";
 
-  // filter bar
+  // Build set of cats that have content
+  const usedCats=new Set([...D.dishes.map(d=>d.cat),...composites.map(c=>c.cat)]);
   const fb=document.getElementById('filter-bar');
-  const usedCats=new Set(D.dishes.map(d=>d.cat));
   fb.innerHTML=`<div class="fchip ${activeCat==='all'?'active':''}" onclick="setCat('all')">Tutti</div>`
     +cats.filter(c=>usedCats.has(c.id)).map(c=>`<div class="fchip ${activeCat===c.id?'active':''}" onclick="setCat('${c.id}')">${c.icon} ${c.name}</div>`).join('');
 
-  const filtered=D.dishes.filter(d=>{
+  const filteredDishes=D.dishes.filter(d=>{
     const inCat=activeCat==='all'||d.cat===activeCat;
     const inS=!search||d.name.toLowerCase().includes(search)||(d.desc||'').toLowerCase().includes(search)||(d.tags||'').toLowerCase().includes(search);
     return inCat&&inS;
   });
+  const filteredComps=composites.filter(cp=>{
+    const inCat=activeCat==='all'||cp.cat===activeCat;
+    const inS=!search||cp.name.toLowerCase().includes(search)||(cp.desc||'').toLowerCase().includes(search);
+    return inCat&&inS;
+  });
 
   const body=document.getElementById('menu-body');
-  if(!filtered.length){body.innerHTML='<div class="empty"><div class="ico">🔍</div><p>Nessun piatto trovato</p></div>';return;}
+  if(!filteredDishes.length&&!filteredComps.length){body.innerHTML='<div class="empty"><div class="ico">🔍</div><p>Nessun piatto trovato</p></div>';return;}
 
-  const showCats=activeCat==='all'?cats.filter(c=>filtered.some(d=>d.cat===c.id)):[cats.find(c=>c.id===activeCat)].filter(Boolean);
+  const showCats=activeCat==='all'
+    ?cats.filter(c=>filteredDishes.some(d=>d.cat===c.id)||filteredComps.some(cp=>cp.cat===c.id))
+    :[cats.find(c=>c.id===activeCat)].filter(Boolean);
+
   body.innerHTML=showCats.map(cat=>{
-    const dishes=filtered.filter(d=>d.cat===cat.id);
-    if(!dishes.length)return'';
+    const dishes=filteredDishes.filter(d=>d.cat===cat.id);
+    const comps=filteredComps.filter(cp=>cp.cat===cat.id);
+    if(!dishes.length&&!comps.length)return'';
     const catHdr=cat.img
       ?`<div style="width:100%;height:100px;overflow:hidden;position:relative;margin-bottom:1.1rem;border-radius:12px;">
           <img src="${cat.img}" style="width:100%;height:100%;object-fit:cover;">
           <div style="position:absolute;inset:0;background:linear-gradient(to right,rgba(28,23,16,.68),transparent);"></div>
           <div style="position:absolute;bottom:.75rem;left:1rem;display:flex;align-items:center;gap:.55rem;">
             <span style="font-size:1.3rem;">${cat.icon}</span>
-            <span style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.4rem;color:#F5E6B0;font-weight:600;text-shadow:0 1px 6px rgba(0,0,0,.5);">${cat.name}</span>
+            <span style="font-family:${fdCss};font-size:1.4rem;color:#F5E6B0;font-weight:600;text-shadow:0 1px 6px rgba(0,0,0,.5);">${cat.name}</span>
           </div>
         </div>`
       :`<div class="section-hdr">
           <span class="section-icon">${cat.icon}</span>
-          <span class="section-name">${cat.name}</span>
+          <span class="section-name" style="font-family:${fdCss}">${cat.name}</span>
           <div class="section-line"></div>
         </div>`;
+    const allItems=[...comps.map(cp=>({...cp,_isComposite:true})),...dishes];
+    const gap=layout==='list'?'.35rem':'.75rem';
     return`<div class="menu-section">
       ${catHdr}
-      <div class="dishes-list">${dishes.map(dishCard).join('')}</div>
+      <div class="dishes-list" style="gap:${gap}">${allItems.map(item=>item._isComposite?compCard(item,layout,fdCss,fbCss):dishCard(item,layout,fdCss,fbCss)).join('')}</div>
     </div>`;
   }).join('');
 }
 
-function dishCard(d){
-  const thumb=d.img?`<img src="${d.img}" alt="${d.name}">`:`<span>${d.emoji||'🍽'}</span>`;
+
+function dishCard(d,layout,fdCss,fbCss){
+  layout=layout||window._appLayout||'card';
+  fdCss=fdCss||window._appFdCss||"'Cormorant Garamond',serif";
+  fbCss=fbCss||window._appFbCss||"'Outfit',sans-serif";
   const als=(d.allergens||[]).slice(0,3).map(a=>`<span class="al-mini">${a}</span>`).join('');
   const moreAl=(d.allergens||[]).length>3?`<span class="al-mini">+${d.allergens.length-3}</span>`:'';
   const tags=(d.tags||'').split(',').filter(t=>t.trim()).slice(0,2).map(t=>`<span class="badge-tag">${t.trim()}</span>`).join('');
+  const orderBadge=appMode==='order'&&d.available?`<span style="margin-left:auto;font-size:.75rem;color:var(--gold);font-weight:600;">+ Aggiungi</span>`:'';
+  if(layout==='list'){
+    return`<div class="dish-card ${d.featured?'feat':''} ${!d.available?'unavail':''}" style="border-radius:10px;min-height:unset;" onclick="openDish('${d.id}')">
+      <div class="dish-media" style="width:58px;min-width:58px;height:58px;font-size:1.6rem;">${d.img?`<img src="${d.img}" alt="${d.name}">`:`<span>${d.emoji||'🍽'}</span>`}</div>
+      <div class="dish-body" style="padding:.55rem .75rem;gap:.15rem;">
+        <div class="dish-header">
+          <div class="dish-name" style="font-family:${fdCss};font-size:.95rem;">${d.name}</div>
+          <div class="dish-price" style="font-family:${fdCss};font-size:.95rem;">€${Number(d.price).toFixed(2)}</div>
+        </div>
+        <div class="dish-desc" style="font-family:${fbCss};-webkit-line-clamp:1;">${d.desc||''}</div>
+        <div class="dish-footer" style="margin-top:.05rem;">
+          ${d.featured?'<span class="badge-feat">★</span>':''}
+          ${!d.available?'<span class="badge-unavail">Non disp.</span>':''}
+          ${tags}${als}${moreAl}${orderBadge}
+        </div>
+      </div>
+    </div>`;
+  }
   return`<div class="dish-card ${d.featured?'feat':''} ${!d.available?'unavail':''}" onclick="openDish('${d.id}')">
-    <div class="dish-media">${thumb}</div>
+    <div class="dish-media">${d.img?`<img src="${d.img}" alt="${d.name}">`:`<span>${d.emoji||'🍽'}</span>`}</div>
     <div class="dish-body">
       <div class="dish-header">
-        <div class="dish-name">${d.name}</div>
-        <div class="dish-price">€${Number(d.price).toFixed(2)}</div>
+        <div class="dish-name" style="font-family:${fdCss}">${d.name}</div>
+        <div class="dish-price" style="font-family:${fdCss}">€${Number(d.price).toFixed(2)}</div>
       </div>
-      <div class="dish-desc">${d.desc||''}</div>
+      <div class="dish-desc" style="font-family:${fbCss}">${d.desc||''}</div>
       <div class="dish-footer">
         ${d.featured?'<span class="badge-feat">★ Consigliato</span>':''}
         ${!d.available?'<span class="badge-unavail">Non disp.</span>':''}
-        ${tags}${als}${moreAl}
+        ${tags}${als}${moreAl}${orderBadge}
       </div>
     </div>
   </div>`;
 }
 
+function compCard(cp,layout,fdCss,fbCss){
+  layout=layout||window._appLayout||'card';
+  fdCss=fdCss||window._appFdCss||"'Cormorant Garamond',serif";
+  fbCss=fbCss||window._appFbCss||"'Outfit',sans-serif";
+  const secPreview=(cp.sections||[]).map(s=>s.name).join(' · ');
+  const orderBadge=appMode==='order'&&cp.available?`<span style="margin-left:auto;font-size:.75rem;color:var(--gold);font-weight:600;">Personalizza →</span>`:'';
+  if(layout==='list'){
+    return`<div class="dish-card feat ${!cp.available?'unavail':''}" style="border-radius:10px;min-height:unset;" onclick="openComp('${cp.id}')">
+      <div class="dish-media" style="width:58px;min-width:58px;height:58px;font-size:1.6rem;"><span>${cp.emoji||'🥣'}</span></div>
+      <div class="dish-body" style="padding:.55rem .75rem;gap:.15rem;">
+        <div class="dish-header">
+          <div class="dish-name" style="font-family:${fdCss};font-size:.95rem;">${cp.name}</div>
+          <div class="dish-price" style="font-family:${fdCss};font-size:.95rem;">da €${Number(cp.price).toFixed(2)}</div>
+        </div>
+        <div class="dish-desc" style="font-family:${fbCss};-webkit-line-clamp:1;">${secPreview}</div>
+        <div class="dish-footer" style="margin-top:.05rem;">
+          <span class="badge-comp">✦</span>
+          ${!cp.available?'<span class="badge-unavail">Non disp.</span>':''}
+          ${orderBadge}
+        </div>
+      </div>
+    </div>`;
+  }
+  return`<div class="dish-card feat ${!cp.available?'unavail':''}" onclick="openComp('${cp.id}')">
+    <div class="dish-media"><span>${cp.emoji||'🥣'}</span></div>
+    <div class="dish-body">
+      <div class="dish-header">
+        <div class="dish-name" style="font-family:${fdCss}">${cp.name}</div>
+        <div class="dish-price" style="font-family:${fdCss}">da €${Number(cp.price).toFixed(2)}</div>
+      </div>
+      <div class="dish-desc" style="font-family:${fbCss}">${cp.desc||''}</div>
+      <div class="dish-sections-preview" style="font-family:${fbCss}">${secPreview}</div>
+      <div class="dish-footer">
+        <span class="badge-comp">✦ Personalizzabile</span>
+        ${!cp.available?'<span class="badge-unavail">Non disp.</span>':''}
+        ${orderBadge}
+      </div>
+    </div>
+  </div>`;
+}
+
+
 function setCat(id){activeCat=id;renderMenu();}
 
+// ── DISH MODAL ──
 function openDish(id){
   const d=D.dishes.find(x=>x.id===id);if(!d)return;
+  currentModalItem={item:d,_isComposite:false};
+  modalQty=1;
   const cat=D.categories.find(c=>c.id===d.cat);
-  // img
   const mi=document.getElementById('m-img');
   mi.innerHTML=`<button class="modal-close-btn" onclick="closeModal()">✕</button>${d.img?`<img src="${d.img}" alt="${d.name}">`:`<span style="font-size:5rem">${d.emoji||'🍽'}</span>`}`;
   document.getElementById('m-cat').textContent=cat?`${cat.icon} ${cat.name}`:'';
   document.getElementById('m-name').textContent=d.name;
   document.getElementById('m-price').textContent='€'+Number(d.price).toFixed(2);
   document.getElementById('m-desc').textContent=d.desc||'';
-  // meta
   const meta=document.getElementById('m-meta');
   const items=[];
   if(d.kcal) items.push({v:d.kcal+'kcal',l:'Calorie'});
   if(d.time) items.push({v:d.time+'min',l:'Preparazione'});
   if(!d.available) items.push({v:'⚠️',l:'Non disponibile'});
   meta.innerHTML=items.length?items.map(i=>`<div class="meta-item"><div class="meta-val">${i.v}</div><div class="meta-lbl">${i.l}</div></div>`).join(''):'';
-  // allergens
   const als=d.allergens||[];
   const aw=document.getElementById('m-al-wrap');
   aw.style.display=als.length?'block':'none';
   document.getElementById('m-al').innerHTML=als.map(a=>`<span class="al-full">${a}</span>`).join('');
+  // hide comp sections
+  document.getElementById('m-comp-sections').style.display='none';
+  // cart action
+  const ca=document.getElementById('m-cart-action');
+  if(appMode==='order'&&d.available){
+    ca.style.display='block';
+    document.getElementById('m-qty').textContent=1;
+    updateModalTotal();
+  } else { ca.style.display='none'; }
   document.getElementById('modal-bg').classList.add('open');
   document.body.style.overflow='hidden';
 }
-function closeModal(){document.getElementById('modal-bg').classList.remove('open');document.body.style.overflow='';}
-document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target===document.getElementById('modal-bg'))closeModal();});
 
-// ── SYNC REMOTO via JSONBin.io ──
-const JSONBIN_BASE  = 'https://api.jsonbin.io/v3/b/';
-const BLOB_ID_KEY   = 'menuSyncBlobId';
-const JSONBIN_KEY_KEY = 'menuSyncApiKey';
-const LS_KEY = 'menuAppData';
-let syncInterval = null;
+// ── COMPOSITE MODAL ──
+function openComp(id){
+  const cp=(D.composites||[]).find(x=>x.id===id);if(!cp)return;
+  currentModalItem={item:cp,_isComposite:true};
+  modalQty=1;
+  modalSelections={};
+  (cp.sections||[]).forEach(s=>{ modalSelections[s.id]=[]; });
 
-function getBlobId(){ return localStorage.getItem(BLOB_ID_KEY) || ''; }
-function getApiKey(){ return localStorage.getItem(JSONBIN_KEY_KEY) || ''; }
+  const mi=document.getElementById('m-img');
+  mi.innerHTML=`<button class="modal-close-btn" onclick="closeModal()">✕</button><span style="font-size:5rem">${cp.emoji||'🥣'}</span>`;
+  document.getElementById('m-cat').textContent='✦ Prodotto personalizzabile';
+  document.getElementById('m-name').textContent=cp.name;
+  document.getElementById('m-price').textContent='da €'+Number(cp.price).toFixed(2);
+  document.getElementById('m-desc').textContent=cp.desc||'';
+  document.getElementById('m-meta').innerHTML='';
+  document.getElementById('m-al-wrap').style.display='none';
+
+  // render sections
+  const secEl=document.getElementById('m-comp-sections');
+  secEl.style.display='block';
+  secEl.innerHTML=(cp.sections||[]).map(sec=>{
+    const reqLabel=sec.min===0?'Facoltativa':`Obbligatoria · scegli ${sec.min===sec.max?sec.min:`${sec.min}–${sec.max}`}`;
+    return`<div class="comp-section-block">
+      <div class="comp-section-title">
+        <span>${sec.name}</span>
+        <span class="comp-section-req">${reqLabel}</span>
+      </div>
+      <div id="csec-opts-${sec.id}">
+        ${(sec.options||[]).map(opt=>`
+          <div class="comp-option" id="copt-${sec.id}-${opt.id}" onclick="toggleOption('${sec.id}','${opt.id}','${cp.id}')">
+            <div class="co-check" id="cocheck-${sec.id}-${opt.id}"></div>
+            <div class="co-label">${opt.name}</div>
+            ${opt.price>0?`<div class="co-extra">+€${Number(opt.price).toFixed(2)}</div>`:''}
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  const ca=document.getElementById('m-cart-action');
+  if(appMode==='order'&&cp.available){
+    ca.style.display='block';
+    document.getElementById('m-qty').textContent=1;
+    updateModalTotal();
+  } else { ca.style.display='none'; }
+
+  document.getElementById('modal-bg').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function toggleOption(secId, optId, cpId){
+  const cp=(D.composites||[]).find(x=>x.id===cpId);
+  const sec=cp.sections.find(s=>s.id===secId);
+  const sel=modalSelections[secId]||[];
+  const idx=sel.indexOf(optId);
+  if(idx>=0){
+    // deselect
+    sel.splice(idx,1);
+  } else {
+    if(sec.max===1){
+      // radio: deselect others
+      sel.forEach(oid=>{
+        document.getElementById('copt-'+secId+'-'+oid)?.classList.remove('selected');
+        document.getElementById('cocheck-'+secId+'-'+oid).textContent='';
+      });
+      sel.length=0;
+    }
+    if(sel.length<sec.max) sel.push(optId);
+    else return; // max reached, ignore
+  }
+  modalSelections[secId]=sel;
+  // update UI
+  const el=document.getElementById('copt-'+secId+'-'+optId);
+  const chk=document.getElementById('cocheck-'+secId+'-'+optId);
+  if(idx>=0){el?.classList.remove('selected');if(chk)chk.textContent='';}
+  else{el?.classList.add('selected');if(chk)chk.textContent='✓';}
+  updateModalTotal();
+}
+
+function updateModalTotal(){
+  if(!currentModalItem)return;
+  const {item,_isComposite}=currentModalItem;
+  let total=item.price*modalQty;
+  if(_isComposite){
+    // add extras from selections
+    (item.sections||[]).forEach(sec=>{
+      (modalSelections[sec.id]||[]).forEach(optId=>{
+        const opt=sec.options.find(o=>o.id===optId);
+        if(opt)total+=opt.price*modalQty;
+      });
+    });
+    // validate & update add button
+    const valid=(item.sections||[]).every(sec=>{
+      const selCount=(modalSelections[sec.id]||[]).length;
+      return selCount>=sec.min&&selCount<=sec.max;
+    });
+    const btn=document.getElementById('m-add-btn');
+    btn.disabled=!valid;
+    btn.style.opacity=valid?1:0.5;
+  }
+  const el=document.getElementById('m-add-total');
+  if(el)el.textContent='€'+total.toFixed(2);
+}
+
+function modalQtyChange(delta){
+  modalQty=Math.max(1,modalQty+delta);
+  document.getElementById('m-qty').textContent=modalQty;
+  updateModalTotal();
+}
+
+// ── ADD TO CART ──
+function addToCart(){
+  if(!currentModalItem)return;
+  const {item,_isComposite}=currentModalItem;
+  if(!item.available)return;
+
+  let extraPrice=0;
+  let choices=[];
+  if(_isComposite){
+    const valid=(item.sections||[]).every(sec=>{
+      const selCount=(modalSelections[sec.id]||[]).length;
+      return selCount>=sec.min;
+    });
+    if(!valid){alert('Completa tutte le sezioni obbligatorie prima di aggiungere.');return;}
+    (item.sections||[]).forEach(sec=>{
+      const selOpts=(modalSelections[sec.id]||[]).map(optId=>{
+        const opt=sec.options.find(o=>o.id===optId);
+        if(opt) extraPrice+=opt.price;
+        return opt?opt.name:'';
+      }).filter(Boolean);
+      if(selOpts.length) choices.push({section:sec.name,values:selOpts});
+    });
+  }
+
+  const totalPrice=(item.price+extraPrice)*modalQty;
+  cart.push({
+    cartId:'ci_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
+    id:item.id,
+    name:item.name,
+    emoji:item.emoji||'🍽',
+    basePrice:item.price+extraPrice,
+    qty:modalQty,
+    choices,
+    totalPrice,
+    _isComposite
+  });
+  updateCartFab();
+  closeModal();
+  // pulse animation on FAB
+  const fab=document.getElementById('cart-fab');
+  fab.style.transform='scale(1.12)';
+  setTimeout(()=>fab.style.transform='',200);
+}
+
+function updateCartFab(){
+  const fab=document.getElementById('cart-fab');
+  const total=cart.reduce((s,i)=>s+i.qty,0);
+  const totalPrice=cart.reduce((s,i)=>s+i.totalPrice,0);
+  document.getElementById('cart-fab-count').textContent=total;
+  document.getElementById('cart-fab-label').textContent=total>0?'€'+totalPrice.toFixed(2):'Il tuo ordine';
+  if(appMode==='order'&&total>0) fab.classList.add('visible');
+  else fab.classList.remove('visible');
+}
+
+// ── CART SHEET ──
+function openCart(){
+  renderCartSheet();
+  document.getElementById('cart-modal-bg').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeCart(){
+  document.getElementById('cart-modal-bg').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function renderCartSheet(sent=false){
+  const el=document.getElementById('cart-content');
+  if(sent){
+    el.innerHTML=`<div class="order-success">
+      <div class="os-icon">✅</div>
+      <h3>Ordine inviato!</h3>
+      <p>Il tuo ordine è stato ricevuto dalla cucina.<br>Ti avviseremo quando sarà pronto.</p>
+      <button onclick="closeCart();cart=[];updateCartFab();" style="margin-top:1.25rem;padding:.65rem 1.8rem;border-radius:50px;border:none;background:var(--dark);color:var(--gold-light);font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;">
+        Chiudi
+      </button>
+    </div>`;
+    return;
+  }
+  if(!cart.length){
+    el.innerHTML=`<div class="empty" style="padding:2.5rem 1rem;"><div class="ico">🛒</div><p>Il carrello è vuoto</p></div>`;
+    return;
+  }
+  const total=cart.reduce((s,i)=>s+i.totalPrice,0);
+  el.innerHTML=`
+    <div class="cart-items">
+      ${cart.map(item=>`
+        <div class="cart-item" id="ci-${item.cartId}">
+          <div class="ci-emoji">${item.emoji}</div>
+          <div class="ci-body">
+            <div class="ci-name">${item.name}</div>
+            ${item.choices.length?`<div class="ci-choices">${item.choices.map(c=>`<b>${c.section}:</b> ${c.values.join(', ')}`).join(' &nbsp;·&nbsp; ')}</div>`:''}
+            <div class="ci-qty">
+              <button class="qty-btn" onclick="cartQtyChange('${item.cartId}',-1)">−</button>
+              <span class="qty-num">${item.qty}</span>
+              <button class="qty-btn" onclick="cartQtyChange('${item.cartId}',1)">+</button>
+            </div>
+          </div>
+          <div class="ci-price">€${item.totalPrice.toFixed(2)}</div>
+        </div>`).join('')}
+    </div>
+    <div class="cart-footer">
+      <div class="table-input-wrap">
+        <label>Tavolo / Nome</label>
+        <input id="cart-table" placeholder="es. Tavolo 3, Mario Rossi…" value="${window._lastTable||''}">
+      </div>
+      <div class="table-input-wrap">
+        <label>Note (allergie, richieste speciali…)</label>
+        <textarea id="cart-note" placeholder="es. Senza cipolla, extra piccante…">${window._lastNote||''}</textarea>
+      </div>
+      <div class="cart-total">
+        <span class="cart-total-label">Totale ordine</span>
+        <span class="cart-total-val">€${total.toFixed(2)}</span>
+      </div>
+      <button onclick="sendOrder()" style="width:100%;padding:.85rem;border-radius:14px;border:none;background:var(--dark);color:var(--gold-light);font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .18s;">
+        🧾 Invia ordine alla cucina
+      </button>
+    </div>`;
+}
+
+function cartQtyChange(cartId,delta){
+  const idx=cart.findIndex(i=>i.cartId===cartId);
+  if(idx<0)return;
+  cart[idx].qty=Math.max(0,cart[idx].qty+delta);
+  if(cart[idx].qty===0){
+    cart.splice(idx,1);
+  } else {
+    cart[idx].totalPrice=cart[idx].basePrice*cart[idx].qty;
+  }
+  updateCartFab();
+  renderCartSheet();
+}
+
+// ── SEND ORDER ──
+async function sendOrder(){
+  const table=document.getElementById('cart-table')?.value.trim()||'';
+  const note=document.getElementById('cart-note')?.value.trim()||'';
+  window._lastTable=table;window._lastNote=note;
+
+  const total=cart.reduce((s,i)=>s+i.totalPrice,0);
+  const order={
+    id:'ord_'+Date.now(),
+    ts:Date.now(),
+    table,
+    note,
+    status:'new',
+    items:cart.map(i=>({name:i.name,emoji:i.emoji,price:i.basePrice,qty:i.qty,choices:i.choices})),
+    total
+  };
+
+  // write to JSONBin
+  const id=getBlobId();
+  const key=getApiKey();
+  if(id&&key){
+    try{
+      // read current data first
+      const headers={'Content-Type':'application/json','X-Master-Key':key};
+      const res=await fetch(JSONBIN_BASE+id+'/latest',{headers:{...(key?{'X-Master-Key':key}:{})}});
+      const json=await res.json();
+      const current=json?.record??json;
+      if(!current.orders)current.orders=[];
+      current.orders.push(order);
+      await fetch(JSONBIN_BASE+id,{method:'PUT',headers,body:JSON.stringify(current)});
+    }catch(e){console.warn('Ordine non inviato al server:',e);}
+  }
+  // also cache locally
+  if(D){
+    if(!D.orders)D.orders=[];
+    D.orders.push(order);
+    localStorage.setItem('menuAppData',JSON.stringify(D));
+  }
+  renderCartSheet(true);
+  cart=[];
+  updateCartFab();
+}
+
+function closeModal(){
+  document.getElementById('modal-bg').classList.remove('open');
+  document.body.style.overflow='';
+  currentModalItem=null;
+}
+
+// ── SYNC ──
+const JSONBIN_BASE='https://api.jsonbin.io/v3/b/';
+const BLOB_ID_KEY='menuSyncBlobId';
+const JSONBIN_KEY_KEY='menuSyncApiKey';
+const LS_KEY='menuAppData';
+let syncInterval=null;
+function getBlobId(){return localStorage.getItem(BLOB_ID_KEY)||'';}
+function getApiKey(){return localStorage.getItem(JSONBIN_KEY_KEY)||'';}
 
 async function loadFromRemote(id){
-  const key = getApiKey();
-  const headers = key ? { 'X-Master-Key': key } : {};
-  const res = await fetch(JSONBIN_BASE + id + '/latest', { headers });
-  const json = await res.json();
-  if(!res.ok) throw new Error(json?.message || 'HTTP ' + res.status);
-  return json?.record ?? json;
+  const key=getApiKey();
+  const headers=key?{'X-Master-Key':key}:{};
+  const res=await fetch(JSONBIN_BASE+id+'/latest',{headers});
+  const json=await res.json();
+  if(!res.ok)throw new Error(json?.message||'HTTP '+res.status);
+  return json?.record??json;
 }
 
 async function initApp(){
-  // 1. Leggi parametri dall URL: ?bid=BINID&key=APIKEY
-  const params = new URLSearchParams(window.location.search);
-  const urlBid = params.get('bid') || params.get('id') || '';
-  const urlKey = params.get('key') || '';
+  const params=new URLSearchParams(window.location.search);
+  const urlBid=params.get('bid')||params.get('id')||'';
+  const urlKey=params.get('key')||'';
+  if(urlBid)localStorage.setItem(BLOB_ID_KEY,urlBid);
+  if(urlKey)localStorage.setItem(JSONBIN_KEY_KEY,urlKey);
+  if(urlBid||urlKey)window.history.replaceState({},'',window.location.pathname);
 
-  // Se arrivano dall URL, salvali in localStorage e pulisci l URL
-  if(urlBid){ localStorage.setItem(BLOB_ID_KEY, urlBid); }
-  if(urlKey){ localStorage.setItem(JSONBIN_KEY_KEY, urlKey); }
-  if(urlBid || urlKey){
-    // Rimuovi i parametri dall URL per non esporre la key
-    const cleanUrl = window.location.pathname;
-    window.history.replaceState({}, '', cleanUrl);
-  }
-
-  const id = getBlobId();
+  const id=getBlobId();
   if(id){
     try{
-      const data = await loadFromRemote(id);
-      if(data && data.settings){
-        D = data;
-        localStorage.setItem(LS_KEY, JSON.stringify(D));
-        startApp();
-        startAutoSync(id);
-        return;
-      }
-    }catch(e){ console.warn('Sync remoto fallito:', e); }
+      const data=await loadFromRemote(id);
+      if(data&&data.settings){D=data;localStorage.setItem(LS_KEY,JSON.stringify(D));startApp();startAutoSync(id);return;}
+    }catch(e){console.warn('Sync remoto fallito:',e);}
   }
-  // Fallback localStorage
-  const cached = localStorage.getItem(LS_KEY);
-  if(cached){
-    try{ D = JSON.parse(cached); startApp(); if(id) startAutoSync(id); return; }catch(e){}
-  }
+  const cached=localStorage.getItem(LS_KEY);
+  if(cached){try{D=JSON.parse(cached);startApp();if(id)startAutoSync(id);return;}catch(e){}}
   showImportOverlay();
 }
 
 function startAutoSync(id){
-  if(syncInterval) clearInterval(syncInterval);
-  syncInterval = setInterval(async ()=>{
-    try{ const data = await loadFromRemote(id); if(data?.settings){ D=data; renderMenu(); } }catch(e){}
-  }, 30000);
+  if(syncInterval)clearInterval(syncInterval);
+  syncInterval=setInterval(async()=>{
+    try{const data=await loadFromRemote(id);if(data?.settings){D=data;renderMenu();}}catch(e){}
+  },30000);
 }
 
 function showImportOverlay(){
-  setTimeout(()=>{
-    document.getElementById('splash').classList.add('hidden');
-    document.getElementById('import-overlay').style.display = 'flex';
-  }, 1600);
+  setTimeout(()=>{document.getElementById('splash').classList.add('hidden');document.getElementById('import-overlay').style.display='flex';},1600);
 }
+
+document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target===document.getElementById('modal-bg'))closeModal();});
+document.getElementById('cart-modal-bg').addEventListener('click',e=>{if(e.target===document.getElementById('cart-modal-bg'))closeCart();});
 
 initApp();
 </script>
+
 </body>
 </html>
