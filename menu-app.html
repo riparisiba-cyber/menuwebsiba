@@ -122,12 +122,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .empty .ico{font-size:3rem;margin-bottom:.75rem;opacity:.4;}
 
 /* LOAD ERROR */
-.import-overlay{position:fixed;inset:0;background:var(--dark);z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.25rem;padding:2rem;}
-.import-overlay.hidden{display:none;}
-.import-overlay h2{font-family:'Cormorant Garamond',serif;color:var(--gold-light);font-size:1.8rem;}
-.import-overlay p{color:rgba(245,230,176,.6);font-size:.9rem;text-align:center;max-width:400px;}
-.import-textarea{width:100%;max-width:500px;height:120px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:.75rem;color:white;font-family:'Outfit',sans-serif;font-size:.82rem;resize:none;outline:none;}
-.import-textarea:focus{border-color:var(--gold2);}
+/* import-overlay rimosso — sostituito da connect-drawer */
 
 /* FOOTER */
 .menu-footer{text-align:center;padding:2rem 1rem;color:var(--text3);font-size:.75rem;}
@@ -551,7 +546,6 @@ function importJSON(){
 }
 
 function startApp(){
-  document.getElementById('import-overlay').classList.add('hidden');
   document.getElementById('app').style.display='block';
   // Ripristina dati cliente da localStorage (utenti non loggati)
   try{
@@ -1579,43 +1573,62 @@ async function loadFromRemote(id){
 }
 
 // ══════════════════════════════════════════════════
-// FIREBASE REALTIME DATABASE — lettura menu + invio ordini
-// La config Firebase è letta dal menu stesso (già dentro D.settings)
-// oppure dall'URL param ?cfg=base64json
+// FIREBASE REALTIME DATABASE — sync automatico
+// Regola d'oro: l'app si apre SEMPRE, Firebase è background
 // ══════════════════════════════════════════════════
-let _clientRtdb = null;
-let _clientRef = null;
-let _clientPush = null;
-let _clientSet = null;
-let _clientOnValue = null;
+let _clientRtdb     = null;
+let _clientPush     = null;
+let _clientOnValue  = null;
+let _appStarted     = false;   // evita doppio startApp
+
+// Chiama startApp una sola volta
+function ensureAppStarted(){
+  if(_appStarted) return;
+  _appStarted = true;
+  if(!D) loadDemo();
+  startApp();
+}
+
+// Nascondi lo splash SEMPRE dopo max 2 s — nulla può bloccare l'app
+setTimeout(function(){
+  const splash = document.getElementById('splash');
+  if(splash && !splash.classList.contains('hidden')){
+    splash.classList.add('hidden');
+    ensureAppStarted();
+  }
+}, 2000);
 
 async function initClientFirebase(cfg){
   try{
-    const {initializeApp, getApps} = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
-    const {getDatabase, ref, onValue, push, set} = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js');
+    const {initializeApp, getApps} =
+      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const {getDatabase, ref, onValue, push} =
+      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js');
+
     const existing = getApps().find(a => a.name === 'menuapp-client');
     const app = existing || initializeApp(cfg, 'menuapp-client');
-    _clientRtdb   = getDatabase(app);
-    _clientRef    = (path) => ref(_clientRtdb, path);
-    _clientPush   = (path, data) => push(ref(_clientRtdb, path), data);
-    _clientSet    = (path, data) => set(ref(_clientRtdb, path), data);
-    _clientOnValue= (path, cb) => onValue(ref(_clientRtdb, path), cb);
+    const db  = getDatabase(app);
 
-    // Ascolta aggiornamenti menu in tempo reale
+    _clientPush    = (path, data) => push(ref(db, path), data);
+    _clientOnValue = (path, cb)   => onValue(ref(db, path), cb);
+
+    // Ascolta il menu in tempo reale — aggiorna silenziosamente
     _clientOnValue('menu', snap => {
       const data = snap.val();
       if(!data || !data.settings) return;
-      // Merge ordini locali (non sovrascrivere)
-      const localOrders = D ? D.orders || [] : [];
+      const localOrders = D ? (D.orders || []) : [];
       D = {...data, orders: localOrders};
       localStorage.setItem(LS_KEY, JSON.stringify(D));
+      // Se app già aperta → aggiorna il menu senza ricaricare pagina
       if(document.getElementById('app').style.display !== 'none'){
-        renderMenu(); // aggiornamento live
+        renderMenu();
       } else {
-        startApp();
+        ensureAppStarted();
       }
       setSyncIndicator('ok');
     });
+
+    setSyncIndicator('connecting');
     return true;
   } catch(e){
     console.warn('Firebase client init error:', e);
@@ -1626,8 +1639,7 @@ async function initClientFirebase(cfg){
 async function initApp(){
   const params = new URLSearchParams(window.location.search);
 
-  // Parametro ?cfg=base64 — contiene la config Firebase codificata
-  // Il backoffice genera questo link automaticamente
+  // Salva config Firebase dall'URL (?cfg=base64)
   const cfgParam = params.get('cfg') || '';
   if(cfgParam){
     try{
@@ -1644,44 +1656,56 @@ async function initApp(){
   if(urlKey)  localStorage.setItem(JSONBIN_KEY_KEY, urlKey);
   if(urlBid||urlKey) window.history.replaceState({}, '', window.location.pathname);
 
-  // Carica cache locale subito → app visibile immediatamente
+  // ── PASSO 1: mostra subito i dati in cache (o demo) ──
+  // L'utente vede il menu istantaneamente
   const cached = localStorage.getItem(LS_KEY);
   if(cached){
-    try{ D = JSON.parse(cached); startApp(); setSyncIndicator('offline'); }catch(e){}
+    try{
+      D = JSON.parse(cached);
+      ensureAppStarted();
+      setSyncIndicator('offline');
+    }catch(e){ loadDemo(); ensureAppStarted(); }
   } else {
-    loadDemo(); setSyncIndicator('demo');
+    loadDemo();
+    ensureAppStarted();
+    setSyncIndicator('demo');
   }
 
-  // Prova Firebase RTDB (priorità massima)
+  // ── PASSO 2: connetti Firebase in background (non blocca nulla) ──
   const fbCfgRaw = localStorage.getItem('firebaseClientCfg');
-  const fbCfgFromMenu = D && D.settings && D.settings.firebaseDatabaseURL ? {
-    apiKey:      D.settings.firebaseApiKey,
-    authDomain:  D.settings.firebaseAuthDomain,
-    projectId:   D.settings.firebaseProjectId,
-    appId:       D.settings.firebaseAppId,
-    databaseURL: D.settings.firebaseDatabaseURL
-  } : null;
+  let fbCfg = fbCfgRaw ? (() => { try{ return JSON.parse(fbCfgRaw); }catch(e){ return null; } })() : null;
 
-  const fbCfg = fbCfgFromMenu || (fbCfgRaw ? JSON.parse(fbCfgRaw) : null);
-  if(fbCfg && fbCfg.databaseURL){
-    const ok = await initClientFirebase(fbCfg);
-    if(ok) return; // onValue gestisce tutto il resto
+  // Anche dalla cache del menu stesso
+  if(!fbCfg && D && D.settings && D.settings.firebaseDatabaseURL){
+    fbCfg = {
+      apiKey:      D.settings.firebaseApiKey,
+      authDomain:  D.settings.firebaseAuthDomain,
+      projectId:   D.settings.firebaseProjectId,
+      appId:       D.settings.firebaseAppId,
+      databaseURL: D.settings.firebaseDatabaseURL
+    };
   }
 
-  // Fallback: JSONBin
+  if(fbCfg && fbCfg.databaseURL){
+    // Non awaittare — va in background
+    initClientFirebase(fbCfg);
+    return;
+  }
+
+  // ── PASSO 3: fallback JSONBin (solo se Firebase non disponibile) ──
   const id = getBlobId();
   if(id){
     try{
       const data = await loadFromRemote(id);
       if(data && data.settings){
-        const localOrders = D ? D.orders || [] : [];
+        const localOrders = D ? (D.orders || []) : [];
         D = {...data, orders: localOrders};
         localStorage.setItem(LS_KEY, JSON.stringify(D));
-        startApp();
+        renderMenu();
         startAutoSync(id);
         setSyncIndicator('ok');
-        // Prova ad estrarre config Firebase dal menu JSONBin
-        if(D.settings.firebaseDatabaseURL && !fbCfg){
+        // Se il menu JSONBin contiene config Firebase, attiva il sync
+        if(D.settings.firebaseDatabaseURL){
           initClientFirebase({
             apiKey:D.settings.firebaseApiKey, authDomain:D.settings.firebaseAuthDomain,
             projectId:D.settings.firebaseProjectId, appId:D.settings.firebaseAppId,
@@ -1689,56 +1713,9 @@ async function initApp(){
           });
         }
       }
-    }catch(e){ console.warn('JSONBin fallback fallito:', e); }
+    }catch(e){ console.warn('JSONBin fallback:', e); }
   }
 }
-
-function setSyncIndicator(state){
-  const btn=document.getElementById('sync-indicator');
-  if(!btn) return;
-  const cfg={
-    ok:     {title:'Menu sincronizzato ✓',  color:'var(--green)',  bg:'rgba(46,125,82,.08)',  icon:'🟢'},
-    offline:{title:'Offline — dati in cache',color:'var(--gold)',   bg:'rgba(184,134,11,.08)', icon:'🟡'},
-    demo:   {title:'Menu demo — tocca per connettere',color:'var(--text3)',bg:'white',icon:'⚙️'},
-  };
-  const c=cfg[state]||cfg.demo;
-  btn.title=c.title;
-  btn.style.color=c.color;
-  btn.style.background=c.bg;
-  btn.style.borderColor=c.color==='var(--text3)'?'var(--border)':c.color;
-  btn.textContent=c.icon;
-}
-
-function startAutoSync(id){
-  if(syncInterval) clearInterval(syncInterval);
-  syncInterval=setInterval(async()=>{
-    try{
-      const data=await loadFromRemote(id);
-      if(data?.settings){ D=data; renderMenu(); setSyncIndicator('ok'); }
-    }catch(e){ setSyncIndicator('offline'); }
-  },30000);
-}
-
-// Drawer connessione
-function openConnectDrawer(){
-  const d=document.getElementById('connect-drawer');
-  d.style.display='flex';
-  // pre-compila se già configurato
-  const bid=getBlobId();
-  if(bid) document.getElementById('import-blobid').value=bid;
-}
-function closeConnectDrawer(){
-  document.getElementById('connect-drawer').style.display='none';
-}
-// Chiudi drawer toccando lo sfondo
-document.getElementById('connect-drawer').addEventListener('click',function(e){
-  if(e.target===this) closeConnectDrawer();
-});
-
-function showImportOverlay(){ openConnectDrawer(); } // compatibilità
-
-document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target===document.getElementById('modal-bg'))closeModal();});
-document.getElementById('cart-modal-bg').addEventListener('click',e=>{if(e.target===document.getElementById('cart-modal-bg'))closeCart();});
 
 initApp();
 </script>
