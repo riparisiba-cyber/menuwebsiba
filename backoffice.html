@@ -263,10 +263,61 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);heigh
 .toast.ok{border-left-color:var(--green);}
 .empty{text-align:center;padding:2.5rem 1rem;color:var(--tx3);}
 .empty .ei{font-size:2.2rem;margin-bottom:.6rem;opacity:.42;}
+
+/* CONSEGNE VICINE */
+.nearby-section{background:rgba(240,192,64,.05);border:1px solid rgba(240,192,64,.2);border-radius:10px;padding:.85rem 1rem;margin-bottom:.75rem;}
+.nearby-title{font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:.65rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;}
+.nearby-spinner{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--tx2);}
+.nearby-spinner .spin{width:14px;height:14px;border:2px solid var(--bdr2);border-top-color:var(--gold);border-radius:50%;animation:nbspin .7s linear infinite;flex-shrink:0;}
+@keyframes nbspin{to{transform:rotate(360deg)}}
+.nearby-item{display:flex;align-items:flex-start;gap:.65rem;background:var(--sur2);border-radius:8px;padding:.6rem .8rem;margin-bottom:.4rem;border-left:3px solid var(--gold);}
+.nearby-item:last-child{margin-bottom:0;}
+.nearby-dist{font-size:.7rem;font-weight:700;color:var(--gold);white-space:nowrap;flex-shrink:0;margin-top:.1rem;}
+.nearby-info{flex:1;min-width:0;}
+.nearby-name{font-size:.83rem;font-weight:600;color:var(--tx);}
+.nearby-addr{font-size:.72rem;color:var(--tx2);margin-top:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nearby-status{font-size:.63rem;padding:.1rem .35rem;border-radius:4px;margin-top:.22rem;display:inline-block;}
+.nearby-empty{font-size:.78rem;color:var(--tx2);text-align:center;padding:.5rem 0;}
+.nearby-multimaps-btn{display:inline-flex;align-items:center;gap:.35rem;padding:.32rem .75rem;border-radius:6px;border:1px solid rgba(240,192,64,.3);background:rgba(240,192,64,.07);color:var(--gold);font-size:.72rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;}
+.nearby-multimaps-btn:hover{background:rgba(240,192,64,.15);}
 @media(max-width:1080px){.prevpanel{width:310px;}.phone-shell.mobile{width:236px;height:472px;}}
 @media(max-width:860px){.prevpanel{display:none;}}
 @media(max-width:680px){.sidebar{display:none;}.main{padding:1rem;}}
+/* ─── PRODUZIONE & SLOT ─────────────────────────────── */
+.prod-block{background:var(--sur2);border:1.5px solid rgba(96,165,250,.22);border-radius:11px;padding:1rem 1.1rem;margin-top:1rem;}
+.prod-block-title{font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:.85rem;display:flex;align-items:center;gap:.4rem;}
+.days-grid{display:flex;gap:.32rem;flex-wrap:wrap;margin-bottom:.85rem;}
+.day-pill{padding:.3rem .6rem;border-radius:20px;font-size:.72rem;font-weight:600;cursor:pointer;border:1.5px solid var(--bdr2);color:var(--tx3);transition:all .14s;user-select:none;}
+.day-pill.on{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.4);color:var(--green);}
+.day-pill.all-toggle{border-style:dashed;}
+.slot-list-wrap{display:flex;flex-direction:column;gap:.35rem;margin-bottom:.55rem;min-height:24px;}
+.slot-row{display:flex;align-items:center;gap:.5rem;background:var(--sur3);border-radius:7px;padding:.38rem .65rem;border:1px solid var(--bdr);}
+.slot-lbl{flex:1;font-size:.8rem;color:var(--tx);}
+.slot-cap-lbl{font-size:.72rem;color:var(--blue);white-space:nowrap;}
+.slot-del{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:.9rem;line-height:1;border-radius:4px;transition:color .12s;padding:.05rem .2rem;}
+.slot-del:hover{color:var(--red);}
+.add-slot-row{display:flex;gap:.38rem;align-items:center;flex-wrap:wrap;}
+.add-slot-row input[type=time]{background:var(--sur2);border:1px solid var(--bdr2);border-radius:7px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.8rem;padding:.38rem .55rem;outline:none;}
+.add-slot-row input[type=time]:focus{border-color:var(--blue);}
+/* badges in card list */
+.prod-badges{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.4rem;}
+.pbadge{display:inline-flex;align-items:center;gap:.22rem;border-radius:6px;padding:.1rem .42rem;font-size:.63rem;font-weight:500;}
+.pbadge.qty{background:rgba(240,192,64,.09);border:1px solid rgba(240,192,64,.25);color:var(--gold);}
+.pbadge.day{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.22);color:var(--green);}
+.pbadge.slot{background:rgba(96,165,250,.09);border:1px solid rgba(96,165,250,.24);color:var(--blue);}
+.pbadge.warn{background:rgba(248,113,113,.09);border:1px solid rgba(248,113,113,.25);color:var(--red);}
+/* produzione panel */
+.prod-panel-card{background:var(--sur);border:1px solid var(--bdr);border-radius:10px;padding:1rem 1.15rem;margin-bottom:.75rem;}
+.prod-panel-card .pp-head{display:flex;align-items:center;gap:.75rem;margin-bottom:.65rem;}
+.pp-progress-wrap{margin:.5rem 0 .35rem;}
+.pp-bar-bg{height:7px;background:var(--sur3);border-radius:4px;overflow:hidden;}
+.pp-bar{height:100%;border-radius:4px;transition:width .35s;}
+.pp-counter{display:flex;align-items:center;gap:.5rem;margin-top:.4rem;}
+.pp-counter button{width:26px;height:26px;border-radius:50%;border:1px solid var(--bdr2);background:var(--sur2);color:var(--tx);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .13s;}
+.pp-counter button:hover{border-color:var(--gold);color:var(--gold);}
+
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -290,6 +341,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);heigh
   <div class="si" onclick="gp('composite',this)"><span class="ico">🥣</span>Prodotti Composti<span class="si-cnt" id="cnt-comp">0</span></div>
   <div class="sl">Operativo</div>
   <div class="si" onclick="gp('orders',this)"><span class="ico">🧾</span>Ordini<span class="si-cnt" id="cnt-orders" style="background:rgba(96,165,250,.2);color:var(--blue);">0</span></div>
+  <div class="si" onclick="gp('production',this)"><span class="ico">⚙️</span>Produzione</div>
   <div class="sl">Personalizza</div>
   <div class="si" onclick="gp('advisor',this)"><span class="ico">✨</span>Consigliere</div>
   <div class="si" onclick="gp('settings',this)"><span class="ico">⚙️</span>Impostazioni</div>
@@ -364,6 +416,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);heigh
       <div class="order-cards" id="col-done"></div>
     </div>
   </div>
+</div>
+
+
+<!-- PRODUZIONE -->
+<div class="panel" id="panel-production">
+  <div class="ph">
+    <div><div class="pt">Produzione</div><div class="ps">Quantità, giorni e slot orari per categorie e prodotti composti</div></div>
+    <button class="btn btn-ghost btn-sm" onclick="resetAllDailyQty()">🔄 Azzera contatori giornalieri</button>
+  </div>
+  <div id="prod-panel-list"></div>
 </div>
 
 <div class="panel" id="panel-advisor">
@@ -519,6 +581,75 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);heigh
     <div style="display:flex;gap:.6rem;"><button class="btn btn-gold" onclick="saveStyleSettings()">💾 Salva Stile</button></div>
   </div>
   <div class="ss">
+    <h3><span>🔥</span> Firebase Auth (Registrazione clienti)</h3>
+    <p style="font-size:.8rem;color:var(--tx2);margin-bottom:.85rem;">
+      Permette ai clienti di <strong>registrarsi e accedere</strong> nell'app menu con email e password, per riordinare velocemente con i dati già salvati.<br>
+      Vai su <a href="https://console.firebase.google.com" target="_blank" style="color:var(--gold);">console.firebase.google.com</a> → seleziona il progetto → ⚙️ Impostazioni → Le tue app → sezione <strong>SDK setup and configuration</strong> e copia i valori qui sotto.
+    </p>
+    <div style="background:var(--sur2);border:1px solid rgba(240,192,64,.15);border-radius:9px;padding:.85rem 1rem;margin-bottom:.9rem;font-size:.78rem;color:var(--tx2);line-height:1.7;">
+      <strong style="color:var(--tx);">Dove trovo i valori?</strong><br>
+      Firebase Console → il tuo progetto → ⚙️ Impostazioni progetto → scorri fino a <em>"Le tue app"</em> → clicca sull'app web → <strong>Configurazione</strong> → copia i campi <code style="color:var(--gold);">apiKey</code>, <code style="color:var(--gold);">authDomain</code>, <code style="color:var(--gold);">projectId</code>, <code style="color:var(--gold);">appId</code>
+    </div>
+    <div class="fg" style="gap:.6rem;">
+      <div class="f full">
+        <label class="fl">API Key <span style="color:var(--tx3);font-weight:400;text-transform:none;letter-spacing:0;">(apiKey)</span></label>
+        <input class="fi" id="s-fb-apikey" placeholder="AIzaSy..." style="font-family:monospace;font-size:.78rem;">
+      </div>
+      <div class="f">
+        <label class="fl">Auth Domain <span style="color:var(--tx3);font-weight:400;text-transform:none;letter-spacing:0;">(authDomain)</span></label>
+        <input class="fi" id="s-fb-authdomain" placeholder="progetto.firebaseapp.com" style="font-family:monospace;font-size:.78rem;">
+      </div>
+      <div class="f">
+        <label class="fl">Project ID <span style="color:var(--tx3);font-weight:400;text-transform:none;letter-spacing:0;">(projectId)</span></label>
+        <input class="fi" id="s-fb-projectid" placeholder="nome-progetto" style="font-family:monospace;font-size:.78rem;">
+      </div>
+      <div class="f full">
+        <label class="fl">App ID <span style="color:var(--tx3);font-weight:400;text-transform:none;letter-spacing:0;">(appId)</span></label>
+        <div style="display:flex;gap:.5rem;">
+          <input class="fi" id="s-fb-appid" placeholder="1:123456789:web:abc123..." style="flex:1;font-family:monospace;font-size:.78rem;">
+          <button class="btn btn-gold btn-sm" onclick="saveFirebaseConfig()">💾 Salva</button>
+        </div>
+      </div>
+    </div>
+    <div id="firebase-config-status" style="margin-top:.5rem;font-size:.75rem;color:var(--tx3);"></div>
+    <div style="background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.18);border-radius:8px;padding:.7rem .9rem;margin-top:.75rem;font-size:.78rem;color:var(--tx2);line-height:1.6;">
+      ⚠️ <strong style="color:var(--tx);">Importante:</strong> Vai su Firebase Console → Authentication → Sign-in method → abilita <strong>Email/Password</strong>. Poi in <strong>Authentication → Settings → Domini autorizzati</strong> aggiungi il dominio da cui servi l'app.
+    </div>
+  </div>
+
+  <div class="ss">
+    <h3><span>📧</span> Email Notifiche (EmailJS)</h3>
+    <p style="font-size:.8rem;color:var(--tx2);margin-bottom:.85rem;">
+      Quando un ordine passa a <strong style="color:var(--green);">Pronto ✅</strong>, il sistema invia automaticamente una email al cliente.<br>
+      Registrati gratis su <a href="https://www.emailjs.com" target="_blank" style="color:var(--gold);">emailjs.com</a> → crea un <strong>Service</strong> (Gmail, Outlook…) e un <strong>Template</strong>, poi inserisci le credenziali qui.
+    </p>
+    <div style="background:var(--sur2);border:1px solid var(--bdr2);border-radius:9px;padding:.85rem 1rem;margin-bottom:.9rem;font-size:.78rem;color:var(--tx2);line-height:1.7;">
+      <strong style="color:var(--tx);">Variabili del template EmailJS:</strong><br>
+      <code style="color:var(--gold);">{{to_name}}</code> · <code style="color:var(--gold);">{{to_email}}</code> · <code style="color:var(--gold);">{{order_id}}</code> · <code style="color:var(--gold);">{{restaurant_name}}</code> · <code style="color:var(--gold);">{{items_list}}</code> · <code style="color:var(--gold);">{{order_total}}</code> · <code style="color:var(--gold);">{{table_info}}</code><br>
+      <span style="font-size:.72rem;color:var(--tx3);">Esempio oggetto: "Il tuo ordine {{order_id}} è pronto! 🎉" — Assicurati di impostare <strong>To Email</strong> = {{to_email}} nel template.</span>
+    </div>
+    <div class="fg" style="gap:.6rem;">
+      <div class="f">
+        <label class="fl">Public Key (User ID)</label>
+        <input class="fi" id="s-emailjs-pubkey" placeholder="user_XXXXXXXX" style="font-family:monospace;font-size:.78rem;">
+      </div>
+      <div class="f">
+        <label class="fl">Service ID</label>
+        <input class="fi" id="s-emailjs-service" placeholder="service_XXXXXXX" style="font-family:monospace;font-size:.78rem;">
+      </div>
+      <div class="f full">
+        <label class="fl">Template ID</label>
+        <div style="display:flex;gap:.5rem;">
+          <input class="fi" id="s-emailjs-template" placeholder="template_XXXXXXX" style="flex:1;font-family:monospace;font-size:.78rem;">
+          <button class="btn btn-ghost btn-sm" onclick="testEmailJs()">🧪 Test</button>
+          <button class="btn btn-gold btn-sm" onclick="saveEmailJsConfig()">💾 Salva</button>
+        </div>
+      </div>
+    </div>
+    <div id="emailjs-status" style="margin-top:.5rem;font-size:.75rem;color:var(--tx3);"></div>
+  </div>
+
+  <div class="ss">
     <h3><span>🔑</span> Sync Cloud (JSONBin.io)</h3>
     <p style="font-size:.8rem;color:var(--tx2);margin-bottom:.85rem;">
       Registrati gratis su <a href="https://jsonbin.io" target="_blank" style="color:var(--gold);">jsonbin.io</a> →
@@ -630,6 +761,35 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);heigh
         </div>
       </div>
     </div>
+      <div class="f full" style="margin-top:.5rem;">
+        <div class="prod-block">
+          <div class="prod-block-title">⚙️ Produzione &amp; Disponibilità</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.85rem;">
+            <div class="f">
+              <label class="fl" style="color:var(--tx2);">Qtà max giornaliera</label>
+              <div style="display:flex;align-items:center;gap:.45rem;">
+                <input class="fi" id="fc-maxqty" type="number" min="0" placeholder="∞" style="width:90px;">
+                <span style="font-size:.7rem;color:var(--tx3);">0 = illimitata</span>
+              </div>
+            </div>
+            <div class="f">
+              <label class="fl" style="color:var(--tx2);">Preparati oggi</label>
+              <input class="fi" id="fc-usedqty" type="number" min="0" placeholder="0" style="width:90px;">
+            </div>
+          </div>
+          <div class="fl" style="color:var(--tx2);margin-bottom:.38rem;">Giorni attivi</div>
+          <div class="days-grid" id="fc-days"></div>
+          <div class="fl" style="color:var(--tx2);margin-bottom:.38rem;">Slot orari consegna/ritiro</div>
+          <div class="slot-list-wrap" id="fc-slots"></div>
+          <div class="add-slot-row">
+            <input type="time" id="fc-from" placeholder="Da">
+            <span style="font-size:.75rem;color:var(--tx3);">→</span>
+            <input type="time" id="fc-to" placeholder="A">
+            <input class="fi" id="fc-slotcap" type="number" min="1" placeholder="Max posti" style="width:110px;font-size:.8rem;padding:.38rem .55rem;">
+            <button class="btn btn-sm btn-ghost" onclick="catAddSlot()">＋ Slot</button>
+          </div>
+        </div>
+      </div>
     <div class="mf"><button class="btn btn-ghost" onclick="closeCatModal()">Annulla</button><button class="btn btn-gold" onclick="saveCat()">💾 Salva</button></div>
   </div>
 </div>
@@ -703,6 +863,33 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);heigh
           <div class="tw2" style="margin-top:.2rem;"><label class="tog"><input type="checkbox" id="fcp-avail" checked><div class="tt"></div><div class="th2"></div></label><span style="font-size:.8rem;color:var(--tx2);">Disponibile</span></div>
         </div>
       </div>
+      <div class="prod-block" style="margin-bottom:1rem;">
+        <div class="prod-block-title">⚙️ Produzione &amp; Disponibilità</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.85rem;">
+          <div class="f">
+            <label class="fl" style="color:var(--tx2);">Qtà max giornaliera</label>
+            <div style="display:flex;align-items:center;gap:.45rem;">
+              <input class="fi" id="fcp-maxqty" type="number" min="0" placeholder="∞" style="width:90px;">
+              <span style="font-size:.7rem;color:var(--tx3);">0 = illimitata</span>
+            </div>
+          </div>
+          <div class="f">
+            <label class="fl" style="color:var(--tx2);">Preparati oggi</label>
+            <input class="fi" id="fcp-usedqty" type="number" min="0" placeholder="0" style="width:90px;">
+          </div>
+        </div>
+        <div class="fl" style="color:var(--tx2);margin-bottom:.38rem;">Giorni attivi</div>
+        <div class="days-grid" id="fcp-days"></div>
+        <div class="fl" style="color:var(--tx2);margin-bottom:.38rem;">Slot orari consegna/ritiro</div>
+        <div class="slot-list-wrap" id="fcp-slots"></div>
+        <div class="add-slot-row">
+          <input type="time" id="fcp-from" placeholder="Da">
+          <span style="font-size:.75rem;color:var(--tx3);">→</span>
+          <input type="time" id="fcp-to" placeholder="A">
+          <input class="fi" id="fcp-slotcap" type="number" min="1" placeholder="Max posti" style="width:110px;font-size:.8rem;padding:.38rem .55rem;">
+          <button class="btn btn-sm btn-ghost" onclick="compAddSlot()">＋ Slot</button>
+        </div>
+      </div>
       <div style="border-top:1px solid var(--bdr);padding-top:1rem;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;">
           <div style="font-size:.82rem;font-weight:600;">Sezioni ingredienti</div>
@@ -718,26 +905,82 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);heigh
 
 <!-- MODAL DETTAGLIO ORDINE -->
 <div class="mbg" id="mbg-order">
-  <div class="md" style="max-width:500px;">
+  <div class="md" style="max-width:560px;">
     <div class="mh"><h2 id="mord-title">Ordine #—</h2><button class="mc" onclick="closeOrderModal()">✕</button></div>
     <div class="mb">
-      <div style="display:flex;gap:.6rem;margin-bottom:.85rem;flex-wrap:wrap;">
-        <div style="flex:1;min-width:120px;background:var(--sur2);border-radius:8px;padding:.6rem .8rem;"><div style="font-size:.65rem;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;">Tavolo</div><div style="font-size:1rem;font-weight:600;" id="ord-table">—</div></div>
-        <div style="flex:1;min-width:120px;background:var(--sur2);border-radius:8px;padding:.6rem .8rem;"><div style="font-size:.65rem;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;">Orario</div><div style="font-size:.9rem;font-weight:500;" id="ord-time">—</div></div>
-        <div style="flex:1;min-width:120px;background:var(--sur2);border-radius:8px;padding:.6rem .8rem;"><div style="font-size:.65rem;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;">Totale</div><div style="font-size:1rem;font-weight:600;color:var(--gold);" id="ord-total">—</div></div>
+      <!-- INFO RAPIDE -->
+      <div style="display:flex;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap;">
+        <div style="flex:1;min-width:100px;background:var(--sur2);border-radius:8px;padding:.55rem .8rem;"><div style="font-size:.6rem;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;">Tavolo</div><div style="font-size:.95rem;font-weight:600;" id="ord-table">—</div></div>
+        <div style="flex:1;min-width:100px;background:var(--sur2);border-radius:8px;padding:.55rem .8rem;"><div style="font-size:.6rem;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;">Ricevuto</div><div style="font-size:.82rem;font-weight:500;" id="ord-time">—</div></div>
+        <div style="flex:1;min-width:100px;background:var(--sur2);border-radius:8px;padding:.55rem .8rem;"><div style="font-size:.6rem;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;">Totale</div><div style="font-size:.95rem;font-weight:600;color:var(--gold);" id="ord-total">—</div></div>
+        <div style="flex:1;min-width:100px;background:var(--sur2);border-radius:8px;padding:.55rem .8rem;" id="ord-slot-box"><div style="font-size:.6rem;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;">Fascia / Giorno</div><div style="font-size:.8rem;font-weight:600;" id="ord-slot">—</div></div>
       </div>
-      <div style="font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2);margin-bottom:.5rem;">Articoli ordinati</div>
+
+      <!-- TIPO ORDINE + CONSEGNA -->
+      <div id="ord-delivery-wrap" style="display:none;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);border-radius:9px;padding:.65rem .9rem;margin-bottom:.75rem;">
+        <div style="font-size:.63rem;color:var(--blue);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:.5rem;" id="ord-type-label">🛵 Consegna a domicilio</div>
+        <div style="font-size:.84rem;font-weight:600;" id="ord-address-text">—</div>
+        <div style="display:flex;gap:.5rem;margin-top:.55rem;flex-wrap:wrap;" id="ord-maps-btns"></div>
+      </div>
+
+      <!-- DATI CLIENTE -->
+      <div id="ord-customer-wrap" style="display:none;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.18);border-radius:8px;padding:.65rem .85rem;margin-bottom:.75rem;">
+        <div style="font-size:.63rem;color:var(--green);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:.42rem;">👤 Dati cliente</div>
+        <div style="display:flex;flex-direction:column;gap:.2rem;">
+          <div style="font-size:.83rem;"><span style="color:var(--tx2);">Nome:</span> <span id="ord-customer-name" style="font-weight:500;">—</span></div>
+          <div style="font-size:.83rem;"><span style="color:var(--tx2);">Email:</span> <a id="ord-customer-email" href="#" style="color:var(--blue);font-weight:500;text-decoration:none;">—</a></div>
+          <div style="font-size:.83rem;"><span style="color:var(--tx2);">Tel:</span> <a id="ord-customer-phone" href="#" style="color:var(--blue);font-weight:500;text-decoration:none;">—</a></div>
+        </div>
+      </div>
+
+      <!-- ARTICOLI -->
+      <div style="font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2);margin-bottom:.45rem;">Articoli ordinati</div>
       <div class="order-detail-items" id="ord-items"></div>
-      <div id="ord-note-wrap" style="display:none;margin-bottom:.85rem;"><div style="font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2);margin-bottom:.4rem;">Note</div><div style="background:var(--sur2);border-radius:7px;padding:.6rem .8rem;font-size:.82rem;" id="ord-note"></div></div>
-      <div style="font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2);margin-bottom:.5rem;">Stato ordine</div>
+      <div id="ord-note-wrap" style="display:none;margin-bottom:.75rem;">
+        <div style="font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2);margin-bottom:.38rem;">Note</div>
+        <div style="background:var(--sur2);border-radius:7px;padding:.6rem .8rem;font-size:.82rem;" id="ord-note"></div>
+      </div>
+
+      <!-- CONSEGNE VICINE -->
+      <div id="ord-nearby-section" style="display:none;" class="nearby-section">
+        <div class="nearby-title">
+          <span>📍 Consegne vicine (≤ 1 km)</span>
+          <div id="ord-nearby-actions" style="display:flex;gap:.4rem;align-items:center;"></div>
+        </div>
+        <div id="ord-nearby-list"><div class="nearby-spinner"><div class="spin"></div>Ricerca in corso…</div></div>
+      </div>
+
+      <!-- QR PERCORSO -->
+      <div id="ord-qr-section" style="display:none;background:var(--sur2);border:1px solid var(--bdr2);border-radius:10px;padding:.85rem 1rem;margin-bottom:.75rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem;flex-wrap:wrap;gap:.5rem;">
+          <div style="font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2);">📍 QR Percorso Google Maps</div>
+          <div style="display:flex;gap:.4rem;">
+            <button class="btn btn-sm btn-ghost" onclick="printOrderQR()">🖨 Stampa</button>
+            <button class="btn btn-sm btn-ghost" onclick="previewOrderQR()">👁 Anteprima</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;">
+          <div id="ord-qr-img" style="flex-shrink:0;"></div>
+          <div style="flex:1;min-width:140px;">
+            <div style="font-size:.74rem;color:var(--tx2);line-height:1.6;" id="ord-qr-desc">Scansiona il QR per aprire il percorso su Google Maps verso l'indirizzo di consegna.</div>
+            <div style="font-size:.72rem;color:var(--tx3);margin-top:.5rem;">💡 Stampa e consegna al fattorino per la navigazione.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATO -->
+      <div style="font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx2);margin-bottom:.45rem;">Stato ordine</div>
       <div class="order-status-btns">
         <button class="btn order-status-btn" id="osb-new" onclick="setOrderStatus('new')">🆕 Nuovo</button>
         <button class="btn order-status-btn" id="osb-prep" onclick="setOrderStatus('prep')">🔥 In prep.</button>
-        <button class="btn order-status-btn" id="osb-ready" onclick="setOrderStatus('ready')">✅ Pronto</button>
+        <button class="btn order-status-btn" id="osb-ready" onclick="setOrderStatus('ready')" title="Pronto — invierà email al cliente">✅ Pronto 📧</button>
         <button class="btn order-status-btn" id="osb-done" onclick="setOrderStatus('done')">📦 Consegnato</button>
       </div>
     </div>
-    <div class="mf"><button class="btn btn-danger" onclick="deleteOrder(currentOrderId)">🗑 Elimina ordine</button><button class="btn btn-ghost" onclick="closeOrderModal()">Chiudi</button></div>
+    <div class="mf">
+      <button class="btn btn-danger" onclick="deleteOrder(currentOrderId)">🗑 Elimina</button>
+      <button class="btn btn-ghost" onclick="closeOrderModal()">Chiudi</button>
+    </div>
   </div>
 </div>
 
@@ -952,6 +1195,7 @@ function gp(name,el){
   if(name==='settings')loadSettings();
   if(name==='composite')renderComposites();
   if(name==='orders')renderOrders();
+  if(name==='production')renderProductionPanel();
 }
 
 // ── PREVIEW ──
@@ -1210,11 +1454,13 @@ function renderCats(){
         <div style="display:flex;gap:.35rem;"><button class="btn btn-sm btn-ghost" onclick="openCatModal('${s.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteCat('${s.id}')">🗑</button></div>
       </div>`;
     }).join('')}</div>`:'';
+    const catBadges=buildProdBadges(c);
     return`<div>
-      <div class="cat-row">${thumb}
-        <div class="cat-info">
+      <div class="cat-row" style="flex-wrap:wrap;">${thumb}
+        <div class="cat-info" style="min-width:0;">
           <div class="cat-name-row">${c.name} <span class="chip gray" style="margin-left:.25rem;">${n} piatti</span>${subs.length?`<span class="chip pur" style="margin-left:.25rem;">${subs.length} sub</span>`:''}</div>
           <div class="cat-sub-row">${c.desc||''}</div>
+          ${catBadges}
         </div>
         <span class="chip ${c.active?'grn':'red'}">${c.active?'Attiva':'Nascosta'}</span>
         <button class="btn btn-sm btn-ghost" style="margin-left:.25rem;" onclick="openCatModal(null,'${c.id}')">+ Sub</button>
@@ -1250,6 +1496,10 @@ function openCatModal(id, defaultParent){
     document.getElementById('fc-img-url').value=c.img||'';
     ps.value=c.parent||'';
     updateCatImgPrev(c.img||'');
+    document.getElementById('fc-maxqty').value=c.maxQty||'';
+    document.getElementById('fc-usedqty').value=c.usedQty||'';
+    _catDays=c.days&&c.days.length?[...c.days]:[1,2,3,4,5,6,0];
+    _catSlots=c.slots?JSON.parse(JSON.stringify(c.slots)):[];
   }else{
     ['fc-name','fc-desc','fc-img-url'].forEach(i=>document.getElementById(i).value='');
     document.getElementById('fc-icon').value='';
@@ -1257,7 +1507,13 @@ function openCatModal(id, defaultParent){
     document.getElementById('fc-active').checked=true;
     ps.value=defaultParent||'';
     updateCatImgPrev('');
+    document.getElementById('fc-maxqty').value='';
+    document.getElementById('fc-usedqty').value='';
+    _catDays=[1,2,3,4,5,6,0];
+    _catSlots=[];
   }
+  renderDayPills('fc-days',_catDays,'cat');
+  renderSlotList('fc-slots',_catSlots,'cat');
   document.getElementById('mbg-cat').classList.add('open');
 }
 function closeCatModal(){document.getElementById('mbg-cat').classList.remove('open');editCatId=null;}
@@ -1272,6 +1528,10 @@ function saveCat(){
     active:document.getElementById('fc-active').checked,
     img:document.getElementById('fc-img-url').value.trim(),
     parent:document.getElementById('fc-parent').value,
+    maxQty:parseInt(document.getElementById('fc-maxqty').value)||0,
+    usedQty:parseInt(document.getElementById('fc-usedqty').value)||0,
+    days:_catDays.length===7?[]:[..._catDays],
+    slots:JSON.parse(JSON.stringify(_catSlots)),
   };
   if(editCatId){const i=D.categories.findIndex(c=>c.id===editCatId);D.categories[i]=obj;}
   else D.categories.push(obj);
@@ -1541,6 +1801,8 @@ function loadSettings(){
   document.getElementById('s-wa-number').value=s.waNumber||'';
   document.getElementById('s-wa-label').value=s.waLabel||'WhatsApp';
   loadStyleSettings();
+  loadEmailJsConfig();
+  loadFirebaseConfig();
 }
 function updateLogoPrev(src){const w=document.getElementById('logo-prev');if(src&&(src.startsWith('http')||src.startsWith('data:'))){w.innerHTML=`<img src="${src}" style="width:100%;height:100%;object-fit:contain;padding:4px;">`;}else{w.innerHTML=`<span style="font-size:2.4rem;">${src||'🍽'}</span>`;}}
 function handleLogo(e){const f=e.target.files[0];if(!f)return;if(f.size>2*1024*1024){toast('Max 2MB','err');return;}const r=new FileReader();r.onload=ev=>{D.settings.logoImg=ev.target.result;document.getElementById('s-logo-url').value='';document.getElementById('s-logo-emoji').value='';updateLogoPrev(ev.target.result);schedulePreview();toast('Logo caricato! Salva.','ok');};r.readAsDataURL(f);}
@@ -1634,11 +1896,13 @@ function renderComposites(){
     const cat=D.categories.find(c=>c.id===cp.cat);
     const secs=(cp.sections||[]).length;
     const opts=(cp.sections||[]).reduce((s,sec)=>s+(sec.options||[]).length,0);
+    const cpBadges=buildProdBadges(cp);
     return`<div class="cat-row" style="flex-wrap:wrap;gap:.6rem;">
       <div class="cat-em">${cp.emoji||'🥣'}</div>
-      <div class="cat-info">
+      <div class="cat-info" style="min-width:0;">
         <div class="cat-name-row">${cp.name}</div>
         <div class="cat-sub-row">${cat?`${cat.icon} ${cat.name}`:'—'} · ${secs} sezioni · ${opts} opzioni</div>
+        ${cpBadges}
       </div>
       <div style="display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;">
         <span style="font-weight:600;color:var(--gold);font-size:.88rem;">€${Number(cp.price).toFixed(2)}</span>
@@ -1674,11 +1938,21 @@ function openCompModal(id){
     document.getElementById('fcp-avail').checked=cp.available;
     sel.value=cp.cat;
     compSectionsData=JSON.parse(JSON.stringify(cp.sections||[]));
+    document.getElementById('fcp-maxqty').value=cp.maxQty||'';
+    document.getElementById('fcp-usedqty').value=cp.usedQty||'';
+    _compDays=cp.days&&cp.days.length?[...cp.days]:[1,2,3,4,5,6,0];
+    _compSlots=cp.slots?JSON.parse(JSON.stringify(cp.slots)):[];
   }else{
     ['fcp-name','fcp-price','fcp-desc','fcp-emoji'].forEach(i=>document.getElementById(i).value='');
     document.getElementById('fcp-avail').checked=true;
     compSectionsData=[];
+    document.getElementById('fcp-maxqty').value='';
+    document.getElementById('fcp-usedqty').value='';
+    _compDays=[1,2,3,4,5,6,0];
+    _compSlots=[];
   }
+  renderDayPills('fcp-days',_compDays,'comp');
+  renderSlotList('fcp-slots',_compSlots,'comp');
   renderSectionsEditor();
   document.getElementById('mbg-comp').classList.add('open');
 }
@@ -1754,7 +2028,11 @@ function saveComp(){
     desc:document.getElementById('fcp-desc').value.trim(),
     emoji:document.getElementById('fcp-emoji').value.trim()||'🥣',
     available:document.getElementById('fcp-avail').checked,
-    sections:JSON.parse(JSON.stringify(compSectionsData))
+    sections:JSON.parse(JSON.stringify(compSectionsData)),
+    maxQty:parseInt(document.getElementById('fcp-maxqty').value)||0,
+    usedQty:parseInt(document.getElementById('fcp-usedqty').value)||0,
+    days:_compDays.length===7?[]:[..._compDays],
+    slots:JSON.parse(JSON.stringify(_compSlots)),
   };
   if(!D.composites)D.composites=[];
   if(editCompId){const i=D.composites.findIndex(c=>c.id===editCompId);D.composites[i]=obj;}
@@ -1779,10 +2057,12 @@ function renderOrders(){
       const items=(o.items||[]).map(i=>i.name).join(', ');
       const t=new Date(o.ts);
       const timeStr=t.getHours().toString().padStart(2,'0')+':'+t.getMinutes().toString().padStart(2,'0');
+      const delivBadge=o.orderType==='consegna'?'<span style="font-size:.6rem;padding:.06rem .28rem;border-radius:4px;background:rgba(96,165,250,.15);color:var(--blue);font-weight:600;margin-left:.3rem;">🛵</span>':'';
+      const slotBadge=o.scheduledSlot?`<span style="font-size:.6rem;color:var(--tx3);">${o.scheduledSlot}</span>`:'';
       return`<div class="order-card col-${status}" onclick="openOrderModal('${o.id}')">
-        <div class="oc-num">#${o.id.slice(-4).toUpperCase()} · ${o.table?'Tavolo '+o.table:'Asporto'}</div>
+        <div class="oc-num">#${o.id.slice(-4).toUpperCase()} · ${o.table?'T.'+o.table:'—'}${delivBadge}</div>
         <div class="oc-items">${items||'—'}</div>
-        <div class="oc-meta"><span class="oc-time">${timeStr}</span><span class="oc-total">€${Number(o.total||0).toFixed(2)}</span></div>
+        <div class="oc-meta"><span class="oc-time">${timeStr} ${slotBadge}</span><span class="oc-total">€${Number(o.total||0).toFixed(2)}</span></div>
       </div>`;
     }).join('');
   });
@@ -1794,21 +2074,75 @@ function openOrderModal(id){
   if(!o)return;
   currentOrderId=id;
   document.getElementById('mord-title').textContent='Ordine #'+o.id.slice(-4).toUpperCase();
-  document.getElementById('ord-table').textContent=o.table?'Tavolo '+o.table:'Asporto';
+  document.getElementById('ord-table').textContent=o.table?'Tavolo '+o.table:'—';
   const t=new Date(o.ts);
-  document.getElementById('ord-time').textContent=t.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})+' · '+t.toLocaleDateString('it-IT');
+  document.getElementById('ord-time').textContent=t.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})+' '+t.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit'});
   document.getElementById('ord-total').textContent='€'+Number(o.total||0).toFixed(2);
-  // items
+
+  // Fascia oraria programmata
+  const slotBox=document.getElementById('ord-slot-box');
+  const slotEl=document.getElementById('ord-slot');
+  if(o.scheduledSlot||o.scheduledDay){
+    slotEl.textContent=(o.scheduledDay?o.scheduledDay:'')+(o.scheduledSlot?' · '+o.scheduledSlot:'');
+    slotBox.style.display='block';
+  } else {slotBox.style.display='none';}
+
+  // Consegna / indirizzo
+  const delivWrap=document.getElementById('ord-delivery-wrap');
+  if(o.orderType==='consegna'&&o.deliveryAddress){
+    delivWrap.style.display='block';
+    document.getElementById('ord-type-label').textContent='🛵 Consegna a domicilio';
+    document.getElementById('ord-address-text').textContent=o.deliveryAddress;
+    // Maps buttons
+    const mapsUrl=`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(o.deliveryAddress)}`;
+    document.getElementById('ord-maps-btns').innerHTML=`
+      <a href="${mapsUrl}" target="_blank" class="btn btn-sm btn-ghost">🗺 Apri Maps</a>`;
+    // QR section
+    const qrSec=document.getElementById('ord-qr-section');
+    qrSec.style.display='block';
+    const qrUrl=`https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(mapsUrl)}`;
+    document.getElementById('ord-qr-img').innerHTML=`<img src="${qrUrl}" style="width:130px;height:130px;border-radius:8px;border:2px solid var(--bdr2);">`;
+    document.getElementById('ord-qr-desc').innerHTML=`Scansiona per navigare verso:<br><strong style="color:var(--tx);">${o.deliveryAddress}</strong>`;
+    // store for print/preview
+    window._currentOrderQrUrl=qrUrl;
+    window._currentOrderMapsUrl=mapsUrl;
+    window._currentOrderAddress=o.deliveryAddress;
+    window._currentOrderId='#'+o.id.slice(-4).toUpperCase();
+    // Avvia ricerca consegne vicine (asincrona, non blocca il modale)
+    findNearbyDeliveries(o);
+  } else {
+    delivWrap.style.display='none';
+    document.getElementById('ord-qr-section').style.display='none';
+    document.getElementById('ord-nearby-section').style.display='none';
+    window._currentOrderQrUrl=null;
+  }
+
+  // Customer info
+  const custWrap=document.getElementById('ord-customer-wrap');
+  if(o.customerName||o.customerEmail){
+    custWrap.style.display='block';
+    document.getElementById('ord-customer-name').textContent=o.customerName||'—';
+    const emailEl=document.getElementById('ord-customer-email');
+    emailEl.textContent=o.customerEmail||'—';
+    emailEl.href=o.customerEmail?'mailto:'+o.customerEmail:'#';
+    const phoneEl=document.getElementById('ord-customer-phone');
+    phoneEl.textContent=o.customerPhone||'—';
+    phoneEl.href=o.customerPhone?'tel:'+o.customerPhone:'#';
+  } else {custWrap.style.display='none';}
+
+  // Items
   const itemsEl=document.getElementById('ord-items');
   itemsEl.innerHTML=(o.items||[]).map(item=>`
     <div class="odi-row">
-      <div class="odi-name">${item.emoji||'🍽'} ${item.name} × ${item.qty||1} <span style="color:var(--gold);font-size:.82rem;">€${Number(item.price*item.qty).toFixed(2)}</span></div>
+      <div class="odi-name">${item.emoji||'🍽'} ${item.name} × ${item.qty||1} <span style="color:var(--gold);font-size:.82rem;">€${Number(item.price*(item.qty||1)).toFixed(2)}</span></div>
       ${item.choices&&item.choices.length?`<div class="odi-opts">${item.choices.map(c=>`<span style="color:var(--tx2);">${c.section}: </span><span>${c.values.join(', ')}</span>`).join(' &nbsp;·&nbsp; ')}</div>`:''}
     </div>`).join('');
-  // notes
+
+  // Notes
   if(o.note){document.getElementById('ord-note-wrap').style.display='block';document.getElementById('ord-note').textContent=o.note;}
   else document.getElementById('ord-note-wrap').style.display='none';
-  // status buttons
+
+  // Status buttons
   ['new','prep','ready','done'].forEach(s=>{
     const btn=document.getElementById('osb-'+s);
     const isActive=o.status===s;
@@ -1817,13 +2151,226 @@ function openOrderModal(id){
   });
   document.getElementById('mbg-order').classList.add('open');
 }
+
+
+// ══════════════════════════════════════════════════
+// CONSEGNE VICINE — Geocoding + Haversine
+// Usa Nominatim (OpenStreetMap, gratuito, no API key)
+// ══════════════════════════════════════════════════
+
+// Cache geocoding per evitare richieste duplicate
+const _geocodeCache = {};
+
+async function geocodeAddress(address){
+  if(_geocodeCache[address]) return _geocodeCache[address];
+  try{
+    const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(address);
+    const res = await fetch(url, {headers:{'Accept-Language':'it','User-Agent':'MenuManager/1.0'}});
+    const data = await res.json();
+    if(data && data.length > 0){
+      const coords = {lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon)};
+      _geocodeCache[address] = coords;
+      return coords;
+    }
+    return null;
+  } catch(e){
+    console.warn('Geocoding fallito per:', address, e);
+    return null;
+  }
+}
+
+// Distanza Haversine in km tra due punti GPS
+function haversineKm(lat1, lon1, lat2, lon2){
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 +
+            Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+            Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+async function findNearbyDeliveries(currentOrder){
+  const nearbySection = document.getElementById('ord-nearby-section');
+  const nearbyList    = document.getElementById('ord-nearby-list');
+  const nearbyActions = document.getElementById('ord-nearby-actions');
+
+  // Solo se è una consegna con indirizzo
+  if(currentOrder.orderType !== 'consegna' || !currentOrder.deliveryAddress){
+    nearbySection.style.display = 'none';
+    return;
+  }
+
+  nearbySection.style.display = 'block';
+  nearbyList.innerHTML = '<div class="nearby-spinner"><div class="spin"></div>Geocodifica in corso…</div>';
+  nearbyActions.innerHTML = '';
+
+  // Geocodifica indirizzo corrente
+  const coords = await geocodeAddress(currentOrder.deliveryAddress);
+  if(!coords){
+    nearbyList.innerHTML = '<div class="nearby-empty">⚠ Impossibile geocodificare l\'indirizzo — verifica che sia completo (via, numero, città)</div>';
+    return;
+  }
+
+  // Trova tutte le altre consegne attive (non consegnate) con indirizzo
+  const others = (D.orders || []).filter(o =>
+    o.id !== currentOrder.id &&
+    o.orderType === 'consegna' &&
+    o.deliveryAddress &&
+    o.status !== 'done'
+  );
+
+  if(!others.length){
+    nearbyList.innerHTML = '<div class="nearby-empty">Nessun\'altra consegna attiva al momento</div>';
+    return;
+  }
+
+  nearbyList.innerHTML = '<div class="nearby-spinner"><div class="spin"></div>Calcolo distanze…</div>';
+
+  // Geocodifica in parallelo con rate limit (Nominatim: max 1 req/s)
+  const results = [];
+  for(const o of others){
+    const c = await geocodeAddress(o.deliveryAddress);
+    // piccola pausa per rispettare i limiti Nominatim
+    await new Promise(r => setTimeout(r, 200));
+    if(c){
+      const km = haversineKm(coords.lat, coords.lon, c.lat, c.lon);
+      if(km <= 1.0) results.push({order: o, coords: c, km});
+    }
+  }
+
+  // Ordina per distanza
+  results.sort((a, b) => a.km - b.km);
+
+  if(!results.length){
+    nearbyList.innerHTML = '<div class="nearby-empty">✅ Nessun\'altra consegna nel raggio di 1 km</div>';
+    nearbyActions.innerHTML = '';
+    return;
+  }
+
+  // Render lista
+  const statusLabel = {new:'🆕 Nuovo', prep:'🔥 In prep.', ready:'✅ Pronto', done:'📦 Consegnato'};
+  const statusColor = {new:'rgba(96,165,250,.15)', prep:'rgba(240,192,64,.15)', ready:'rgba(52,211,153,.15)', done:'rgba(255,255,255,.06)'};
+
+  nearbyList.innerHTML = results.map(r => `
+    <div class="nearby-item" style="cursor:pointer;" onclick="closeOrderModal();openOrderModal('${r.order.id}')">
+      <div class="nearby-dist">${r.km < 0.1 ? '<100m' : (r.km*1000).toFixed(0)+'m'}</div>
+      <div class="nearby-info">
+        <div class="nearby-name">#${r.order.id.slice(-4).toUpperCase()} · ${r.order.customerName||'—'}</div>
+        <div class="nearby-addr">📍 ${r.order.deliveryAddress}</div>
+        <span class="nearby-status" style="background:${statusColor[r.order.status]||'rgba(255,255,255,.06)'};">${statusLabel[r.order.status]||r.order.status}</span>
+      </div>
+    </div>`).join('');
+
+  // Bottone "Apri tutte su Maps" con waypoint multipli
+  const allAddresses = [currentOrder.deliveryAddress, ...results.map(r => r.order.deliveryAddress)];
+  // Google Maps supporta fino a 8 waypoint nell'URL
+  const origin = encodeURIComponent(currentOrder.deliveryAddress);
+  const waypoints = results.slice(0, 7).map(r => encodeURIComponent(r.order.deliveryAddress)).join('|');
+  const multiMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${origin}&waypoints=${waypoints}&travelmode=driving`;
+
+  nearbyActions.innerHTML = `
+    <a href="${multiMapsUrl}" target="_blank" class="nearby-multimaps-btn">
+      🗺 Ottimizza percorso (${results.length+1} consegne)
+    </a>`;
+}
+
+function previewOrderQR(){
+  if(!window._currentOrderQrUrl){toast('Nessun QR disponibile','err');return;}
+  const addr=window._currentOrderAddress||'';
+  const ordId=window._currentOrderId||'';
+  const win=window.open('','_blank','width=420,height=560');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>QR Consegna</title>
+  <style>body{font-family:sans-serif;margin:0;background:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;}
+  .card{text-align:center;padding:2rem;border:2px solid #eee;border-radius:16px;max-width:320px;margin:auto;}
+  h2{font-size:1.1rem;margin-bottom:.5rem;}p{font-size:.85rem;color:#555;margin:.25rem 0;}
+  img{margin:1rem auto;border-radius:8px;border:2px solid #ddd;}
+  .addr{font-size:.95rem;font-weight:600;color:#333;margin-top:.75rem;padding:.5rem;background:#f8f8f8;border-radius:8px;}
+  </style></head><body>
+  <div class="card">
+    <h2>🛵 Consegna ${ordId}</h2>
+    <p>Scansiona per il percorso su Google Maps</p>
+    <img src="${window._currentOrderQrUrl}" width="160" height="160">
+    <div class="addr">📍 ${addr}</div>
+    <p style="margin-top:1rem;font-size:.75rem;color:#aaa;">Apri con la fotocamera del telefono</p>
+  </div></body></html>`);
+  win.document.close();
+}
+
+function printOrderQR(){
+  if(!window._currentOrderQrUrl){toast('Nessun QR disponibile','err');return;}
+  const addr=window._currentOrderAddress||'';
+  const ordId=window._currentOrderId||'';
+  const mapsUrl=window._currentOrderMapsUrl||'';
+  const win=window.open('','_blank','width=500,height=600');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Stampa QR</title>
+  <style>
+    @media print{@page{margin:10mm;}.no-print{display:none;}}
+    body{font-family:'Arial',sans-serif;margin:0;padding:1.5rem;background:#fff;}
+    .card{border:2px solid #333;border-radius:12px;padding:1.5rem;max-width:340px;margin:auto;text-align:center;}
+    h2{font-size:1.15rem;margin-bottom:.3rem;color:#111;}
+    .sub{font-size:.82rem;color:#666;margin-bottom:.8rem;}
+    img{border-radius:8px;border:2px solid #ccc;margin:0 auto .75rem;}
+    .addr{font-size:.9rem;font-weight:700;color:#111;background:#f5f5f5;border-radius:8px;padding:.55rem .75rem;text-align:left;margin-top:.5rem;}
+    .hint{font-size:.7rem;color:#aaa;margin-top:.8rem;}
+    .print-btn{margin-top:1rem;padding:.55rem 1.5rem;background:#333;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.88rem;}
+  </style></head><body>
+  <div class="card">
+    <h2>🛵 Ordine ${ordId}</h2>
+    <div class="sub">Percorso consegna — scansiona con fotocamera</div>
+    <img src="${window._currentOrderQrUrl}" width="180" height="180">
+    <div class="addr">📍 ${addr}</div>
+    <div class="hint"><a href="${mapsUrl}" style="color:#888;">Apri Maps direttamente →</a></div>
+  </div>
+  <div class="no-print" style="text-align:center;margin-top:1.5rem;">
+    <button class="print-btn" onclick="window.print()">🖨 Stampa</button>
+  </div>
+  </body></html>`);
+  win.document.close();
+  setTimeout(()=>win.print(),400);
+}
+
+
 function closeOrderModal(){document.getElementById('mbg-order').classList.remove('open');currentOrderId=null;}
-function setOrderStatus(status){
+async function setOrderStatus(status){
   if(!currentOrderId)return;
   const o=D.orders.find(x=>x.id===currentOrderId);
   if(!o)return;
+  const prevStatus=o.status;
   o.status=status;
   save();renderOrders();openOrderModal(currentOrderId);toast('Stato aggiornato!','ok');
+  // Send email when order becomes ready
+  if(status==='ready' && prevStatus!=='ready' && o.customerEmail){
+    await sendReadyEmail(o);
+  }
+}
+
+async function sendReadyEmail(o){
+  const serviceId=localStorage.getItem('emailjs_service_id')||'';
+  const templateId=localStorage.getItem('emailjs_template_id')||'';
+  const publicKey=localStorage.getItem('emailjs_public_key')||'';
+  if(!serviceId||!templateId||!publicKey){
+    toast('⚠ Email non configurata — vai in Impostazioni > Email','err');
+    return;
+  }
+  const restaurantName=(D.settings&&D.settings.name)||'Il Ristorante';
+  const itemsList=(o.items||[]).map(i=>(i.emoji||'🍽')+' '+i.name+' × '+(i.qty||1)).join(', ');
+  const params={
+    to_email: o.customerEmail,
+    to_name: o.customerName||'Cliente',
+    order_id: '#'+o.id.slice(-4).toUpperCase(),
+    restaurant_name: restaurantName,
+    items_list: itemsList,
+    order_total: '€'+Number(o.total||0).toFixed(2),
+    table_info: o.table?'Tavolo '+o.table:'Asporto'
+  };
+  try{
+    await emailjs.send(serviceId, templateId, params, publicKey);
+    toast('📧 Email di notifica inviata a '+o.customerEmail,'ok');
+  }catch(e){
+    console.error('EmailJS error:',e);
+    toast('❌ Errore invio email: '+e.text,'err');
+  }
 }
 function deleteOrder(id){
   if(!confirm('Eliminare questo ordine?'))return;
@@ -1854,6 +2401,90 @@ function addTestOrder(){
 }
 
 
+// ── EMAILJS CONFIG ──
+function saveEmailJsConfig(){
+  const pub=document.getElementById('s-emailjs-pubkey').value.trim();
+  const svc=document.getElementById('s-emailjs-service').value.trim();
+  const tpl=document.getElementById('s-emailjs-template').value.trim();
+  if(!pub||!svc||!tpl){toast('Compila tutti i campi EmailJS','err');return;}
+  localStorage.setItem('emailjs_public_key',pub);
+  localStorage.setItem('emailjs_service_id',svc);
+  localStorage.setItem('emailjs_template_id',tpl);
+  emailjs.init(pub);
+  document.getElementById('emailjs-status').innerHTML='<span style="color:var(--green);">✅ Configurazione salvata</span>';
+  toast('EmailJS configurato!','ok');
+}
+function loadEmailJsConfig(){
+  const pub=localStorage.getItem('emailjs_public_key')||'';
+  const svc=localStorage.getItem('emailjs_service_id')||'';
+  const tpl=localStorage.getItem('emailjs_template_id')||'';
+  const pubEl=document.getElementById('s-emailjs-pubkey');
+  const svcEl=document.getElementById('s-emailjs-service');
+  const tplEl=document.getElementById('s-emailjs-template');
+  if(pubEl)pubEl.value=pub;
+  if(svcEl)svcEl.value=svc;
+  if(tplEl)tplEl.value=tpl;
+  if(pub){
+    emailjs.init(pub);
+    const statusEl=document.getElementById('emailjs-status');
+    if(statusEl)statusEl.innerHTML='<span style="color:var(--green);">✅ EmailJS configurato</span>';
+  }
+}
+async function testEmailJs(){
+  const pub=document.getElementById('s-emailjs-pubkey').value.trim();
+  const svc=document.getElementById('s-emailjs-service').value.trim();
+  const tpl=document.getElementById('s-emailjs-template').value.trim();
+  if(!pub||!svc||!tpl){toast('Compila tutti i campi prima del test','err');return;}
+  const testEmail=prompt('Inserisci la tua email per ricevere il test:');
+  if(!testEmail)return;
+  try{
+    emailjs.init(pub);
+    await emailjs.send(svc,tpl,{
+      to_email:testEmail,to_name:'Test',order_id:'#TEST',
+      restaurant_name:(D&&D.settings&&D.settings.name)||'Ristorante',
+      items_list:'Tagliatelle al Ragù × 2, Tiramisù × 1',
+      order_total:'€27.00',table_info:'Tavolo 5'
+    },pub);
+    toast('📧 Email di test inviata a '+testEmail,'ok');
+  }catch(e){
+    console.error(e);
+    toast('❌ Errore: '+( e.text||JSON.stringify(e)),'err');
+  }
+}
+
+// ── FIREBASE CONFIG ──
+function saveFirebaseConfig(){
+  const apiKey=document.getElementById('s-fb-apikey').value.trim();
+  const authDomain=document.getElementById('s-fb-authdomain').value.trim();
+  const projectId=document.getElementById('s-fb-projectid').value.trim();
+  const appId=document.getElementById('s-fb-appid').value.trim();
+  if(!apiKey||!authDomain||!projectId||!appId){
+    toast('Compila tutti i campi Firebase','err'); return;
+  }
+  D.settings.firebaseApiKey=apiKey;
+  D.settings.firebaseAuthDomain=authDomain;
+  D.settings.firebaseProjectId=projectId;
+  D.settings.firebaseAppId=appId;
+  save();
+  document.getElementById('firebase-config-status').innerHTML='<span style="color:var(--green);">✅ Configurazione Firebase salvata e sincronizzata</span>';
+  toast('Firebase configurato!','ok');
+}
+
+function loadFirebaseConfig(){
+  const s=D&&D.settings;
+  const el=(id)=>document.getElementById(id);
+  if(el('s-fb-apikey')) el('s-fb-apikey').value=s&&s.firebaseApiKey||'';
+  if(el('s-fb-authdomain')) el('s-fb-authdomain').value=s&&s.firebaseAuthDomain||'';
+  if(el('s-fb-projectid')) el('s-fb-projectid').value=s&&s.firebaseProjectId||'';
+  if(el('s-fb-appid')) el('s-fb-appid').value=s&&s.firebaseAppId||'';
+  const status=el('firebase-config-status');
+  if(status){
+    if(s&&s.firebaseApiKey) status.innerHTML='<span style="color:var(--green);">✅ Firebase configurato</span>';
+    else status.innerHTML='<span style="color:var(--tx3);">Non configurato — i clienti non potranno registrarsi</span>';
+  }
+}
+
+
 function renderAll(){
   renderCats();
   renderDishes();
@@ -1862,9 +2493,205 @@ function renderAll(){
   renderDashboard();
   loadSettings();
   refreshPreview();
+  renderProductionPanel();
+}
+
+
+// ═══════════════════════════════════════════════════════════
+//  PRODUZIONE & SLOT — state vars
+// ═══════════════════════════════════════════════════════════
+const DAY_LABELS=['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+let _catDays=[1,2,3,4,5,6,0];
+let _catSlots=[];
+let _compDays=[1,2,3,4,5,6,0];
+let _compSlots=[];
+
+// ── render day pills into a container ──
+function renderDayPills(containerId,activeDays,prefix){
+  const el=document.getElementById(containerId);
+  if(!el)return;
+  const all=[1,2,3,4,5,6,0]; // Mon..Sun
+  const isAll=activeDays.length===7;
+  el.innerHTML=`
+    <div class="day-pill all-toggle ${isAll?'on':''}" onclick="toggleAllDays('${containerId}','${prefix}')"
+         style="${isAll?'background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.4);color:var(--green);':''}">
+      Tutti
+    </div>
+    ${all.map(d=>`<div class="day-pill ${activeDays.includes(d)?'on':''}"
+        onclick="toggleDay('${containerId}','${prefix}',${d})">${DAY_LABELS[d]}</div>`).join('')}`;
+}
+function toggleDay(containerId,prefix,d){
+  const arr=prefix==='cat'?_catDays:_compDays;
+  const idx=arr.indexOf(d);
+  if(idx>=0)arr.splice(idx,1);else arr.push(d);
+  renderDayPills(containerId,arr,prefix);
+}
+function toggleAllDays(containerId,prefix){
+  const arr=prefix==='cat'?_catDays:_compDays;
+  const all=[1,2,3,4,5,6,0];
+  if(arr.length===7){arr.length=0;}else{arr.length=0;arr.push(...all);}
+  renderDayPills(containerId,arr,prefix);
+}
+
+// ── render slot list ──
+function renderSlotList(containerId,slots,prefix){
+  const el=document.getElementById(containerId);
+  if(!el)return;
+  if(!slots.length){
+    el.innerHTML='<div style="font-size:.73rem;color:var(--tx3);padding:.1rem 0;">Nessuna fascia — attivo tutto il giorno</div>';
+    return;
+  }
+  el.innerHTML=slots.map((s,i)=>`
+    <div class="slot-row">
+      <span class="slot-lbl">🕐 ${s.from} → ${s.to}</span>
+      ${s.cap?`<span class="slot-cap-lbl">max ${s.cap} posti</span>`:''}
+      <button class="slot-del" onclick="removeSlot('${containerId}','${prefix}',${i})">✕</button>
+    </div>`).join('');
+}
+function catAddSlot(){
+  const from=document.getElementById('fc-from').value;
+  const to=document.getElementById('fc-to').value;
+  if(!from||!to){toast('Inserisci orario inizio e fine','err');return;}
+  if(from>=to){toast('Fine deve essere dopo l\'inizio','err');return;}
+  const cap=parseInt(document.getElementById('fc-slotcap').value)||0;
+  _catSlots.push({from,to,cap});
+  ['fc-from','fc-to','fc-slotcap'].forEach(id=>{document.getElementById(id).value='';});
+  renderSlotList('fc-slots',_catSlots,'cat');
+}
+function compAddSlot(){
+  const from=document.getElementById('fcp-from').value;
+  const to=document.getElementById('fcp-to').value;
+  if(!from||!to){toast('Inserisci orario inizio e fine','err');return;}
+  if(from>=to){toast('Fine deve essere dopo l\'inizio','err');return;}
+  const cap=parseInt(document.getElementById('fcp-slotcap').value)||0;
+  _compSlots.push({from,to,cap});
+  ['fcp-from','fcp-to','fcp-slotcap'].forEach(id=>{document.getElementById(id).value='';});
+  renderSlotList('fcp-slots',_compSlots,'comp');
+}
+function removeSlot(containerId,prefix,i){
+  const arr=prefix==='cat'?_catSlots:_compSlots;
+  arr.splice(i,1);
+  renderSlotList(containerId,arr,prefix);
+}
+
+// ── build badge html for list cards ──
+function buildProdBadges(obj){
+  if(!obj)return'';
+  const parts=[];
+  const maxQ=obj.maxQty||0;
+  const usedQ=obj.usedQty||0;
+  if(maxQ>0){
+    const left=maxQ-usedQ;
+    if(left<=0)parts.push('<span class="pbadge warn">⛔ Esaurito</span>');
+    else parts.push(`<span class="pbadge qty">📦 ${usedQ}/${maxQ} preparati</span>`);
+  }
+  const days=obj.days&&obj.days.length?obj.days:null;
+  if(days&&days.length<7){
+    const names=days.map(d=>DAY_LABELS[d]).join(' · ');
+    parts.push(`<span class="pbadge day">📅 ${names}</span>`);
+  }
+  if(obj.slots&&obj.slots.length){
+    obj.slots.forEach(s=>parts.push(`<span class="pbadge slot">🕐 ${s.from}–${s.to}${s.cap?' ('+s.cap+')':''}</span>`));
+  }
+  return parts.length?`<div class="prod-badges">${parts.join('')}</div>`:'';
+}
+
+// ── check if obj is available right now ──
+function isAvailableNow(obj){
+  if(!obj)return true;
+  const now=new Date();
+  const dow=now.getDay();
+  const days=obj.days&&obj.days.length?obj.days:null;
+  if(days&&!days.includes(dow))return false;
+  const maxQ=obj.maxQty||0;
+  const usedQ=obj.usedQty||0;
+  if(maxQ>0&&usedQ>=maxQ)return false;
+  if(obj.slots&&obj.slots.length){
+    const hh=now.getHours().toString().padStart(2,'0');
+    const mm=now.getMinutes().toString().padStart(2,'0');
+    const t=hh+':'+mm;
+    if(!obj.slots.some(s=>t>=s.from&&t<=s.to))return false;
+  }
+  return true;
+}
+
+// ── PRODUCTION PANEL ──
+function renderProductionPanel(){
+  const el=document.getElementById('prod-panel-list');
+  if(!el)return;
+  const items=[
+    ...D.categories.map(c=>({...c,_type:'cat'})),
+    ...(D.composites||[]).map(cp=>({...cp,_type:'comp'}))
+  ].filter(x=>x.maxQty>0||(x.days&&x.days.length&&x.days.length<7)||(x.slots&&x.slots.length));
+  if(!items.length){
+    el.innerHTML='<div class="empty"><div class="ei">⚙️</div><p>Nessuna regola di produzione configurata.<br><span style="font-size:.78rem;">Modifica una categoria o un prodotto composto e imposta quantità, giorni o slot orari.</span></p></div>';
+    return;
+  }
+  el.innerHTML=items.map(item=>{
+    const avail=isAvailableNow(item);
+    const maxQ=item.maxQty||0;
+    const usedQ=item.usedQty||0;
+    const pct=maxQ>0?Math.min(100,Math.round(usedQ/maxQ*100)):0;
+    const barColor=pct>=100?'var(--red)':pct>=80?'var(--gold)':'var(--green)';
+    const days=item.days&&item.days.length&&item.days.length<7?item.days.map(d=>DAY_LABELS[d]).join(', '):null;
+    const slots=item.slots&&item.slots.length?item.slots:null;
+    const editFn=item._type==='cat'?`openCatModal('${item.id}')`:`openCompModal('${item.id}')`;
+    return`<div class="prod-panel-card">
+      <div class="pp-head">
+        <span style="font-size:1.6rem;">${item.icon||item.emoji||'📦'}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:600;font-size:.9rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
+            ${item.name}
+            <span class="chip ${avail?'grn':'red'}" style="font-size:.62rem;">${avail?'✓ Disponibile ora':'✗ Non disponibile'}</span>
+            <span class="chip ${item._type==='cat'?'blu':'pur'}" style="font-size:.62rem;">${item._type==='cat'?'Categoria':'Composizione'}</span>
+          </div>
+          ${days?`<div style="font-size:.73rem;color:var(--tx2);margin-top:.18rem;">📅 ${days}</div>`:''}
+          ${slots?`<div style="font-size:.73rem;color:var(--tx2);margin-top:.1rem;">🕐 ${slots.map(s=>s.from+'–'+s.to+(s.cap?' (max '+s.cap+')':'')).join('  ·  ')}</div>`:''}
+        </div>
+        <button class="btn btn-sm btn-ghost" onclick="${editFn}">✏️</button>
+      </div>
+      ${maxQ>0?`
+      <div class="pp-progress-wrap">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.32rem;">
+          <span style="font-size:.72rem;color:var(--tx2);">Produzione giornaliera</span>
+          <span style="font-size:.75rem;font-weight:600;color:${barColor};">${usedQ} / ${maxQ} — ${pct>=100?'<span style="color:var(--red)">Esaurito</span>':`<span style="color:var(--green)">${maxQ-usedQ} rimasti</span>`}</span>
+        </div>
+        <div class="pp-bar-bg"><div class="pp-bar" style="width:${pct}%;background:${barColor};"></div></div>
+      </div>
+      <div class="pp-counter">
+        <span style="font-size:.72rem;color:var(--tx2);">Aggiorna contatore:</span>
+        <button onclick="changeUsedQty('${item.id}','${item._type}',-1)">−</button>
+        <span style="font-size:.88rem;font-weight:600;min-width:32px;text-align:center;">${usedQ}</span>
+        <button onclick="changeUsedQty('${item.id}','${item._type}',1)">＋</button>
+        <button class="btn btn-sm btn-ghost" style="margin-left:.4rem;" onclick="resetItemQty('${item.id}','${item._type}')">🔄 Reset</button>
+      </div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function changeUsedQty(id,type,delta){
+  const obj=type==='cat'?D.categories.find(x=>x.id===id):(D.composites||[]).find(x=>x.id===id);
+  if(!obj)return;
+  obj.usedQty=Math.max(0,(obj.usedQty||0)+delta);
+  save();renderProductionPanel();renderCats();renderComposites();
+  toast(`Contatore: ${obj.usedQty}`+(obj.maxQty>0?` / ${obj.maxQty}`:''),'ok');
+}
+function resetItemQty(id,type){
+  const obj=type==='cat'?D.categories.find(x=>x.id===id):(D.composites||[]).find(x=>x.id===id);
+  if(!obj)return;
+  obj.usedQty=0;
+  save();renderProductionPanel();renderCats();renderComposites();toast('Contatore azzerato','ok');
+}
+function resetAllDailyQty(){
+  if(!confirm('Azzerare tutti i contatori "preparati oggi"?'))return;
+  D.categories.forEach(c=>{c.usedQty=0;});
+  (D.composites||[]).forEach(cp=>{cp.usedQty=0;});
+  save();renderProductionPanel();renderCats();renderComposites();toast('Contatori azzerati!','ok');
 }
 
 loadFromFirebase();
+// Init EmailJS if already configured
+(function(){const k=localStorage.getItem('emailjs_public_key');if(k)emailjs.init(k);})();
 </script>
 </body>
 </html>
