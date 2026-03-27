@@ -244,37 +244,26 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 </div>
 
 <!-- IMPORT OVERLAY (shown if no data) -->
-<div class="import-overlay" id="import-overlay">
-  <div style="font-size:3rem;">🔗</div>
-  <h2>Connetti al Menu</h2>
-  <p>Inserisci il <strong style="color:var(--gold2);">Blob ID</strong> che trovi nel Backoffice → Impostazioni → Codice Sync</p>
-  <input
-    id="import-blobid"
-    placeholder="Bin ID (es: 6849a2f3abc123...)"
-    style="width:100%;max-width:420px;padding:.7rem 1rem;border-radius:10px;border:1.5px solid rgba(184,134,11,.4);background:rgba(255,255,255,.08);color:white;font-family:'Outfit',monospace;font-size:.9rem;outline:none;text-align:center;letter-spacing:.04em;"
-    oninput="this.style.borderColor=this.value.length>5?'var(--gold2)':'rgba(184,134,11,.4)'"
-  >
-  <input
-    id="import-apikey"
-    placeholder="API Key JSONBin (opzionale se bin è pubblico)"
-    type="password"
-    style="width:100%;max-width:420px;padding:.6rem 1rem;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:rgba(255,255,255,.7);font-family:'Outfit',monospace;font-size:.8rem;outline:none;text-align:center;"
-  >
-  <button class="fchip active" style="padding:.65rem 2.2rem;font-size:.92rem;" onclick="connectBlobId()">🔗 Connetti</button>
-
-  <div style="display:flex;align-items:center;gap:.75rem;width:100%;max-width:420px;margin:.2rem 0;">
-    <div style="flex:1;height:1px;background:rgba(255,255,255,.12);"></div>
-    <span style="font-size:.75rem;color:rgba(255,255,255,.3);">oppure</span>
-    <div style="flex:1;height:1px;background:rgba(255,255,255,.12);"></div>
+<!-- DRAWER CONNESSIONE (nascosto, opzionale) -->
+<div id="connect-drawer" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(28,23,16,.85);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;">
+  <div style="background:var(--dark);width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:1.75rem 1.5rem 2rem;animation:slideUp .28s cubic-bezier(.34,1.56,.64,1);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold-light);">🔗 Connetti al Backoffice</div>
+      <button onclick="closeConnectDrawer()" style="background:rgba(255,255,255,.1);border:none;color:white;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:.9rem;">✕</button>
+    </div>
+    <p style="font-size:.82rem;color:rgba(245,230,176,.55);margin-bottom:1rem;line-height:1.55;">Inserisci il <strong style="color:var(--gold2);">Bin ID</strong> dal Backoffice → Impostazioni → Sync per sincronizzare il menu in tempo reale.</p>
+    <input id="import-blobid" placeholder="Bin ID (es: 6849a2f3abc123...)"
+      style="width:100%;padding:.7rem 1rem;border-radius:10px;border:1.5px solid rgba(184,134,11,.35);background:rgba(255,255,255,.07);color:white;font-family:'Outfit',monospace;font-size:.88rem;outline:none;text-align:center;margin-bottom:.5rem;"
+      oninput="this.style.borderColor=this.value.length>5?'var(--gold2)':'rgba(184,134,11,.35)'">
+    <input id="import-apikey" placeholder="API Key JSONBin (opzionale)" type="password"
+      style="width:100%;padding:.6rem 1rem;border-radius:10px;border:1.5px solid rgba(255,255,255,.09);background:rgba(255,255,255,.05);color:rgba(255,255,255,.65);font-family:'Outfit',monospace;font-size:.8rem;outline:none;text-align:center;margin-bottom:.85rem;">
+    <button onclick="connectBlobId()" style="width:100%;padding:.72rem;border-radius:12px;border:none;background:var(--gold);color:var(--dark);font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;margin-bottom:.55rem;">🔗 Connetti</button>
+    <details style="width:100%;">
+      <summary style="font-size:.78rem;color:rgba(245,230,176,.35);cursor:pointer;text-align:center;list-style:none;">Incolla JSON manualmente ▾</summary>
+      <textarea id="import-json" placeholder='Incolla qui il JSON del menu...' style="width:100%;height:110px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:.65rem;color:white;font-family:'Outfit',sans-serif;font-size:.8rem;resize:none;outline:none;margin-top:.55rem;"></textarea>
+      <button onclick="importJSON()" style="width:100%;padding:.55rem;border-radius:9px;border:1.5px solid rgba(184,134,11,.3);background:rgba(184,134,11,.1);color:var(--gold-light);font-family:'Outfit',sans-serif;font-size:.82rem;cursor:pointer;margin-top:.4rem;">Carica da JSON</button>
+    </details>
   </div>
-
-  <details style="width:100%;max-width:420px;">
-    <summary style="font-size:.8rem;color:rgba(245,230,176,.45);cursor:pointer;text-align:center;list-style:none;">Incolla JSON manualmente ▾</summary>
-    <textarea class="import-textarea" id="import-json" placeholder='Incolla qui il JSON del menu...' style="margin-top:.75rem;"></textarea>
-    <button class="fchip active" style="padding:.5rem 1.5rem;font-size:.84rem;margin-top:.5rem;width:100%;" onclick="importJSON()">Carica da JSON</button>
-  </details>
-
-  <button style="background:none;border:none;color:rgba(255,255,255,.25);font-size:.75rem;cursor:pointer;margin-top:.25rem;" onclick="loadDemo()">usa il menu demo</button>
 </div>
 
 <!-- MAIN APP -->
@@ -303,6 +292,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
         <span class="search-icon">🔍</span>
         <input type="text" id="search-input" placeholder="Cerca nel menu..." oninput="renderMenu()">
       </div>
+      <button id="sync-indicator" onclick="openConnectDrawer()" title="Connetti al backoffice"
+        style="width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border);background:white;color:var(--text3);cursor:pointer;font-size:.85rem;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .18s;">
+        ⚙️
+      </button>
     </div>
     <div class="filter-bar" id="filter-bar"></div>
   </div>
@@ -512,7 +505,7 @@ function loadDemo(){
 
 async function connectBlobId(){
   const raw = document.getElementById('import-blobid').value.trim();
-  if(!raw){ alert('Inserisci il Bin ID.'); return; }
+  if(!raw){ toast('Inserisci il Bin ID','err'); return; }
   const id = raw.replace(/\s/g,'');
   const apiKeyInput = document.getElementById('import-apikey');
   const apiKey = apiKeyInput ? apiKeyInput.value.trim() : '';
@@ -532,11 +525,14 @@ async function connectBlobId(){
     localStorage.setItem(BLOB_ID_KEY, id);
     D = data;
     localStorage.setItem(LS_KEY, JSON.stringify(D));
+    closeConnectDrawer();
     startApp();
     startAutoSync(id);
+    setSyncIndicator('ok');
+    toast('✅ Menu connesso!');
   }catch(e){
     btn.textContent = origText; btn.disabled = false;
-    alert('Connessione fallita.\n\n' + e.message);
+    toast('Connessione fallita: ' + e.message, 'err');
   }
 }
 
@@ -545,9 +541,12 @@ function importJSON(){
     const raw=document.getElementById('import-json').value.trim();
     D=JSON.parse(raw);
     localStorage.setItem('menuAppData',JSON.stringify(D));
+    closeConnectDrawer();
     startApp();
+    setSyncIndicator('offline');
+    toast('✅ Menu caricato!');
   }catch(e){
-    alert('JSON non valido. Riprova.');
+    toast('JSON non valido. Riprova.', 'err');
   }
 }
 
@@ -1518,29 +1517,42 @@ async function sendOrder(){
     total
   };
 
-  // Write to JSONBin
-  const bid=getBlobId(), key=getApiKey();
-  if(bid&&key){
+  // ── Salva ordine ──
+  if(D){ if(!D.orders)D.orders=[]; D.orders.push(order); localStorage.setItem('menuAppData',JSON.stringify(D)); }
+
+  // Prova Firebase RTDB (priorità)
+  if(_clientPush){
     try{
-      const headers={'Content-Type':'application/json','X-Master-Key':key};
-      const res=await fetch(JSONBIN_BASE+bid+'/latest',{headers:{...(key?{'X-Master-Key':key}:{})}});
-      const json=await res.json();
-      const current=json?.record??json;
-      if(!current.orders)current.orders=[];
-      current.orders.push(order);
-      await fetch(JSONBIN_BASE+bid,{method:'PUT',headers,body:JSON.stringify(current)});
-    }catch(e){console.warn('Ordine non inviato al server:',e);}
-  }
-  if(D){
-    if(!D.orders)D.orders=[];
-    D.orders.push(order);
-    localStorage.setItem('menuAppData',JSON.stringify(D));
+      await _clientPush('orders', order);
+      // Non serve fare nient'altro: il backoffice ascolta in realtime
+    }catch(e){
+      console.warn('Firebase push ordine fallito:', e);
+      // Fallback JSONBin
+      await sendOrderJSONBin(order);
+    }
+  } else {
+    // Fallback JSONBin
+    await sendOrderJSONBin(order);
   }
   window._selectedSlot=null; window._selectedDay=null;
   renderCartSheet(true);
   cart=[]; updateCartFab();
 }
 
+
+async function sendOrderJSONBin(order){
+  const bid=getBlobId(), key=getApiKey();
+  if(!bid||!key) return;
+  try{
+    const headers={'Content-Type':'application/json','X-Master-Key':key};
+    const res=await fetch(JSONBIN_BASE+bid+'/latest',{headers:{...(key?{'X-Master-Key':key}:{})}});
+    const json=await res.json();
+    const current=json?.record??json;
+    if(!current.orders)current.orders=[];
+    current.orders.push(order);
+    await fetch(JSONBIN_BASE+bid,{method:'PUT',headers,body:JSON.stringify(current)});
+  }catch(e){console.warn('JSONBin ordine fallito:',e);}
+}
 
 function closeModal(){
   document.getElementById('modal-bg').classList.remove('open');
@@ -1566,36 +1578,164 @@ async function loadFromRemote(id){
   return json?.record??json;
 }
 
-async function initApp(){
-  const params=new URLSearchParams(window.location.search);
-  const urlBid=params.get('bid')||params.get('id')||'';
-  const urlKey=params.get('key')||'';
-  if(urlBid)localStorage.setItem(BLOB_ID_KEY,urlBid);
-  if(urlKey)localStorage.setItem(JSONBIN_KEY_KEY,urlKey);
-  if(urlBid||urlKey)window.history.replaceState({},'',window.location.pathname);
+// ══════════════════════════════════════════════════
+// FIREBASE REALTIME DATABASE — lettura menu + invio ordini
+// La config Firebase è letta dal menu stesso (già dentro D.settings)
+// oppure dall'URL param ?cfg=base64json
+// ══════════════════════════════════════════════════
+let _clientRtdb = null;
+let _clientRef = null;
+let _clientPush = null;
+let _clientSet = null;
+let _clientOnValue = null;
 
-  const id=getBlobId();
+async function initClientFirebase(cfg){
+  try{
+    const {initializeApp, getApps} = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const {getDatabase, ref, onValue, push, set} = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js');
+    const existing = getApps().find(a => a.name === 'menuapp-client');
+    const app = existing || initializeApp(cfg, 'menuapp-client');
+    _clientRtdb   = getDatabase(app);
+    _clientRef    = (path) => ref(_clientRtdb, path);
+    _clientPush   = (path, data) => push(ref(_clientRtdb, path), data);
+    _clientSet    = (path, data) => set(ref(_clientRtdb, path), data);
+    _clientOnValue= (path, cb) => onValue(ref(_clientRtdb, path), cb);
+
+    // Ascolta aggiornamenti menu in tempo reale
+    _clientOnValue('menu', snap => {
+      const data = snap.val();
+      if(!data || !data.settings) return;
+      // Merge ordini locali (non sovrascrivere)
+      const localOrders = D ? D.orders || [] : [];
+      D = {...data, orders: localOrders};
+      localStorage.setItem(LS_KEY, JSON.stringify(D));
+      if(document.getElementById('app').style.display !== 'none'){
+        renderMenu(); // aggiornamento live
+      } else {
+        startApp();
+      }
+      setSyncIndicator('ok');
+    });
+    return true;
+  } catch(e){
+    console.warn('Firebase client init error:', e);
+    return false;
+  }
+}
+
+async function initApp(){
+  const params = new URLSearchParams(window.location.search);
+
+  // Parametro ?cfg=base64 — contiene la config Firebase codificata
+  // Il backoffice genera questo link automaticamente
+  const cfgParam = params.get('cfg') || '';
+  if(cfgParam){
+    try{
+      const cfg = JSON.parse(atob(cfgParam));
+      localStorage.setItem('firebaseClientCfg', JSON.stringify(cfg));
+      window.history.replaceState({}, '', window.location.pathname);
+    }catch(e){}
+  }
+
+  // Retrocompatibilità JSONBin
+  const urlBid = params.get('bid') || params.get('id') || '';
+  const urlKey = params.get('key') || '';
+  if(urlBid) localStorage.setItem(BLOB_ID_KEY, urlBid);
+  if(urlKey)  localStorage.setItem(JSONBIN_KEY_KEY, urlKey);
+  if(urlBid||urlKey) window.history.replaceState({}, '', window.location.pathname);
+
+  // Carica cache locale subito → app visibile immediatamente
+  const cached = localStorage.getItem(LS_KEY);
+  if(cached){
+    try{ D = JSON.parse(cached); startApp(); setSyncIndicator('offline'); }catch(e){}
+  } else {
+    loadDemo(); setSyncIndicator('demo');
+  }
+
+  // Prova Firebase RTDB (priorità massima)
+  const fbCfgRaw = localStorage.getItem('firebaseClientCfg');
+  const fbCfgFromMenu = D && D.settings && D.settings.firebaseDatabaseURL ? {
+    apiKey:      D.settings.firebaseApiKey,
+    authDomain:  D.settings.firebaseAuthDomain,
+    projectId:   D.settings.firebaseProjectId,
+    appId:       D.settings.firebaseAppId,
+    databaseURL: D.settings.firebaseDatabaseURL
+  } : null;
+
+  const fbCfg = fbCfgFromMenu || (fbCfgRaw ? JSON.parse(fbCfgRaw) : null);
+  if(fbCfg && fbCfg.databaseURL){
+    const ok = await initClientFirebase(fbCfg);
+    if(ok) return; // onValue gestisce tutto il resto
+  }
+
+  // Fallback: JSONBin
+  const id = getBlobId();
   if(id){
     try{
-      const data=await loadFromRemote(id);
-      if(data&&data.settings){D=data;localStorage.setItem(LS_KEY,JSON.stringify(D));startApp();startAutoSync(id);return;}
-    }catch(e){console.warn('Sync remoto fallito:',e);}
+      const data = await loadFromRemote(id);
+      if(data && data.settings){
+        const localOrders = D ? D.orders || [] : [];
+        D = {...data, orders: localOrders};
+        localStorage.setItem(LS_KEY, JSON.stringify(D));
+        startApp();
+        startAutoSync(id);
+        setSyncIndicator('ok');
+        // Prova ad estrarre config Firebase dal menu JSONBin
+        if(D.settings.firebaseDatabaseURL && !fbCfg){
+          initClientFirebase({
+            apiKey:D.settings.firebaseApiKey, authDomain:D.settings.firebaseAuthDomain,
+            projectId:D.settings.firebaseProjectId, appId:D.settings.firebaseAppId,
+            databaseURL:D.settings.firebaseDatabaseURL
+          });
+        }
+      }
+    }catch(e){ console.warn('JSONBin fallback fallito:', e); }
   }
-  const cached=localStorage.getItem(LS_KEY);
-  if(cached){try{D=JSON.parse(cached);startApp();if(id)startAutoSync(id);return;}catch(e){}}
-  showImportOverlay();
+}
+
+function setSyncIndicator(state){
+  const btn=document.getElementById('sync-indicator');
+  if(!btn) return;
+  const cfg={
+    ok:     {title:'Menu sincronizzato ✓',  color:'var(--green)',  bg:'rgba(46,125,82,.08)',  icon:'🟢'},
+    offline:{title:'Offline — dati in cache',color:'var(--gold)',   bg:'rgba(184,134,11,.08)', icon:'🟡'},
+    demo:   {title:'Menu demo — tocca per connettere',color:'var(--text3)',bg:'white',icon:'⚙️'},
+  };
+  const c=cfg[state]||cfg.demo;
+  btn.title=c.title;
+  btn.style.color=c.color;
+  btn.style.background=c.bg;
+  btn.style.borderColor=c.color==='var(--text3)'?'var(--border)':c.color;
+  btn.textContent=c.icon;
 }
 
 function startAutoSync(id){
-  if(syncInterval)clearInterval(syncInterval);
+  if(syncInterval) clearInterval(syncInterval);
   syncInterval=setInterval(async()=>{
-    try{const data=await loadFromRemote(id);if(data?.settings){D=data;renderMenu();}}catch(e){}
+    try{
+      const data=await loadFromRemote(id);
+      if(data?.settings){ D=data; renderMenu(); setSyncIndicator('ok'); }
+    }catch(e){ setSyncIndicator('offline'); }
   },30000);
 }
 
-function showImportOverlay(){
-  setTimeout(()=>{document.getElementById('splash').classList.add('hidden');document.getElementById('import-overlay').style.display='flex';},1600);
+// Drawer connessione
+function openConnectDrawer(){
+  const d=document.getElementById('connect-drawer');
+  d.style.display='flex';
+  // pre-compila se già configurato
+  const bid=getBlobId();
+  if(bid) document.getElementById('import-blobid').value=bid;
 }
+function closeConnectDrawer(){
+  document.getElementById('connect-drawer').style.display='none';
+}
+// Chiudi drawer toccando lo sfondo
+document.getElementById('connect-drawer').addEventListener('click',function(e){
+  if(e.target===this) closeConnectDrawer();
+});
+
+function showImportOverlay(){ openConnectDrawer(); } // compatibilità
 
 document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target===document.getElementById('modal-bg'))closeModal();});
 document.getElementById('cart-modal-bg').addEventListener('click',e=>{if(e.target===document.getElementById('cart-modal-bg'))closeCart();});
