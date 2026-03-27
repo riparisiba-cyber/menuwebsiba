@@ -338,114 +338,74 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
     <!-- PANNELLO PROFILO / AUTH -->
     <div id="cart-profile-panel" style="border-bottom:1px solid var(--border2);">
 
-      <!-- STATO: non loggato → form login/registrazione -->
-      <div id="auth-login-section" style="padding:.85rem 1.25rem .8rem;">
-        <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);font-weight:600;margin-bottom:.7rem;">👤 Accedi o registrati per riordinare velocemente</div>
-
-        <!-- Tab login / registra -->
-        <div style="display:flex;gap:0;background:#f3ede0;border-radius:10px;padding:.2rem;margin-bottom:.75rem;" id="auth-tab-bar">
+      <!-- SEZIONE AUTH: login / registra / barra loggato (collassabile) -->
+      <div id="auth-login-section" style="padding:.75rem 1.25rem .6rem;background:rgba(184,134,11,.04);">
+        <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);font-weight:700;margin-bottom:.55rem;">👤 Accedi per riordinare velocemente</div>
+        <div style="display:flex;gap:0;background:#f0e8d0;border-radius:9px;padding:.18rem;margin-bottom:.6rem;" id="auth-tab-bar">
           <button id="tab-login" onclick="switchAuthTab('login')"
-            style="flex:1;padding:.42rem;border-radius:8px;border:none;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;background:var(--dark);color:var(--gold-light);transition:all .18s;">
-            Accedi
-          </button>
+            style="flex:1;padding:.38rem;border-radius:7px;border:none;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;background:var(--dark);color:var(--gold-light);transition:all .18s;">Accedi</button>
           <button id="tab-register" onclick="switchAuthTab('register')"
-            style="flex:1;padding:.42rem;border-radius:8px;border:none;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);transition:all .18s;">
-            Registrati
-          </button>
+            style="flex:1;padding:.38rem;border-radius:7px;border:none;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);transition:all .18s;">Registrati</button>
         </div>
-
-        <!-- Form LOGIN -->
         <div id="auth-form-login">
-          <div class="table-input-wrap" style="margin-bottom:.5rem;">
-            <label>Email</label>
-            <input id="auth-email" type="email" placeholder="mario@email.it" autocomplete="email">
+          <div style="display:grid;grid-template-columns:1fr auto;gap:.4rem;margin-bottom:.4rem;">
+            <input id="auth-email" type="email" placeholder="Email" autocomplete="email"
+              style="padding:.55rem .8rem;border-radius:9px;border:1.5px solid var(--border2);font-family:'Outfit',sans-serif;font-size:.85rem;color:var(--dark);outline:none;width:100%;">
+            <input id="auth-password" type="password" placeholder="Password" autocomplete="current-password"
+              style="padding:.55rem .8rem;border-radius:9px;border:1.5px solid var(--border2);font-family:'Outfit',sans-serif;font-size:.85rem;color:var(--dark);outline:none;width:130px;">
           </div>
-          <div class="table-input-wrap" style="margin-bottom:.5rem;">
-            <label>Password</label>
-            <input id="auth-password" type="password" placeholder="••••••••" autocomplete="current-password">
+          <div style="display:flex;gap:.4rem;">
+            <button onclick="doLogin()" style="flex:1;padding:.58rem;border-radius:9px;border:none;background:var(--dark);color:var(--gold-light);font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;">Accedi</button>
+            <button onclick="doResetPassword()" style="padding:.58rem .8rem;border-radius:9px;border:1.5px solid var(--border2);background:transparent;color:var(--text3);font-family:'Outfit',sans-serif;font-size:.75rem;cursor:pointer;">Reset pw</button>
           </div>
-          <button onclick="doLogin()" style="width:100%;padding:.65rem;border-radius:10px;border:none;background:var(--dark);color:var(--gold-light);font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;margin-bottom:.45rem;">
-            Accedi
-          </button>
-          <button onclick="doResetPassword()" style="width:100%;padding:.38rem;border-radius:8px;border:none;background:transparent;color:var(--text3);font-family:'Outfit',sans-serif;font-size:.75rem;cursor:pointer;">
-            Password dimenticata?
-          </button>
         </div>
-
-        <!-- Form REGISTRAZIONE -->
         <div id="auth-form-register" style="display:none;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
-            <div class="table-input-wrap" style="margin-bottom:.5rem;">
-              <label>Nome e Cognome *</label>
-              <input id="reg-name" placeholder="Mario Rossi" autocomplete="name">
-            </div>
-            <div class="table-input-wrap" style="margin-bottom:.5rem;">
-              <label>Telefono *</label>
-              <input id="reg-phone" type="tel" placeholder="+39 333 123" autocomplete="tel">
-            </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.4rem;">
+            <input id="reg-name" placeholder="Nome e Cognome" autocomplete="name"
+              style="padding:.55rem .8rem;border-radius:9px;border:1.5px solid var(--border2);font-family:'Outfit',sans-serif;font-size:.82rem;color:var(--dark);outline:none;">
+            <input id="reg-phone" type="tel" placeholder="Telefono" autocomplete="tel"
+              style="padding:.55rem .8rem;border-radius:9px;border:1.5px solid var(--border2);font-family:'Outfit',sans-serif;font-size:.82rem;color:var(--dark);outline:none;">
           </div>
-          <div class="table-input-wrap" style="margin-bottom:.5rem;">
-            <label>Email *</label>
-            <input id="reg-email" type="email" placeholder="mario@email.it" autocomplete="email">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.4rem;">
+            <input id="reg-email" type="email" placeholder="Email" autocomplete="email"
+              style="padding:.55rem .8rem;border-radius:9px;border:1.5px solid var(--border2);font-family:'Outfit',sans-serif;font-size:.82rem;color:var(--dark);outline:none;">
+            <input id="reg-password" type="password" placeholder="Password (min 6)" autocomplete="new-password"
+              style="padding:.55rem .8rem;border-radius:9px;border:1.5px solid var(--border2);font-family:'Outfit',sans-serif;font-size:.82rem;color:var(--dark);outline:none;">
           </div>
-          <div class="table-input-wrap" style="margin-bottom:.5rem;">
-            <label>Password * <span style="font-size:.62rem;color:var(--text3);">min. 6 caratteri</span></label>
-            <input id="reg-password" type="password" placeholder="Scegli una password" autocomplete="new-password">
-          </div>
-          <button onclick="doRegister()" style="width:100%;padding:.65rem;border-radius:10px;border:none;background:var(--gold);color:#fff;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;">
-            Crea account
-          </button>
+          <button onclick="doRegister()" style="width:100%;padding:.6rem;border-radius:9px;border:none;background:var(--gold);color:#fff;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;">Crea account</button>
         </div>
-
-        <div style="text-align:center;margin-top:.55rem;font-size:.72rem;color:var(--text3);">
-          oppure <button onclick="skipAuth()" style="background:none;border:none;color:var(--gold);font-size:.72rem;cursor:pointer;text-decoration:underline;font-family:'Outfit',sans-serif;">continua senza account</button>
+        <div style="text-align:center;margin-top:.45rem;font-size:.7rem;color:var(--text3);">
+          <button onclick="skipAuth()" style="background:none;border:none;color:var(--gold);font-size:.7rem;cursor:pointer;text-decoration:underline;font-family:'Outfit',sans-serif;">continua senza account →</button>
         </div>
       </div>
 
-      <!-- STATO: loggato → barra profilo + campi precompilati -->
-      <div id="auth-logged-section" style="display:none;padding:.75rem 1.25rem .8rem;">
-        <div style="display:flex;align-items:center;gap:.65rem;background:rgba(46,125,82,.07);border:1px solid rgba(46,125,82,.18);border-radius:10px;padding:.5rem .8rem;margin-bottom:.7rem;">
-          <div style="width:32px;height:32px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex-shrink:0;" id="auth-user-initials">?</div>
+      <!-- Barra utente loggato (visibile solo quando loggato) -->
+      <div id="auth-logged-section" style="display:none;padding:.55rem 1.25rem .55rem;background:rgba(46,125,82,.06);border-bottom:1px solid rgba(46,125,82,.14);">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;" id="auth-user-initials">?</div>
           <div style="flex:1;min-width:0;">
-            <div id="auth-user-fullname" style="font-size:.84rem;font-weight:600;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
-            <div id="auth-user-email-bar" style="font-size:.7rem;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+            <div id="auth-user-fullname" style="font-size:.82rem;font-weight:600;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+            <div id="auth-user-email-bar" style="font-size:.68rem;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
           </div>
-          <button onclick="doSignOut()" style="font-size:.7rem;color:var(--text3);background:none;border:1px solid var(--border2);border-radius:6px;cursor:pointer;padding:.22rem .5rem;font-family:'Outfit',sans-serif;flex-shrink:0;">Esci</button>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
-          <div class="table-input-wrap" style="margin-bottom:0;">
-            <label>Nome e Cognome *</label>
-            <input id="inp-name" placeholder="Mario Rossi" autocomplete="name">
-          </div>
-          <div class="table-input-wrap" style="margin-bottom:0;">
-            <label>Telefono *</label>
-            <input id="inp-phone" type="tel" placeholder="+39 333 123" autocomplete="tel">
-          </div>
-        </div>
-        <div class="table-input-wrap" style="margin-top:.5rem;margin-bottom:0;">
-          <label>Email * <span style="font-size:.62rem;color:var(--text3);font-weight:400;">(conferma quando pronto)</span></label>
-          <input id="inp-email" type="email" placeholder="mario@email.it" autocomplete="email">
+          <button onclick="doSignOut()" style="font-size:.68rem;color:var(--text3);background:none;border:1px solid var(--border2);border-radius:5px;cursor:pointer;padding:.18rem .45rem;font-family:'Outfit',sans-serif;flex-shrink:0;">Esci</button>
         </div>
       </div>
 
-      <!-- STATO: guest (senza account) -->
-      <div id="auth-guest-section" style="display:none;padding:.75rem 1.25rem .8rem;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem;">
-          <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-weight:600;">📋 I tuoi dati</div>
-          <button onclick="showAuthLoginSection()" style="font-size:.72rem;color:var(--gold);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:'Outfit',sans-serif;">Accedi / Registrati</button>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+      <!-- CAMPI DATI CLIENTE — UNICI, sempre nel DOM, sempre visibili -->
+      <div style="padding:.75rem 1.25rem .7rem;border-top:1px solid var(--border2);">
+        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-weight:600;margin-bottom:.55rem;">📋 I tuoi dati <span style="color:var(--red);font-size:.65rem;">* obbligatori</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;">
           <div class="table-input-wrap" style="margin-bottom:0;">
             <label>Nome e Cognome *</label>
             <input id="inp-name" placeholder="Mario Rossi" autocomplete="name">
           </div>
           <div class="table-input-wrap" style="margin-bottom:0;">
             <label>Telefono *</label>
-            <input id="inp-phone" type="tel" placeholder="+39 333 123" autocomplete="tel">
+            <input id="inp-phone" type="tel" placeholder="+39 333 1234567" autocomplete="tel">
           </div>
         </div>
-        <div class="table-input-wrap" style="margin-top:.5rem;margin-bottom:0;">
-          <label>Email * <span style="font-size:.62rem;color:var(--text3);font-weight:400;">(conferma quando pronto)</span></label>
+        <div class="table-input-wrap" style="margin-bottom:0;">
+          <label>Email * <span style="font-size:.6rem;color:var(--text3);font-weight:400;">(riceverai conferma quando pronto)</span></label>
           <input id="inp-email" type="email" placeholder="mario@email.it" autocomplete="email">
         </div>
       </div>
@@ -1333,16 +1293,18 @@ function setFieldIfEmpty(id,val){
 
 // ── Gestione stati UI ──
 function showAuthLoginSection(){
-  document.getElementById('auth-login-section').style.display='block';
-  document.getElementById('auth-logged-section').style.display='none';
-  document.getElementById('auth-guest-section').style.display='none';
+  const ls=document.getElementById('auth-login-section');
+  const lo=document.getElementById('auth-logged-section');
+  if(ls) ls.style.display='block';
+  if(lo) lo.style.display='none';
   const badge=document.getElementById('cart-user-badge');
   if(badge) badge.style.display='none';
 }
 function showAuthLoggedBar(user, displayName){
-  document.getElementById('auth-login-section').style.display='none';
-  document.getElementById('auth-logged-section').style.display='block';
-  document.getElementById('auth-guest-section').style.display='none';
+  const ls=document.getElementById('auth-login-section');
+  const lo=document.getElementById('auth-logged-section');
+  if(ls) ls.style.display='none';
+  if(lo) lo.style.display='flex';
   const fn=document.getElementById('auth-user-fullname');
   if(fn) fn.textContent=displayName||user.displayName||'';
   const eb=document.getElementById('auth-user-email-bar');
@@ -1355,9 +1317,12 @@ function showAuthLoggedBar(user, displayName){
   if(shortName) shortName.textContent=(displayName||'').split(' ')[0]||'Profilo';
 }
 function showAuthGuestSection(){
-  document.getElementById('auth-login-section').style.display='none';
-  document.getElementById('auth-logged-section').style.display='none';
-  document.getElementById('auth-guest-section').style.display='block';
+  // auth-guest-section è rimossa — ora i campi sono sempre visibili.
+  // Nascondiamo solo la sezione login e mostriamo i dati cliente.
+  const ls=document.getElementById('auth-login-section');
+  const lo=document.getElementById('auth-logged-section');
+  if(ls) ls.style.display='none';
+  if(lo) lo.style.display='none';
 }
 
 function switchAuthTab(tab){
