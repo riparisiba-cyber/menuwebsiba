@@ -581,14 +581,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);heigh
     <div style="display:flex;gap:.6rem;"><button class="btn btn-gold" onclick="saveStyleSettings()">💾 Salva Stile</button></div>
   </div>
   <div class="ss">
-    <h3><span>🔥</span> Firebase Auth (Registrazione clienti)</h3>
+    <h3><span>🔥</span> Firebase — Sync automatico + Registrazione clienti</h3>
     <p style="font-size:.8rem;color:var(--tx2);margin-bottom:.85rem;">
-      Permette ai clienti di <strong>registrarsi e accedere</strong> nell'app menu con email e password, per riordinare velocemente con i dati già salvati.<br>
-      Vai su <a href="https://console.firebase.google.com" target="_blank" style="color:var(--gold);">console.firebase.google.com</a> → seleziona il progetto → ⚙️ Impostazioni → Le tue app → sezione <strong>SDK setup and configuration</strong> e copia i valori qui sotto.
+      Con Firebase configurato tutti i dispositivi ricevono il menu aggiornato e inviano ordini <strong>automaticamente</strong>, senza inserire nulla.<br>
+      Vai su <a href="https://console.firebase.google.com" target="_blank" style="color:var(--gold);">console.firebase.google.com</a> → il tuo progetto → ⚙️ Impostazioni → <strong>Le tue app</strong> → sezione <strong>Configurazione SDK</strong>.
     </p>
-    <div style="background:var(--sur2);border:1px solid rgba(240,192,64,.15);border-radius:9px;padding:.85rem 1rem;margin-bottom:.9rem;font-size:.78rem;color:var(--tx2);line-height:1.7;">
-      <strong style="color:var(--tx);">Dove trovo i valori?</strong><br>
-      Firebase Console → il tuo progetto → ⚙️ Impostazioni progetto → scorri fino a <em>"Le tue app"</em> → clicca sull'app web → <strong>Configurazione</strong> → copia i campi <code style="color:var(--gold);">apiKey</code>, <code style="color:var(--gold);">authDomain</code>, <code style="color:var(--gold);">projectId</code>, <code style="color:var(--gold);">appId</code>
+    <div style="background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);border-radius:9px;padding:.85rem 1rem;margin-bottom:.9rem;font-size:.78rem;color:var(--tx2);line-height:1.8;">
+      <strong style="color:var(--blue);">Come trovare il Database URL:</strong><br>
+      Firebase Console → <strong>Realtime Database</strong> → crea il database → copia l'URL tipo <code style="color:var(--gold);">https://progetto-rtdb.firebaseio.com</code><br>
+      <strong style="color:var(--blue);">Regole database (incolla nel tab Regole):</strong><br>
+      <code style="color:var(--gold);">{ "rules": { ".read": true, ".write": true } }</code>
     </div>
     <div class="fg" style="gap:.6rem;">
       <div class="f full">
@@ -605,18 +607,23 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);heigh
       </div>
       <div class="f full">
         <label class="fl">App ID <span style="color:var(--tx3);font-weight:400;text-transform:none;letter-spacing:0;">(appId)</span></label>
+        <input class="fi" id="s-fb-appid" placeholder="1:123456789:web:abc123..." style="font-family:monospace;font-size:.78rem;">
+      </div>
+      <div class="f full">
+        <label class="fl" style="color:var(--blue);">🔗 Database URL <span style="color:var(--tx3);font-weight:400;text-transform:none;letter-spacing:0;">(Realtime Database — per il sync automatico)</span></label>
         <div style="display:flex;gap:.5rem;">
-          <input class="fi" id="s-fb-appid" placeholder="1:123456789:web:abc123..." style="flex:1;font-family:monospace;font-size:.78rem;">
+          <input class="fi" id="s-fb-dburl" placeholder="https://progetto-default-rtdb.firebaseio.com" style="flex:1;font-family:monospace;font-size:.78rem;">
           <button class="btn btn-gold btn-sm" onclick="saveFirebaseConfig()">💾 Salva</button>
         </div>
       </div>
     </div>
     <div id="firebase-config-status" style="margin-top:.5rem;font-size:.75rem;color:var(--tx3);"></div>
-    <div style="background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.18);border-radius:8px;padding:.7rem .9rem;margin-top:.75rem;font-size:.78rem;color:var(--tx2);line-height:1.6;">
-      ⚠️ <strong style="color:var(--tx);">Importante:</strong> Vai su Firebase Console → Authentication → Sign-in method → abilita <strong>Email/Password</strong>. Poi in <strong>Authentication → Settings → Domini autorizzati</strong> aggiungi il dominio da cui servi l'app.
+    <div id="firebase-sync-status" style="margin-top:.35rem;font-size:.75rem;color:var(--tx3);"></div>
+    <div style="background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.18);border-radius:8px;padding:.7rem .9rem;margin-top:.75rem;font-size:.78rem;color:var(--tx2);line-height:1.65;">
+      ⚡ <strong style="color:var(--tx);">Authentication:</strong> Firebase Console → Authentication → Sign-in method → abilita Email/Password.<br>
+      🌐 <strong style="color:var(--tx);">Domini:</strong> Authentication → Settings → Domini autorizzati → aggiungi il tuo dominio.
     </div>
   </div>
-
   <div class="ss">
     <h3><span>📧</span> Email Notifiche (EmailJS)</h3>
     <p style="font-size:.8rem;color:var(--tx2);margin-bottom:.85rem;">
@@ -1106,6 +1113,134 @@ let D = defaultData();
 let editCatId=null,editDishId=null,editProfileId=null;
 let prevVisible=true,curDev='mobile',prevTimer=null;
 
+// ══════════════════════════════════════════════════════════════
+// FIREBASE REALTIME DATABASE — Sync automatico bidirezionale
+// Backoffice scrive menu+settings → tutti i client leggono
+// Tutti i client scrivono ordini → backoffice legge in tempo reale
+// ══════════════════════════════════════════════════════════════
+
+let _rtdb = null;          // istanza Firebase Database
+let _rtdbRef = null;       // funzione ref()
+let _rtdbSet = null;       // funzione set()
+let _rtdbOnValue = null;   // funzione onValue()
+let _rtdbPush = null;      // funzione push()
+let _rtdbOff = null;       // funzione off()
+let _rtdbConnected = false;
+let _ordersListener = null;
+
+function getFirebaseRTDBConfig(){
+  const s = D && D.settings;
+  if(s && s.firebaseApiKey && s.firebaseDatabaseURL) return {
+    apiKey:      s.firebaseApiKey,
+    authDomain:  s.firebaseAuthDomain,
+    projectId:   s.firebaseProjectId,
+    appId:       s.firebaseAppId,
+    databaseURL: s.firebaseDatabaseURL
+  };
+  return null;
+}
+
+async function initFirebaseRTDB(){
+  const cfg = getFirebaseRTDBConfig();
+  if(!cfg){ updateSyncStatus('no-config'); return; }
+  try{
+    const {initializeApp, getApps, getApp} = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const {getDatabase, ref, set, onValue, push, off, serverTimestamp} =
+      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js');
+
+    const existing = getApps().find(a => a.name === 'backoffice-rtdb');
+    const app = existing || initializeApp(cfg, 'backoffice-rtdb');
+    _rtdb = getDatabase(app);
+    _rtdbRef = (path) => ref(_rtdb, path);
+    _rtdbSet = (r, data) => set(r, data);
+    _rtdbOnValue = (r, cb) => onValue(r, cb);
+    _rtdbPush = (r, data) => push(r, data);
+    _rtdbOff = (r) => off(r);
+
+    _rtdbConnected = true;
+    updateSyncStatus('connected');
+
+    // Ascolta nuovi ordini in tempo reale
+    startOrdersListener();
+
+    // Scrivi il menu subito
+    await pushMenuToRTDB();
+
+    toast('🔥 Firebase connesso — sync automatico attivo', 'ok');
+  } catch(e){
+    console.error('Firebase RTDB error:', e);
+    updateSyncStatus('error', e.message);
+  }
+}
+
+function updateSyncStatus(state, msg=''){
+  const lbl = document.getElementById('sync-lbl');
+  const syncSt = document.getElementById('firebase-sync-status');
+  const cfg = {
+    'no-config':  {lbl:'Locale — configura Firebase per il sync', color:'var(--tx2)'},
+    'connected':  {lbl:'🔥 Firebase — sync in tempo reale', color:'var(--green)'},
+    'pushing':    {lbl:'⬆ Salvataggio su Firebase...', color:'var(--gold)'},
+    'pushed':     {lbl:'✅ Sincronizzato ' + new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}), color:'var(--green)'},
+    'error':      {lbl:'⚠ Firebase error: ' + msg, color:'var(--red)'},
+  };
+  const c = cfg[state] || cfg['no-config'];
+  if(lbl){ lbl.textContent = c.lbl; lbl.style.color = c.color; }
+  if(syncSt && state === 'connected'){
+    syncSt.innerHTML = '<span style="color:var(--green);">✅ Realtime Database attivo — menu e ordini sincronizzati automaticamente</span>';
+  }
+}
+
+// Scrive menu, categorie, piatti, prodotti, impostazioni su Firebase
+async function pushMenuToRTDB(){
+  if(!_rtdbConnected || !_rtdbRef) return;
+  try{
+    updateSyncStatus('pushing');
+    const payload = {
+      settings:   D.settings   || {},
+      categories: D.categories || [],
+      dishes:     D.dishes     || [],
+      composites: D.composites || [],
+      profiles:   D.profiles   || [],
+      updatedAt:  Date.now()
+    };
+    await _rtdbSet(_rtdbRef('menu'), payload);
+    updateSyncStatus('pushed');
+  } catch(e){
+    console.error('pushMenuToRTDB error:', e);
+    updateSyncStatus('error', e.message);
+  }
+}
+
+// Ascolta nuovi ordini scritti dai clienti su Firebase
+function startOrdersListener(){
+  if(!_rtdbConnected || !_rtdbRef) return;
+  if(_ordersListener) _rtdbOff(_rtdbRef('orders'));
+
+  _ordersListener = _rtdbOnValue(_rtdbRef('orders'), snapshot => {
+    const data = snapshot.val();
+    if(!data) return;
+    // Converti da oggetto Firebase a array
+    const fbOrders = Object.entries(data).map(([k, v]) => ({...v, _fbKey: k}));
+    // Merge con ordini locali (evita duplicati per id)
+    if(!D.orders) D.orders = [];
+    fbOrders.forEach(fo => {
+      if(!D.orders.find(o => o.id === fo.id)){
+        D.orders.push(fo);
+        // Notifica visiva per nuovi ordini
+        const newEl = document.getElementById('cnt-orders');
+        if(newEl) newEl.style.animation = 'pulse-badge .5s ease';
+      }
+    });
+    localStorage.setItem('menuAppData', JSON.stringify(D));
+    renderOrders();
+    updateCounts();
+  });
+}
+
+// Quando il backoffice salva → scrive su Firebase E su JSONBin (retrocompatibilità)
+const _originalSave = null; // hook interno
+
+
 async function loadFromFirebase(){
   const lbl = document.getElementById('sync-lbl');
   const id = getBlobId();
@@ -1125,18 +1260,19 @@ async function loadFromFirebase(){
     // Nessun blob: usa localStorage o default
     const cached = localStorage.getItem('menuAppData');
     if(cached){ try{ D = JSON.parse(cached); }catch(_){} }
-    lbl.textContent = getApiKey() ? 'Pronto — salva per creare il sync' : '⚠️ Inserisci API Key in Impostazioni';
+    lbl.textContent = getApiKey() ? 'Pronto — salva per creare il sync' : 'Locale — nessun sync cloud';
   }
   updateCounts(); schedulePreview(); renderAll();
 }
 
 async function save(){
   localStorage.setItem('menuAppData', JSON.stringify(D));
+  // Pusha su Firebase Realtime Database se configurato (sync automatico)
+  if(_rtdbConnected) pushMenuToRTDB();
   const lbl = document.getElementById('sync-lbl');
   if(!getApiKey()){
     updateCounts(); schedulePreview();
-    lbl.textContent = '⚠️ API Key mancante — vai in Impostazioni → Sync';
-    toast('Inserisci la tua API Key JSONBin in Impostazioni per abilitare il sync', 'err');
+    lbl.textContent = _rtdbConnected ? '🔥 Salvato su Firebase' : 'Salvato in locale';
     return;
   }
   let id = getBlobId();
@@ -1829,15 +1965,35 @@ function saveSettings(){
   save();toast('Impostazioni salvate!','ok');
 }
 function generateMenuLink(){
+  const base = window.location.href.replace('backoffice.html','menu-app.html').split('?')[0];
+  const s = D && D.settings;
+
+  // Se Firebase è configurato, genera link con cfg codificata in base64
+  // → tutti i dispositivi si connettono automaticamente senza inserire nulla
+  if(s && s.firebaseDatabaseURL){
+    const cfg = {
+      apiKey:      s.firebaseApiKey,
+      authDomain:  s.firebaseAuthDomain,
+      projectId:   s.firebaseProjectId,
+      appId:       s.firebaseAppId,
+      databaseURL: s.firebaseDatabaseURL
+    };
+    const encoded = btoa(JSON.stringify(cfg));
+    const url = base + '?cfg=' + encodeURIComponent(encoded);
+    document.getElementById('menu-link-output').value = url;
+    toast('✅ Link Firebase generato — tutti i dispositivi si connettono automaticamente!', 'ok');
+    return;
+  }
+
+  // Fallback JSONBin
   const id = getBlobId();
   const key = getApiKey();
-  if(!id){ toast('Imposta prima il Bin ID','err'); return; }
-  // Base URL: stessa origine del backoffice ma punta a menu-app.html
-  const base = window.location.href.replace('backoffice.html','menu-app.html').split('?')[0];
-  let url = base + '?bid=' + encodeURIComponent(id);
-  if(key) url += '&key=' + encodeURIComponent(key);
+  if(!id && !s?.firebaseDatabaseURL){ toast('Configura Firebase o JSONBin prima di generare il link','err'); return; }
+  let url = base;
+  if(id) url += '?bid=' + encodeURIComponent(id);
+  if(key) url += (id?'&':'?') + 'key=' + encodeURIComponent(key);
   document.getElementById('menu-link-output').value = url;
-  toast('Link generato! Copialo e condividilo.','ok');
+  toast('Link JSONBin generato', 'ok');
 }
 function copyMenuLink(){
   const val = document.getElementById('menu-link-output').value;
@@ -2454,33 +2610,44 @@ async function testEmailJs(){
 
 // ── FIREBASE CONFIG ──
 function saveFirebaseConfig(){
-  const apiKey=document.getElementById('s-fb-apikey').value.trim();
-  const authDomain=document.getElementById('s-fb-authdomain').value.trim();
-  const projectId=document.getElementById('s-fb-projectid').value.trim();
-  const appId=document.getElementById('s-fb-appid').value.trim();
+  const apiKey    = document.getElementById('s-fb-apikey').value.trim();
+  const authDomain= document.getElementById('s-fb-authdomain').value.trim();
+  const projectId = document.getElementById('s-fb-projectid').value.trim();
+  const appId     = document.getElementById('s-fb-appid').value.trim();
+  const dbUrl     = document.getElementById('s-fb-dburl').value.trim();
   if(!apiKey||!authDomain||!projectId||!appId){
-    toast('Compila tutti i campi Firebase','err'); return;
+    toast('Compila almeno i 4 campi Firebase obbligatori','err'); return;
   }
-  D.settings.firebaseApiKey=apiKey;
-  D.settings.firebaseAuthDomain=authDomain;
-  D.settings.firebaseProjectId=projectId;
-  D.settings.firebaseAppId=appId;
+  D.settings.firebaseApiKey     = apiKey;
+  D.settings.firebaseAuthDomain = authDomain;
+  D.settings.firebaseProjectId  = projectId;
+  D.settings.firebaseAppId      = appId;
+  if(dbUrl) D.settings.firebaseDatabaseURL = dbUrl;
   save();
-  document.getElementById('firebase-config-status').innerHTML='<span style="color:var(--green);">✅ Configurazione Firebase salvata e sincronizzata</span>';
+  document.getElementById('firebase-config-status').innerHTML =
+    '<span style="color:var(--green);">✅ Configurazione salvata</span>'
+    + (dbUrl ? ' <span style="color:var(--blue);">+ Database URL ✓</span>' : ' <span style="color:var(--gold);">⚠ Database URL mancante — il sync automatico non funzionerà</span>');
+  // Riavvia il sync con le nuove credenziali
+  if(dbUrl) initFirebaseRTDB();
   toast('Firebase configurato!','ok');
 }
 
 function loadFirebaseConfig(){
-  const s=D&&D.settings;
-  const el=(id)=>document.getElementById(id);
-  if(el('s-fb-apikey')) el('s-fb-apikey').value=s&&s.firebaseApiKey||'';
-  if(el('s-fb-authdomain')) el('s-fb-authdomain').value=s&&s.firebaseAuthDomain||'';
-  if(el('s-fb-projectid')) el('s-fb-projectid').value=s&&s.firebaseProjectId||'';
-  if(el('s-fb-appid')) el('s-fb-appid').value=s&&s.firebaseAppId||'';
-  const status=el('firebase-config-status');
+  const s  = D && D.settings;
+  const el = (id) => document.getElementById(id);
+  if(el('s-fb-apikey'))     el('s-fb-apikey').value     = s&&s.firebaseApiKey||'';
+  if(el('s-fb-authdomain')) el('s-fb-authdomain').value = s&&s.firebaseAuthDomain||'';
+  if(el('s-fb-projectid'))  el('s-fb-projectid').value  = s&&s.firebaseProjectId||'';
+  if(el('s-fb-appid'))      el('s-fb-appid').value      = s&&s.firebaseAppId||'';
+  if(el('s-fb-dburl'))      el('s-fb-dburl').value      = s&&s.firebaseDatabaseURL||'';
+  const status = el('firebase-config-status');
   if(status){
-    if(s&&s.firebaseApiKey) status.innerHTML='<span style="color:var(--green);">✅ Firebase configurato</span>';
-    else status.innerHTML='<span style="color:var(--tx3);">Non configurato — i clienti non potranno registrarsi</span>';
+    if(s&&s.firebaseDatabaseURL)
+      status.innerHTML = '<span style="color:var(--green);">✅ Firebase + Database configurati — sync automatico attivo</span>';
+    else if(s&&s.firebaseApiKey)
+      status.innerHTML = '<span style="color:var(--gold);">⚠ Firebase Auth configurato — aggiungi Database URL per il sync automatico</span>';
+    else
+      status.innerHTML = '<span style="color:var(--tx3);">Non configurato</span>';
   }
 }
 
@@ -2690,6 +2857,12 @@ function resetAllDailyQty(){
 }
 
 loadFromFirebase();
+// Init Firebase Realtime Database sync (se configurato)
+(async function(){
+  if(D && D.settings && D.settings.firebaseDatabaseURL){
+    await initFirebaseRTDB();
+  }
+})();
 // Init EmailJS if already configured
 (function(){const k=localStorage.getItem('emailjs_public_key');if(k)emailjs.init(k);})();
 </script>
