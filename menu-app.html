@@ -198,11 +198,40 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .table-input-wrap input:focus,.table-input-wrap textarea:focus{border-color:var(--gold);}
 .table-input-wrap textarea{resize:none;min-height:70px;}
 
+
+/* SLOT PICKER */
+.slot-picker-wrap{background:rgba(28,23,16,.04);border:1.5px solid rgba(184,134,11,.2);border-radius:14px;padding:.85rem 1rem;margin-bottom:.85rem;}
+.slot-picker-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.13em;color:var(--gold);font-weight:700;margin-bottom:.65rem;display:flex;align-items:center;gap:.35rem;}
+.order-type-row{display:flex;gap:.5rem;margin-bottom:.75rem;}
+.order-type-btn{flex:1;padding:.55rem;border-radius:10px;border:1.5px solid var(--border2);background:white;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;text-align:center;transition:all .18s;color:var(--text2);}
+.order-type-btn.active{background:var(--dark);color:var(--gold-light);border-color:var(--dark);}
+.day-chips-row{display:flex;gap:.4rem;overflow-x:auto;padding-bottom:.3rem;margin-bottom:.6rem;scrollbar-width:none;}
+.day-chips-row::-webkit-scrollbar{display:none;}
+.day-chip{flex-shrink:0;padding:.3rem .75rem;border-radius:20px;border:1.5px solid var(--border2);font-size:.75rem;font-weight:600;cursor:pointer;transition:all .16s;color:var(--text2);background:white;}
+.day-chip.sel{background:var(--dark);color:var(--gold-light);border-color:var(--dark);}
+.day-chip.disabled{opacity:.35;cursor:not-allowed;text-decoration:line-through;}
+.slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.4rem;}
+.slot-btn{padding:.45rem .6rem;border-radius:9px;border:1.5px solid var(--border2);background:white;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .16s;text-align:center;color:var(--text2);}
+.slot-btn.sel{background:var(--dark);color:var(--gold-light);border-color:var(--dark);}
+.slot-btn.full{background:#fee2e2;color:#991b1b;border-color:#fca5a5;cursor:not-allowed;text-decoration:line-through;opacity:.6;}
+.slot-btn:not(.full):hover{border-color:var(--gold);color:var(--gold);}
+.slot-no-restriction{font-size:.8rem;color:var(--text2);padding:.35rem 0;}
+.delivery-fields{margin-top:.6rem;padding-top:.6rem;border-top:1px solid rgba(184,134,11,.15);}
+
 /* ── ORDER SUCCESS ── */
 .order-success{text-align:center;padding:2rem 1.5rem;}
 .order-success .os-icon{font-size:3.5rem;margin-bottom:.75rem;}
 .order-success h3{font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:.5rem;}
 .order-success p{font-size:.88rem;color:var(--text2);line-height:1.6;}
+/* cart flex layout */
+.cart-sheet{display:flex;flex-direction:column;}
+#cart-content{overflow-y:auto;}
+/* input error */
+.inp-error{border-color:var(--red)!important;animation:shake .3s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* google btn hover */
+.google-btn:hover{box-shadow:0 2px 8px rgba(66,133,244,.25);}
 </style>
 </head>
 <body>
@@ -293,11 +322,138 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 <!-- CART SHEET -->
 <div class="modal-bg" id="cart-modal-bg">
   <div class="cart-sheet" id="cart-sheet">
+
+    <!-- HEADER con profilo utente -->
     <div class="cart-header">
       <h3>🛒 Il tuo ordine</h3>
-      <button class="modal-close-btn" style="position:static;background:var(--border2);color:var(--text);" onclick="closeCart()">✕</button>
+      <div style="display:flex;align-items:center;gap:.5rem;">
+        <div id="cart-user-badge" style="display:none;align-items:center;gap:.4rem;background:rgba(184,134,11,.08);border:1px solid rgba(184,134,11,.2);border-radius:20px;padding:.22rem .65rem;font-size:.72rem;color:var(--gold);cursor:pointer;" onclick="toggleProfilePanel()">
+          <span id="cart-user-avatar" style="font-size:.9rem;">👤</span>
+          <span id="cart-user-name-short">Profilo</span>
+        </div>
+        <button class="modal-close-btn" style="position:static;background:var(--border2);color:var(--text);" onclick="closeCart()">✕</button>
+      </div>
     </div>
-    <div id="cart-content">
+
+    <!-- PANNELLO PROFILO / AUTH -->
+    <div id="cart-profile-panel" style="border-bottom:1px solid var(--border2);">
+
+      <!-- STATO: non loggato → form login/registrazione -->
+      <div id="auth-login-section" style="padding:.85rem 1.25rem .8rem;">
+        <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);font-weight:600;margin-bottom:.7rem;">👤 Accedi o registrati per riordinare velocemente</div>
+
+        <!-- Tab login / registra -->
+        <div style="display:flex;gap:0;background:#f3ede0;border-radius:10px;padding:.2rem;margin-bottom:.75rem;" id="auth-tab-bar">
+          <button id="tab-login" onclick="switchAuthTab('login')"
+            style="flex:1;padding:.42rem;border-radius:8px;border:none;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;background:var(--dark);color:var(--gold-light);transition:all .18s;">
+            Accedi
+          </button>
+          <button id="tab-register" onclick="switchAuthTab('register')"
+            style="flex:1;padding:.42rem;border-radius:8px;border:none;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);transition:all .18s;">
+            Registrati
+          </button>
+        </div>
+
+        <!-- Form LOGIN -->
+        <div id="auth-form-login">
+          <div class="table-input-wrap" style="margin-bottom:.5rem;">
+            <label>Email</label>
+            <input id="auth-email" type="email" placeholder="mario@email.it" autocomplete="email">
+          </div>
+          <div class="table-input-wrap" style="margin-bottom:.5rem;">
+            <label>Password</label>
+            <input id="auth-password" type="password" placeholder="••••••••" autocomplete="current-password">
+          </div>
+          <button onclick="doLogin()" style="width:100%;padding:.65rem;border-radius:10px;border:none;background:var(--dark);color:var(--gold-light);font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;margin-bottom:.45rem;">
+            Accedi
+          </button>
+          <button onclick="doResetPassword()" style="width:100%;padding:.38rem;border-radius:8px;border:none;background:transparent;color:var(--text3);font-family:'Outfit',sans-serif;font-size:.75rem;cursor:pointer;">
+            Password dimenticata?
+          </button>
+        </div>
+
+        <!-- Form REGISTRAZIONE -->
+        <div id="auth-form-register" style="display:none;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+            <div class="table-input-wrap" style="margin-bottom:.5rem;">
+              <label>Nome e Cognome *</label>
+              <input id="reg-name" placeholder="Mario Rossi" autocomplete="name">
+            </div>
+            <div class="table-input-wrap" style="margin-bottom:.5rem;">
+              <label>Telefono *</label>
+              <input id="reg-phone" type="tel" placeholder="+39 333 123" autocomplete="tel">
+            </div>
+          </div>
+          <div class="table-input-wrap" style="margin-bottom:.5rem;">
+            <label>Email *</label>
+            <input id="reg-email" type="email" placeholder="mario@email.it" autocomplete="email">
+          </div>
+          <div class="table-input-wrap" style="margin-bottom:.5rem;">
+            <label>Password * <span style="font-size:.62rem;color:var(--text3);">min. 6 caratteri</span></label>
+            <input id="reg-password" type="password" placeholder="Scegli una password" autocomplete="new-password">
+          </div>
+          <button onclick="doRegister()" style="width:100%;padding:.65rem;border-radius:10px;border:none;background:var(--gold);color:#fff;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;">
+            Crea account
+          </button>
+        </div>
+
+        <div style="text-align:center;margin-top:.55rem;font-size:.72rem;color:var(--text3);">
+          oppure <button onclick="skipAuth()" style="background:none;border:none;color:var(--gold);font-size:.72rem;cursor:pointer;text-decoration:underline;font-family:'Outfit',sans-serif;">continua senza account</button>
+        </div>
+      </div>
+
+      <!-- STATO: loggato → barra profilo + campi precompilati -->
+      <div id="auth-logged-section" style="display:none;padding:.75rem 1.25rem .8rem;">
+        <div style="display:flex;align-items:center;gap:.65rem;background:rgba(46,125,82,.07);border:1px solid rgba(46,125,82,.18);border-radius:10px;padding:.5rem .8rem;margin-bottom:.7rem;">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex-shrink:0;" id="auth-user-initials">?</div>
+          <div style="flex:1;min-width:0;">
+            <div id="auth-user-fullname" style="font-size:.84rem;font-weight:600;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+            <div id="auth-user-email-bar" style="font-size:.7rem;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+          </div>
+          <button onclick="doSignOut()" style="font-size:.7rem;color:var(--text3);background:none;border:1px solid var(--border2);border-radius:6px;cursor:pointer;padding:.22rem .5rem;font-family:'Outfit',sans-serif;flex-shrink:0;">Esci</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+          <div class="table-input-wrap" style="margin-bottom:0;">
+            <label>Nome e Cognome *</label>
+            <input id="inp-name" placeholder="Mario Rossi" autocomplete="name">
+          </div>
+          <div class="table-input-wrap" style="margin-bottom:0;">
+            <label>Telefono *</label>
+            <input id="inp-phone" type="tel" placeholder="+39 333 123" autocomplete="tel">
+          </div>
+        </div>
+        <div class="table-input-wrap" style="margin-top:.5rem;margin-bottom:0;">
+          <label>Email * <span style="font-size:.62rem;color:var(--text3);font-weight:400;">(conferma quando pronto)</span></label>
+          <input id="inp-email" type="email" placeholder="mario@email.it" autocomplete="email">
+        </div>
+      </div>
+
+      <!-- STATO: guest (senza account) -->
+      <div id="auth-guest-section" style="display:none;padding:.75rem 1.25rem .8rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem;">
+          <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-weight:600;">📋 I tuoi dati</div>
+          <button onclick="showAuthLoginSection()" style="font-size:.72rem;color:var(--gold);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:'Outfit',sans-serif;">Accedi / Registrati</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+          <div class="table-input-wrap" style="margin-bottom:0;">
+            <label>Nome e Cognome *</label>
+            <input id="inp-name" placeholder="Mario Rossi" autocomplete="name">
+          </div>
+          <div class="table-input-wrap" style="margin-bottom:0;">
+            <label>Telefono *</label>
+            <input id="inp-phone" type="tel" placeholder="+39 333 123" autocomplete="tel">
+          </div>
+        </div>
+        <div class="table-input-wrap" style="margin-top:.5rem;margin-bottom:0;">
+          <label>Email * <span style="font-size:.62rem;color:var(--text3);font-weight:400;">(conferma quando pronto)</span></label>
+          <input id="inp-email" type="email" placeholder="mario@email.it" autocomplete="email">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CONTENUTO DINAMICO (articoli + slot + footer) -->
+    <div id="cart-content" style="overflow-y:auto;flex:1;">
       <!-- filled dynamically -->
     </div>
   </div>
@@ -438,6 +594,21 @@ function importJSON(){
 function startApp(){
   document.getElementById('import-overlay').classList.add('hidden');
   document.getElementById('app').style.display='block';
+  // Ripristina dati cliente da localStorage (utenti non loggati)
+  try{
+    const saved=JSON.parse(localStorage.getItem('menuLastCustomer')||'null');
+    if(saved){
+      setFieldIfEmpty('inp-name',  saved.name||'');
+      setFieldIfEmpty('inp-email', saved.email||'');
+      setFieldIfEmpty('inp-phone', saved.phone||'');
+      // Ripristina i 3 campi indirizzo separati
+      if(saved.addrVia)    window._addrVia    = saved.addrVia;
+      if(saved.addrCivico) window._addrCivico = saved.addrCivico;
+      if(saved.addrCitta)  window._addrCitta  = saved.addrCitta;
+    }
+  }catch(e){}
+  // Init Firebase Auth (se configurato nel menu)
+  initFirebaseAuth();
   const s=D.settings;
   document.getElementById('splash-logo').textContent=s.logo||'🍽';
   document.getElementById('splash-name').textContent=s.name||'Menu';
@@ -904,7 +1075,7 @@ function renderCartSheet(sent=false){
     el.innerHTML=`<div class="order-success">
       <div class="os-icon">✅</div>
       <h3>Ordine inviato!</h3>
-      <p>Il tuo ordine è stato ricevuto dalla cucina.<br>Ti avviseremo quando sarà pronto.</p>
+      <p>Riceverai una conferma email.<br>Ti avvisiamo quando è pronto!</p>
       <button onclick="closeCart();cart=[];updateCartFab();" style="margin-top:1.25rem;padding:.65rem 1.8rem;border-radius:50px;border:none;background:var(--dark);color:var(--gold-light);font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;">
         Chiudi
       </button>
@@ -923,7 +1094,7 @@ function renderCartSheet(sent=false){
           <div class="ci-emoji">${item.emoji}</div>
           <div class="ci-body">
             <div class="ci-name">${item.name}</div>
-            ${item.choices.length?`<div class="ci-choices">${item.choices.map(c=>`<b>${c.section}:</b> ${c.values.join(', ')}`).join(' &nbsp;·&nbsp; ')}</div>`:''}
+            ${item.choices&&item.choices.length?`<div class="ci-choices">${item.choices.map(c=>`<b>${c.section}:</b> ${c.values.join(', ')}`).join(' &nbsp;·&nbsp; ')}</div>`:''}
             <div class="ci-qty">
               <button class="qty-btn" onclick="cartQtyChange('${item.cartId}',-1)">−</button>
               <span class="qty-num">${item.qty}</span>
@@ -934,23 +1105,57 @@ function renderCartSheet(sent=false){
         </div>`).join('')}
     </div>
     <div class="cart-footer">
-      <div class="table-input-wrap">
-        <label>Tavolo / Nome</label>
-        <input id="cart-table" placeholder="es. Tavolo 3, Mario Rossi…" value="${window._lastTable||''}">
+      <!-- SLOT PICKER -->
+      <div class="slot-picker-wrap">
+        <div class="slot-picker-title">🕐 Quando vuoi ricevere l'ordine?</div>
+        <div class="order-type-row">
+          <button class="order-type-btn ${window._orderType==='asporto'||!window._orderType?'active':''}"
+            onclick="setOrderType('asporto')">🥡 Asporto / Ritiro</button>
+          <button class="order-type-btn ${window._orderType==='consegna'?'active':''}"
+            onclick="setOrderType('consegna')">🛵 Consegna a domicilio</button>
+        </div>
+
+        <!-- CAMPI CONSEGNA: Via+Civico+Città separati -->
+        <div id="delivery-addr-wrap" style="display:${window._orderType==='consegna'?'block':'none'};">
+          <div style="display:grid;grid-template-columns:1fr auto;gap:.5rem;margin-bottom:.5rem;">
+            <div class="table-input-wrap" style="margin-bottom:0;">
+              <label>Via / Corso / Piazza *</label>
+              <input id="inp-via" placeholder="es. Via Roma" value="${window._addrVia||''}"
+                autocomplete="address-line1" oninput="window._addrVia=this.value">
+            </div>
+            <div class="table-input-wrap" style="margin-bottom:0;width:80px;">
+              <label>Civico *</label>
+              <input id="inp-civico" placeholder="12" value="${window._addrCivico||''}"
+                autocomplete="address-line2" oninput="window._addrCivico=this.value">
+            </div>
+          </div>
+          <div class="table-input-wrap" style="margin-bottom:.65rem;">
+            <label>Città *</label>
+            <input id="inp-citta" placeholder="es. Milano" value="${window._addrCitta||''}"
+              autocomplete="address-level2" oninput="window._addrCitta=this.value">
+          </div>
+        </div>
+
+        ${buildDayChips()}
+        <div id="slot-grid-wrap">${buildSlotGrid()}</div>
       </div>
+
+      <!-- NOTE (sempre visibili, facoltative) -->
       <div class="table-input-wrap">
-        <label>Note (allergie, richieste speciali…)</label>
-        <textarea id="cart-note" placeholder="es. Senza cipolla, extra piccante…">${window._lastNote||''}</textarea>
+        <label>Note <span style="font-size:.62rem;color:var(--text3);font-weight:400;">allergie, richieste speciali… (facoltativo)</span></label>
+        <textarea id="inp-note" placeholder="es. Senza cipolla, extra piccante, citofono rotto…" oninput="window._orderNote=this.value">${window._orderNote||''}</textarea>
       </div>
+
       <div class="cart-total">
         <span class="cart-total-label">Totale ordine</span>
         <span class="cart-total-val">€${total.toFixed(2)}</span>
       </div>
-      <button onclick="sendOrder()" style="width:100%;padding:.85rem;border-radius:14px;border:none;background:var(--dark);color:var(--gold-light);font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .18s;">
-        🧾 Invia ordine alla cucina
+      <button onclick="sendOrder()" style="width:100%;padding:.9rem;border-radius:14px;border:none;background:var(--dark);color:var(--gold-light);font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .18s;letter-spacing:.02em;">
+        🧾 Conferma e invia ordine
       </button>
     </div>`;
 }
+
 
 function cartQtyChange(cartId,delta){
   const idx=cart.findIndex(i=>i.cartId===cartId);
@@ -965,48 +1170,412 @@ function cartQtyChange(cartId,delta){
   renderCartSheet();
 }
 
+// ── SLOT / DELIVERY ──
+function getAllSlots(){
+  if(!D)return[];
+  const map={};
+  const srcs=[...(D.categories||[]),...(D.composites||[])];
+  srcs.forEach(obj=>{
+    (obj.slots||[]).forEach(s=>{
+      const k=s.from+'–'+s.to;
+      const isFull=s.cap>0&&(obj.usedQty||0)>=(obj.maxQty||0)&&(obj.maxQty||0)>0;
+      if(!map[k]) map[k]={key:k,from:s.from,to:s.to,cap:s.cap||0,full:isFull};
+      else if(isFull) map[k].full=true;
+    });
+  });
+  return Object.values(map);
+}
+
+function getAllowedDow(){
+  const srcs=[...(D&&D.categories||[]),...(D&&D.composites||[])].filter(o=>o.days&&o.days.length&&o.days.length<7);
+  if(!srcs.length) return[0,1,2,3,4,5,6];
+  return [...new Set(srcs.flatMap(o=>o.days))];
+}
+
+function buildDayChips(){
+  const allowed=getAllowedDow();
+  const days=[];
+  for(let i=0;i<14;i++){
+    const d=new Date();d.setDate(d.getDate()+i);
+    if(!allowed.includes(d.getDay()))continue;
+    const val=d.toISOString().split('T')[0];
+    days.push({val,label:i===0?'Oggi':i===1?'Domani':d.toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short'})});
+    if(days.length>=7)break;
+  }
+  if(!days.length)return'';
+  if(!window._selectedDay||!days.find(d=>d.val===window._selectedDay)) window._selectedDay=days[0].val;
+  return`<div style="font-size:.67rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.35rem;">Giorno</div>
+  <div class="day-chips-row" style="margin-bottom:.6rem;">
+    ${days.map(d=>`<div class="day-chip${d.val===window._selectedDay?' sel':''}" onclick="selDay('${d.val}')">${d.label}</div>`).join('')}
+  </div>`;
+}
+
+function buildSlotGrid(){
+  const slots=getAllSlots();
+  if(!slots.length) return'<div class="slot-no-restriction">🕐 Nessuna fascia — puoi ordinare in qualsiasi momento</div>';
+  return`<div style="font-size:.67rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.35rem;">Fascia oraria</div>
+  <div class="slot-grid">
+    ${slots.map(s=>`<div class="slot-btn${s.full?' full':''}${!s.full&&window._selectedSlot===s.key?' sel':''}"
+      onclick="${s.full?'':'selSlot(\''+s.key+'\')'}">
+      ${s.from}&nbsp;–&nbsp;${s.to}
+      ${s.full?'<br><span style="font-size:.6rem;">⛔ Saturo</span>':''}
+      ${!s.full&&s.cap>0?'<br><span style="font-size:.6rem;opacity:.65;">max '+s.cap+'</span>':''}
+    </div>`).join('')}
+  </div>`;
+}
+
+function selDay(v){ window._selectedDay=v; window._selectedSlot=null; refreshSlots(); }
+function selSlot(k){ window._selectedSlot=k; refreshSlots(); }
+function setOrderType(t){
+  window._orderType=t;
+  const wrap=document.getElementById('delivery-addr-wrap');
+  if(wrap) wrap.style.display=t==='consegna'?'block':'none';
+  document.querySelectorAll('.order-type-btn').forEach(b=>{
+    b.classList.toggle('active',b.textContent.includes(t==='asporto'?'Asporto':'Consegna'));
+  });
+}
+function refreshSlots(){
+  // aggiorna solo i chip giorno e la griglia slot, senza re-render tutto
+  const dayWrap=document.querySelector('.day-chips-row');
+  if(dayWrap){
+    dayWrap.querySelectorAll('.day-chip').forEach(c=>{
+      c.classList.toggle('sel',c.getAttribute('onclick').includes(window._selectedDay));
+    });
+  }
+  const gridWrap=document.getElementById('slot-grid-wrap');
+  if(gridWrap) gridWrap.innerHTML=buildSlotGrid();
+}
+
+// ══════════════════════════════════════════════════
+// FIREBASE AUTH — Email / Password
+// Usa variabili locali di modulo — nessuna race condition
+// ══════════════════════════════════════════════════
+let _fbAuth = null;
+let _currentUser = null;
+// Questi vengono assegnati DENTRO initFirebaseAuth e
+// rimangono nel closure — non su window
+let _fnCreateUser = null;
+let _fnSignIn = null;
+let _fnResetPw = null;
+let _fnUpdateProfile = null;
+let _fnSignOut = null;
+
+async function initFirebaseAuth(){
+  const cfg = getFirebaseCfg();
+  if(!cfg){ showAuthGuestSection(); return; }
+  try{
+    const {initializeApp, getApps} =
+      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const {
+      getAuth, onAuthStateChanged,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      sendPasswordResetEmail,
+      updateProfile,
+      signOut: fbSignOut
+    } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+
+    const existing = getApps().find(a => a.name === 'menuapp');
+    const app = existing || initializeApp(cfg, 'menuapp');
+    _fbAuth = getAuth(app);
+
+    // Assegna le funzioni DENTRO lo stesso async scope
+    // così sono sempre disponibili dopo initFirebaseAuth()
+    _fnCreateUser  = (e,p) => createUserWithEmailAndPassword(_fbAuth, e, p);
+    _fnSignIn      = (e,p) => signInWithEmailAndPassword(_fbAuth, e, p);
+    _fnResetPw     = (e)   => sendPasswordResetEmail(_fbAuth, e);
+    _fnUpdateProfile = (u,d) => updateProfile(u, d);
+    _fnSignOut     = ()    => fbSignOut(_fbAuth);
+
+    onAuthStateChanged(_fbAuth, user => {
+      _currentUser = user;
+      if(user){
+        const saved = loadUserProfile(user.uid);
+        const dispName = user.displayName || saved?.name || '';
+        setField('inp-name',  dispName);
+        setField('inp-email', user.email || '');
+        if(saved?.phone)      setField('inp-phone', saved.phone);
+        if(saved?.addrVia)    window._addrVia    = saved.addrVia;
+        if(saved?.addrCivico) window._addrCivico = saved.addrCivico;
+        if(saved?.addrCitta)  window._addrCitta  = saved.addrCitta;
+        showAuthLoggedBar(user, dispName);
+        hideAuthSpinner();
+      } else {
+        showAuthLoginSection();
+      }
+    });
+
+  } catch(e){
+    console.warn('Firebase non disponibile:', e);
+    showAuthGuestSection();
+  }
+}
+
+function getFirebaseCfg(){
+  const s=D&&D.settings;
+  if(s&&s.firebaseApiKey) return{
+    apiKey:s.firebaseApiKey,
+    authDomain:s.firebaseAuthDomain,
+    projectId:s.firebaseProjectId,
+    appId:s.firebaseAppId
+  };
+  return null;
+}
+
+function setField(id,val){
+  const el=document.getElementById(id);
+  if(el) el.value=val;
+}
+function setFieldIfEmpty(id,val){
+  const el=document.getElementById(id);
+  if(el&&!el.value) el.value=val;
+}
+
+// ── Gestione stati UI ──
+function showAuthLoginSection(){
+  document.getElementById('auth-login-section').style.display='block';
+  document.getElementById('auth-logged-section').style.display='none';
+  document.getElementById('auth-guest-section').style.display='none';
+  const badge=document.getElementById('cart-user-badge');
+  if(badge) badge.style.display='none';
+}
+function showAuthLoggedBar(user, displayName){
+  document.getElementById('auth-login-section').style.display='none';
+  document.getElementById('auth-logged-section').style.display='block';
+  document.getElementById('auth-guest-section').style.display='none';
+  const fn=document.getElementById('auth-user-fullname');
+  if(fn) fn.textContent=displayName||user.displayName||'';
+  const eb=document.getElementById('auth-user-email-bar');
+  if(eb) eb.textContent=user.email||'';
+  const ini=document.getElementById('auth-user-initials');
+  if(ini) ini.textContent=(displayName||user.email||'?')[0].toUpperCase();
+  const badge=document.getElementById('cart-user-badge');
+  const shortName=document.getElementById('cart-user-name-short');
+  if(badge) badge.style.display='flex';
+  if(shortName) shortName.textContent=(displayName||'').split(' ')[0]||'Profilo';
+}
+function showAuthGuestSection(){
+  document.getElementById('auth-login-section').style.display='none';
+  document.getElementById('auth-logged-section').style.display='none';
+  document.getElementById('auth-guest-section').style.display='block';
+}
+
+function switchAuthTab(tab){
+  const isLogin=tab==='login';
+  document.getElementById('auth-form-login').style.display=isLogin?'block':'none';
+  document.getElementById('auth-form-register').style.display=isLogin?'none':'block';
+  document.getElementById('tab-login').style.background=isLogin?'var(--dark)':'transparent';
+  document.getElementById('tab-login').style.color=isLogin?'var(--gold-light)':'var(--text2)';
+  document.getElementById('tab-register').style.background=isLogin?'transparent':'var(--dark)';
+  document.getElementById('tab-register').style.color=isLogin?'var(--text2)':'var(--gold-light)';
+}
+
+function skipAuth(){
+  showAuthGuestSection();
+}
+
+// ── Azioni auth ──
+async function doLogin(){
+  if(!_fnSignIn){ toast('⚠ Servizio non ancora pronto, riprova tra un secondo','err'); return; }
+  const email=(document.getElementById('auth-email')?.value||'').trim();
+  const pw=document.getElementById('auth-password')?.value||'';
+  if(!email||!pw){ toast('⚠ Inserisci email e password','err'); return; }
+  try{
+    showAuthSpinner('Accesso in corso…');
+    await _fnSignIn(email,pw);
+    // onAuthStateChanged si occupa del resto
+  } catch(e){
+    hideAuthSpinner();
+    const msgs={
+      'auth/user-not-found':'Email non registrata',
+      'auth/wrong-password':'Password errata',
+      'auth/invalid-credential':'Email o password non corretti',
+      'auth/too-many-requests':'Troppi tentativi, riprova tra poco',
+      'auth/network-request-failed':'Errore di rete, controlla la connessione'
+    };
+    toast('⚠ '+(msgs[e.code]||e.message),'err');
+  }
+}
+
+async function doRegister(){
+  if(!_fnCreateUser){ toast('⚠ Servizio non ancora pronto, riprova tra un secondo','err'); return; }
+  const name=(document.getElementById('reg-name')?.value||'').trim();
+  const phone=(document.getElementById('reg-phone')?.value||'').trim();
+  const email=(document.getElementById('reg-email')?.value||'').trim();
+  const pw=document.getElementById('reg-password')?.value||'';
+  if(!name){ toast('⚠ Inserisci il nome','err'); document.getElementById('reg-name')?.focus(); return; }
+  if(!phone){ toast('⚠ Inserisci il telefono','err'); document.getElementById('reg-phone')?.focus(); return; }
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ toast('⚠ Email non valida','err'); document.getElementById('reg-email')?.focus(); return; }
+  if(pw.length<6){ toast('⚠ Password minimo 6 caratteri','err'); document.getElementById('reg-password')?.focus(); return; }
+  try{
+    showAuthSpinner('Registrazione in corso…');
+    const cred=await _fnCreateUser(email,pw);
+    await _fnUpdateProfile(cred.user,{displayName:name});
+    saveUserProfile(cred.user.uid,{name,phone,email});
+    setField('inp-name',name);
+    setField('inp-email',email);
+    setField('inp-phone',phone);
+    toast('✅ Account creato! Benvenuto '+name.split(' ')[0]+'!');
+  } catch(e){
+    hideAuthSpinner();
+    const msgs={
+      'auth/email-already-in-use':'Email già registrata — prova ad accedere',
+      'auth/invalid-email':'Email non valida',
+      'auth/weak-password':'Password troppo debole',
+      'auth/network-request-failed':'Errore di rete, controlla la connessione'
+    };
+    toast('⚠ '+(msgs[e.code]||e.message),'err');
+  }
+}
+
+async function doResetPassword(){
+  const email=(document.getElementById('auth-email')?.value||'').trim();
+  if(!email){ toast('⚠ Inserisci la tua email sopra','err'); document.getElementById('auth-email')?.focus(); return; }
+  try{
+    await _fnResetPw(email);
+    toast('📧 Email di reset inviata a '+email);
+  } catch(e){
+    toast('⚠ '+(e.code==='auth/user-not-found'?'Email non registrata':e.message),'err');
+  }
+}
+
+async function doSignOut(){
+  if(!_fnSignOut) return;
+  await _fnSignOut();
+  setField('inp-name',''); setField('inp-email',''); setField('inp-phone','');
+  showAuthLoginSection();
+  const badge=document.getElementById('cart-user-badge');
+  if(badge) badge.style.display='none';
+}
+
+function showAuthSpinner(msg){
+  // piccolo overlay di caricamento nel pannello auth
+  const sec=document.getElementById('auth-login-section');
+  if(!sec) return;
+  if(!document.getElementById('auth-spinner')){
+    const d=document.createElement('div');
+    d.id='auth-spinner';
+    d.style.cssText='position:absolute;inset:0;background:rgba(253,250,244,.88);display:flex;align-items:center;justify-content:center;z-index:10;border-radius:inherit;font-size:.85rem;color:var(--text2);font-family:Outfit,sans-serif;gap:.5rem;';
+    d.innerHTML='<div style="width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;"></div>'+msg;
+    sec.style.position='relative';
+    sec.appendChild(d);
+  }
+}
+function hideAuthSpinner(){
+  document.getElementById('auth-spinner')?.remove();
+}
+
+function toggleProfilePanel(){
+  const p=document.getElementById('cart-profile-panel');
+  if(p) p.style.display=p.style.display==='none'?'block':'none';
+}
+
+// salva/carica profilo locale
+function saveUserProfile(uid,data){ try{localStorage.setItem('menuUserProfile_'+uid,JSON.stringify(data));}catch(e){} }
+function loadUserProfile(uid){ try{return JSON.parse(localStorage.getItem('menuUserProfile_'+uid)||'null');}catch(e){return null;} }
+
+
+function toast(msg,type=''){
+  let t=document.getElementById('app-toast');
+  if(!t){t=document.createElement('div');t.id='app-toast';t.style.cssText='position:fixed;bottom:5.5rem;left:50%;transform:translateX(-50%);background:var(--dark);color:var(--gold-light);padding:.55rem 1.2rem;border-radius:50px;font-family:Outfit,sans-serif;font-size:.82rem;font-weight:600;z-index:9999;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;';document.body.appendChild(t);}
+  t.textContent=msg;
+  t.style.background=type==='err'?'var(--red)':'var(--dark)';
+  t.style.opacity='1';
+  clearTimeout(t._to);t._to=setTimeout(()=>{t.style.opacity='0';},2500);
+}
+
 // ── SEND ORDER ──
 async function sendOrder(){
-  const table=document.getElementById('cart-table')?.value.trim()||'';
-  const note=document.getElementById('cart-note')?.value.trim()||'';
-  window._lastTable=table;window._lastNote=note;
+  const name  = (document.getElementById('inp-name')?.value||'').trim();
+  const email = (document.getElementById('inp-email')?.value||'').trim();
+  const phone = (document.getElementById('inp-phone')?.value||'').trim();
+  const note  = (document.getElementById('inp-note')?.value||'').trim();
+  const orderType    = window._orderType||'asporto';
+  const selectedDay  = window._selectedDay||'';
+  const selectedSlot = window._selectedSlot||'';
 
-  const total=cart.reduce((s,i)=>s+i.totalPrice,0);
-  const order={
-    id:'ord_'+Date.now(),
-    ts:Date.now(),
-    table,
+  // Campi indirizzo separati (solo consegna)
+  const via    = (document.getElementById('inp-via')?.value||'').trim();
+  const civico = (document.getElementById('inp-civico')?.value||'').trim();
+  const citta  = (document.getElementById('inp-citta')?.value||'').trim();
+  const fullAddress = orderType==='consegna' ? (via+' '+civico+', '+citta).trim() : '';
+
+  // ── Validazione ──
+  function fieldErr(id, msg){
+    const el = document.getElementById(id);
+    if(el){
+      el.classList.add('inp-error');
+      el.scrollIntoView({behavior:'smooth', block:'center'});
+      el.focus();
+      el.addEventListener('input', () => el.classList.remove('inp-error'), {once:true});
+    }
+    toast('⚠ ' + msg, 'err');
+  }
+
+  // Dati cliente — sempre obbligatori
+  if(!name)  { fieldErr('inp-name',  'Nome e Cognome obbligatorio'); return; }
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+             { fieldErr('inp-email', 'Inserisci una email valida'); return; }
+  if(!phone) { fieldErr('inp-phone', 'Numero di telefono obbligatorio'); return; }
+
+  // Indirizzo — obbligatorio solo per consegna
+  if(orderType === 'consegna'){
+    if(!via)    { fieldErr('inp-via',    'Inserisci la via / corso'); return; }
+    if(!civico) { fieldErr('inp-civico', 'Inserisci il numero civico'); return; }
+    if(!citta)  { fieldErr('inp-citta',  'Inserisci la citta'); return; }
+  }
+
+  // Slot
+  const slots = getAllSlots();
+  if(slots.length > 0 && !selectedSlot){ toast('⚠ Seleziona una fascia oraria', 'err'); return; }
+  if(selectedSlot && slots.find(s => s.key === selectedSlot && s.full))
+    { toast('⚠ La fascia selezionata e satura', 'err'); return; }
+
+  // Salva profilo
+  const profileData = {name, email, phone,
+    addrVia:via, addrCivico:civico, addrCitta:citta};
+  if(_currentUser) saveUserProfile(_currentUser.uid, profileData);
+  try{ localStorage.setItem('menuLastCustomer', JSON.stringify(profileData)); }catch(e){}
+
+  window._addrVia = via; window._addrCivico = civico; window._addrCitta = citta;
+
+  const total = cart.reduce((s,i) => s + i.totalPrice, 0);
+  const order = {
+    id: 'ord_' + Date.now(), ts: Date.now(),
     note,
+    customerName:name, customerEmail:email, customerPhone:phone,
+    orderType,
+    deliveryAddress: fullAddress,
+    deliveryVia:via, deliveryCivico:civico, deliveryCitta:citta,
+    scheduledDay:selectedDay, scheduledSlot:selectedSlot,
     status:'new',
-    items:cart.map(i=>({name:i.name,emoji:i.emoji,price:i.basePrice,qty:i.qty,choices:i.choices})),
+    items: cart.map(i => ({name:i.name, emoji:i.emoji, price:i.basePrice, qty:i.qty, choices:i.choices})),
     total
   };
 
-  // write to JSONBin
-  const id=getBlobId();
-  const key=getApiKey();
-  if(id&&key){
+  // Write to JSONBin
+  const bid=getBlobId(), key=getApiKey();
+  if(bid&&key){
     try{
-      // read current data first
       const headers={'Content-Type':'application/json','X-Master-Key':key};
-      const res=await fetch(JSONBIN_BASE+id+'/latest',{headers:{...(key?{'X-Master-Key':key}:{})}});
+      const res=await fetch(JSONBIN_BASE+bid+'/latest',{headers:{...(key?{'X-Master-Key':key}:{})}});
       const json=await res.json();
       const current=json?.record??json;
       if(!current.orders)current.orders=[];
       current.orders.push(order);
-      await fetch(JSONBIN_BASE+id,{method:'PUT',headers,body:JSON.stringify(current)});
+      await fetch(JSONBIN_BASE+bid,{method:'PUT',headers,body:JSON.stringify(current)});
     }catch(e){console.warn('Ordine non inviato al server:',e);}
   }
-  // also cache locally
   if(D){
     if(!D.orders)D.orders=[];
     D.orders.push(order);
     localStorage.setItem('menuAppData',JSON.stringify(D));
   }
+  window._selectedSlot=null; window._selectedDay=null;
   renderCartSheet(true);
-  cart=[];
-  updateCartFab();
+  cart=[]; updateCartFab();
 }
+
 
 function closeModal(){
   document.getElementById('modal-bg').classList.remove('open');
