@@ -787,10 +787,28 @@ function setMode(mode){
   updateCartFab();
 }
 
+// Normalizza dati da qualsiasi fonte (Firebase converte array in oggetti)
+function normalizeData(data){
+  if(!data) return data;
+  function toArr(v){
+    if(!v) return [];
+    if(Array.isArray(v)) return v;
+    if(typeof v==='object') return Object.values(v);
+    return [];
+  }
+  return {
+    ...data,
+    categories: toArr(data.categories),
+    dishes:     toArr(data.dishes),
+    composites: toArr(data.composites),
+    profiles:   toArr(data.profiles),
+  };
+}
+
 // Try load from localStorage
 function tryLoad(){
   const stored=localStorage.getItem('menuAppData');
-  if(stored){try{D=JSON.parse(stored);return true;}catch(e){}}
+  if(stored){try{D=normalizeData(JSON.parse(stored));return true;}catch(e){}}
   return false;
 }
 
@@ -894,6 +912,10 @@ function startApp(){
   const s=D.settings;
   document.getElementById('splash-logo').textContent=s.logo||'🍽';
   document.getElementById('splash-name').textContent=s.name||'Menu';
+  const splashTag=document.getElementById('splash-tag');
+  if(splashTag) splashTag.textContent=s.tagline||'Menu Digitale';
+  const heroStatusText=document.getElementById('hero-status-text');
+  if(heroStatusText) heroStatusText.textContent=s.tagline||'Aperto ora';
   const logoWrap=document.getElementById('app-logo-wrap');
   if(s.logoImg){
     logoWrap.innerHTML=`<img src="${s.logoImg}" alt="logo" style="max-height:90px;max-width:200px;object-fit:contain;filter:drop-shadow(0 2px 12px rgba(0,0,0,.4));">`;
@@ -997,7 +1019,7 @@ function startApp(){
   if(bnav) bnav.style.display='flex';
   // Show order tab only if ordering is enabled
   const bnOrd=document.getElementById('bn-order');
-  if(bnOrd) bnOrd.style.display=s.orderEnabled!==false?'flex':'none';
+  if(bnOrd) bnOrd.style.display='flex'; // mostra sempre il tab ordine
   renderContactsPanel();
   setTimeout(()=>document.getElementById('splash').classList.add('hidden'),1800);
 }
@@ -1963,8 +1985,22 @@ async function initClientFirebase(cfg){
 
     // Ascolta il menu in tempo reale
     db.ref('menu').on('value', snap => {
-      const data = snap.val();
-      if(!data || !data.settings) return;
+      const raw = snap.val();
+      if(!raw || !raw.settings) return;
+      // Firebase RTDB converte gli array in oggetti {0:..,1:..} — riconvertiamo
+      function toArr(v){ 
+        if(!v) return [];
+        if(Array.isArray(v)) return v;
+        if(typeof v==='object') return Object.values(v);
+        return [];
+      }
+      const data = {
+        ...raw,
+        categories: toArr(raw.categories),
+        dishes:     toArr(raw.dishes),
+        composites: toArr(raw.composites),
+        profiles:   toArr(raw.profiles),
+      };
       const localOrders = D ? (D.orders || []) : [];
       D = {...data, orders: localOrders};
       localStorage.setItem(LS_KEY, JSON.stringify(D));
@@ -2007,7 +2043,7 @@ async function initApp(){
   const cached = localStorage.getItem(LS_KEY);
   if(cached){
     try{
-      D = JSON.parse(cached);
+      D = normalizeData(JSON.parse(cached));
       ensureAppStarted();
       setSyncIndicator('offline');
     }catch(e){ loadDemo(); ensureAppStarted(); }
