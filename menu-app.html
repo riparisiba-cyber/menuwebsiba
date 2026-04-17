@@ -4,10 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Menu</title>
-<!-- Firebase SDK (caricato staticamente per compatibilità GitHub Pages) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1575,51 +1571,9 @@ let _fnUpdateProfile = null;
 let _fnSignOut = null;
 
 async function initFirebaseAuth(){
-  const cfg = getFirebaseCfg();
-  if(!cfg){ showAuthGuestSection(); return; }
-  try{
-    // Aspetta che Firebase SDK sia caricato
-    let attempts = 0;
-    while(typeof firebase === 'undefined' && attempts < 50){
-      await new Promise(r => setTimeout(r, 100));
-      attempts++;
-    }
-    if(typeof firebase === 'undefined'){ showAuthGuestSection(); return; }
-
-    let app;
-    try{ app = firebase.app('menuapp'); }
-    catch(e){ app = firebase.initializeApp(cfg, 'menuapp'); }
-
-    const auth = firebase.auth(app);
-
-    _fnCreateUser    = (e,p) => auth.createUserWithEmailAndPassword(e, p);
-    _fnSignIn        = (e,p) => auth.signInWithEmailAndPassword(e, p);
-    _fnResetPw       = (e)   => auth.sendPasswordResetEmail(e);
-    _fnUpdateProfile = (u,d) => u.updateProfile(d);
-    _fnSignOut       = ()    => auth.signOut();
-
-    auth.onAuthStateChanged(user => {
-      _currentUser = user;
-      if(user){
-        const saved = loadUserProfile(user.uid);
-        const dispName = user.displayName || saved?.name || '';
-        setFieldIfEmpty('inp-name',  dispName);
-        setFieldIfEmpty('inp-email', user.email || '');
-        if(saved?.phone)      setField('inp-phone', saved.phone);
-        if(saved?.addrVia)    window._addrVia    = saved.addrVia;
-        if(saved?.addrCivico) window._addrCivico = saved.addrCivico;
-        if(saved?.addrCitta)  window._addrCitta  = saved.addrCitta;
-        showAuthLoggedBar(user, dispName);
-        hideAuthSpinner();
-      } else {
-        showAuthLoginSection();
-      }
-    });
-
-  } catch(e){
-    console.warn('Firebase Auth non disponibile:', e);
-    showAuthGuestSection();
-  }
+  // Auth Firebase disabilitata (non richiede SDK)
+  // Il cliente può ordinare senza login
+  showAuthGuestSection();
 }
 
 function getFirebaseCfg(){
@@ -1958,63 +1912,54 @@ setTimeout(function(){
 }, 3000);
 
 async function initClientFirebase(cfg){
+  // Usa Firebase REST API — nessun SDK, nessun problema di CSP/CORS
+  // Funziona su GitHub Pages, Netlify, qualsiasi hosting statico
   try{
-    // Aspetta che Firebase SDK sia caricato (max 5 secondi)
-    let attempts = 0;
-    while(typeof firebase === 'undefined' && attempts < 50){
-      await new Promise(r => setTimeout(r, 100));
-      attempts++;
-    }
-    if(typeof firebase === 'undefined'){
-      console.warn('Firebase SDK non disponibile dopo attesa');
-      return false;
-    }
+    const dbUrl = (cfg.databaseURL||'').replace(/\/+$/,'');
+    if(!dbUrl){ console.warn('Firebase: databaseURL mancante'); return false; }
 
-    // Inizializza app solo se non esiste già
-    let app;
-    try{
-      app = firebase.app('menuapp-client');
-    } catch(e){
-      app = firebase.initializeApp(cfg, 'menuapp-client');
-    }
+    // Funzioni REST per leggere/scrivere
+    _clientPush = async (path, data) => {
+      await fetch(`${dbUrl}/${path}.json`, {
+        method:'POST', body:JSON.stringify(data),
+        headers:{'Content-Type':'application/json'}
+      });
+    };
 
-    const db = firebase.database(app);
-
-    _clientPush    = (path, data) => db.ref(path).push(data);
-    _clientOnValue = (path, cb)   => db.ref(path).on('value', cb);
-
-    // Ascolta il menu in tempo reale
-    db.ref('menu').on('value', snap => {
-      const raw = snap.val();
-      if(!raw || !raw.settings) return;
-      // Firebase RTDB converte gli array in oggetti {0:..,1:..} — riconvertiamo
-      function toArr(v){ 
-        if(!v) return [];
-        if(Array.isArray(v)) return v;
-        if(typeof v==='object') return Object.values(v);
-        return [];
+    // Polling ogni 5 secondi per aggiornamenti in tempo reale (via REST)
+    let lastUpdatedAt = null;
+    async function pollMenu(){
+      try{
+        const res = await fetch(`${dbUrl}/menu.json`);
+        if(!res.ok) return;
+        const raw = await res.json();
+        if(!raw || !raw.settings) return;
+        // Evita re-render se non ci sono modifiche
+        if(raw.updatedAt && raw.updatedAt === lastUpdatedAt) return;
+        lastUpdatedAt = raw.updatedAt || Date.now();
+        // Normalizza array (Firebase REST restituisce oggetti per array)
+        const data = normalizeData(raw);
+        const localOrders = D ? (D.orders||[]) : [];
+        D = {...data, orders: localOrders};
+        localStorage.setItem(LS_KEY, JSON.stringify(D));
+        _appStarted = true;
+        document.getElementById('splash').classList.add('hidden');
+        startApp();
+        setSyncIndicator('ok');
+      } catch(e){
+        setSyncIndicator('offline');
       }
-      const data = {
-        ...raw,
-        categories: toArr(raw.categories),
-        dishes:     toArr(raw.dishes),
-        composites: toArr(raw.composites),
-        profiles:   toArr(raw.profiles),
-      };
-      const localOrders = D ? (D.orders || []) : [];
-      D = {...data, orders: localOrders};
-      localStorage.setItem(LS_KEY, JSON.stringify(D));
-      // Aggiorna sempre tutto: nome, colori, font, piatti
-      _appStarted = true;
-      document.getElementById('splash').classList.add('hidden');
-      startApp();
-      setSyncIndicator('ok');
-    });
+    }
 
-    setSyncIndicator('connecting');
+    // Prima lettura immediata
+    await pollMenu();
+    // Poi polling ogni 5 secondi
+    if(window._firebaseInterval) clearInterval(window._firebaseInterval);
+    window._firebaseInterval = setInterval(pollMenu, 5000);
+
     return true;
   } catch(e){
-    console.warn('Firebase client init error:', e);
+    console.warn('Firebase REST error:', e);
     return false;
   }
 }
@@ -2243,6 +2188,33 @@ function startAutoSync(id){
       }
     }catch(e){ setSyncIndicator('offline'); }
   }, 30000);
+}
+
+
+// ── SYNC INDICATOR ──
+function setSyncIndicator(state){
+  const btn = document.getElementById('sync-indicator');
+  if(!btn) return;
+  const map = {
+    'ok':        {ico:'🔥', title:'Sincronizzato con Firebase'},
+    'connecting':{ico:'⏳', title:'Connessione in corso...'},
+    'offline':   {ico:'📴', title:'Dati in cache locale'},
+    'demo':      {ico:'⚙️', title:'Dati demo — connetti al backoffice'},
+    'error':     {ico:'⚠️', title:'Errore di sincronizzazione'},
+  };
+  const s = map[state] || map['demo'];
+  btn.textContent = s.ico;
+  btn.title = s.title;
+}
+
+// ── CONNECT DRAWER ──
+function openConnectDrawer(){
+  const d = document.getElementById('connect-drawer');
+  if(d) d.style.display = 'flex';
+}
+function closeConnectDrawer(){
+  const d = document.getElementById('connect-drawer');
+  if(d) d.style.display = 'none';
 }
 
 initApp();
