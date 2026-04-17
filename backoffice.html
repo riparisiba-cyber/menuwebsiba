@@ -1193,31 +1193,56 @@ async function initFirebaseRTDB(){
   const cfg = getFirebaseRTDBConfig();
   if(!cfg){ updateSyncStatus('no-config'); return; }
   try{
-    const {initializeApp, getApps, getApp} = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
-    const {getDatabase, ref, set, onValue, push, off, serverTimestamp} =
-      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js');
+    const dbUrl = (cfg.databaseURL||'').replace(/\/+$/,'');
+    if(!dbUrl){ updateSyncStatus('no-config'); return; }
 
-    const existing = getApps().find(a => a.name === 'backoffice-rtdb');
-    const app = existing || initializeApp(cfg, 'backoffice-rtdb');
-    _rtdb = getDatabase(app);
-    _rtdbRef = (path) => ref(_rtdb, path);
-    _rtdbSet = (r, data) => set(r, data);
-    _rtdbOnValue = (r, cb) => onValue(r, cb);
-    _rtdbPush = (r, data) => push(r, data);
-    _rtdbOff = (r) => off(r);
-
+    // Funzioni REST (nessun SDK necessario)
     _rtdbConnected = true;
-    updateSyncStatus('connected');
+    _rtdbRef   = (path) => `${dbUrl}/${path}.json`;
+    _rtdbSet   = async (url, data) => {
+      const res = await fetch(url, {
+        method:'PUT', body:JSON.stringify(data),
+        headers:{'Content-Type':'application/json'}
+      });
+      if(!res.ok) throw new Error('HTTP '+res.status);
+    };
+    _rtdbPush  = async (url, data) => {
+      await fetch(url, {
+        method:'POST', body:JSON.stringify(data),
+        headers:{'Content-Type':'application/json'}
+      });
+    };
+    _rtdbOnValue = async (url, cb) => {
+      try{
+        const res = await fetch(url);
+        if(res.ok){ const val = await res.json(); cb({val:()=>val}); }
+      }catch(e){}
+    };
 
-    // Ascolta nuovi ordini in tempo reale
-    startOrdersListener();
+    // Ascolta ordini con polling ogni 5s
+    let lastOrderCount = 0;
+    async function pollOrders(){
+      try{
+        const res = await fetch(`${dbUrl}/orders.json`);
+        if(!res.ok) return;
+        const raw = await res.json();
+        if(!raw) return;
+        const orders = Array.isArray(raw) ? raw : Object.values(raw);
+        if(orders.length !== lastOrderCount){
+          lastOrderCount = orders.length;
+          orders.forEach(order => { if(order && order.id) onNewOrder(order); });
+        }
+      }catch(e){}
+    }
+    if(window._ordersInterval) clearInterval(window._ordersInterval);
+    window._ordersInterval = setInterval(pollOrders, 5000);
 
-    // Scrivi il menu subito
+    // Push menu subito
     await pushMenuToRTDB();
-
-    toast('🔥 Firebase connesso — sync automatico attivo', 'ok');
+    updateSyncStatus('connected');
+    toast('🔥 Firebase REST — sync attivo', 'ok');
   } catch(e){
-    console.error('Firebase RTDB error:', e);
+    console.error('Firebase REST error:', e);
     updateSyncStatus('error', e.message);
   }
 }
@@ -1240,7 +1265,7 @@ function updateSyncStatus(state, msg=''){
 }
 
 // Scrive menu, categorie, piatti, prodotti, impostazioni su Firebase
-async function pushMenuToRTDB(){
+async async function pushMenuToRTDB(){
   if(!_rtdbConnected || !_rtdbRef) return;
   try{
     updateSyncStatus('pushing');
