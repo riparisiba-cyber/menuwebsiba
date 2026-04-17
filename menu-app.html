@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Menu</title>
+<!-- Firebase SDK (caricato staticamente per compatibilità GitHub Pages) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -746,6 +750,26 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 
 
 <script>
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  CONFIGURAZIONE FIREBASE — compila una volta sola           ║
+// ║  Copia dal backoffice → Impostazioni → Firebase → "Copia"  ║
+// ╚══════════════════════════════════════════════════════════════╝
+const FIREBASE_CFG_EMBEDDED = {
+  apiKey:      "AIzaSyBTPz4YYV7cu7L2izmchFp5FTNWNhdUW7o",
+  authDomain:  "menuwebsiba.firebaseapp.com",
+  projectId:   "menuwebsiba",
+  appId:       "1:575640959961:web:c55a7f0f542a57680977c8",
+  databaseURL: "https://menuwebsiba-default-rtdb.europe-west1.firebasedatabase.app"
+};
+// Esempio compilato:
+// const FIREBASE_CFG_EMBEDDED = {
+//   apiKey:      "AIzaSy...",
+//   authDomain:  "progetto.firebaseapp.com",
+//   projectId:   "progetto",
+//   appId:       "1:123:web:abc",
+//   databaseURL: "https://progetto-default-rtdb.firebaseio.com"
+// };
+
 let D=null;
 let activeCat='all';
 let appMode='menu'; // 'menu' | 'order'
@@ -1532,36 +1556,33 @@ async function initFirebaseAuth(){
   const cfg = getFirebaseCfg();
   if(!cfg){ showAuthGuestSection(); return; }
   try{
-    const {initializeApp, getApps} =
-      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
-    const {
-      getAuth, onAuthStateChanged,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      sendPasswordResetEmail,
-      updateProfile,
-      signOut: fbSignOut
-    } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+    // Aspetta che Firebase SDK sia caricato
+    let attempts = 0;
+    while(typeof firebase === 'undefined' && attempts < 50){
+      await new Promise(r => setTimeout(r, 100));
+      attempts++;
+    }
+    if(typeof firebase === 'undefined'){ showAuthGuestSection(); return; }
 
-    const existing = getApps().find(a => a.name === 'menuapp');
-    const app = existing || initializeApp(cfg, 'menuapp');
-    _fbAuth = getAuth(app);
+    let app;
+    try{ app = firebase.app('menuapp'); }
+    catch(e){ app = firebase.initializeApp(cfg, 'menuapp'); }
 
-    // Assegna le funzioni DENTRO lo stesso async scope
-    // così sono sempre disponibili dopo initFirebaseAuth()
-    _fnCreateUser  = (e,p) => createUserWithEmailAndPassword(_fbAuth, e, p);
-    _fnSignIn      = (e,p) => signInWithEmailAndPassword(_fbAuth, e, p);
-    _fnResetPw     = (e)   => sendPasswordResetEmail(_fbAuth, e);
-    _fnUpdateProfile = (u,d) => updateProfile(u, d);
-    _fnSignOut     = ()    => fbSignOut(_fbAuth);
+    const auth = firebase.auth(app);
 
-    onAuthStateChanged(_fbAuth, user => {
+    _fnCreateUser    = (e,p) => auth.createUserWithEmailAndPassword(e, p);
+    _fnSignIn        = (e,p) => auth.signInWithEmailAndPassword(e, p);
+    _fnResetPw       = (e)   => auth.sendPasswordResetEmail(e);
+    _fnUpdateProfile = (u,d) => u.updateProfile(d);
+    _fnSignOut       = ()    => auth.signOut();
+
+    auth.onAuthStateChanged(user => {
       _currentUser = user;
       if(user){
         const saved = loadUserProfile(user.uid);
         const dispName = user.displayName || saved?.name || '';
-        setField('inp-name',  dispName);
-        setField('inp-email', user.email || '');
+        setFieldIfEmpty('inp-name',  dispName);
+        setFieldIfEmpty('inp-email', user.email || '');
         if(saved?.phone)      setField('inp-phone', saved.phone);
         if(saved?.addrVia)    window._addrVia    = saved.addrVia;
         if(saved?.addrCivico) window._addrCivico = saved.addrCivico;
@@ -1574,7 +1595,7 @@ async function initFirebaseAuth(){
     });
 
   } catch(e){
-    console.warn('Firebase non disponibile:', e);
+    console.warn('Firebase Auth non disponibile:', e);
     showAuthGuestSection();
   }
 }
@@ -1904,42 +1925,53 @@ function ensureAppStarted(){
   startApp();
 }
 
-// Nascondi lo splash SEMPRE dopo max 2 s — nulla può bloccare l'app
+// Nascondi lo splash dopo max 3s se Firebase non risponde
+// Se Firebase risponde prima, nasconde lui stesso lo splash
 setTimeout(function(){
   const splash = document.getElementById('splash');
   if(splash && !splash.classList.contains('hidden')){
     splash.classList.add('hidden');
     ensureAppStarted();
   }
-}, 2000);
+}, 3000);
 
 async function initClientFirebase(cfg){
   try{
-    const {initializeApp, getApps} =
-      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
-    const {getDatabase, ref, onValue, push} =
-      await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js');
+    // Aspetta che Firebase SDK sia caricato (max 5 secondi)
+    let attempts = 0;
+    while(typeof firebase === 'undefined' && attempts < 50){
+      await new Promise(r => setTimeout(r, 100));
+      attempts++;
+    }
+    if(typeof firebase === 'undefined'){
+      console.warn('Firebase SDK non disponibile dopo attesa');
+      return false;
+    }
 
-    const existing = getApps().find(a => a.name === 'menuapp-client');
-    const app = existing || initializeApp(cfg, 'menuapp-client');
-    const db  = getDatabase(app);
+    // Inizializza app solo se non esiste già
+    let app;
+    try{
+      app = firebase.app('menuapp-client');
+    } catch(e){
+      app = firebase.initializeApp(cfg, 'menuapp-client');
+    }
 
-    _clientPush    = (path, data) => push(ref(db, path), data);
-    _clientOnValue = (path, cb)   => onValue(ref(db, path), cb);
+    const db = firebase.database(app);
 
-    // Ascolta il menu in tempo reale — aggiorna silenziosamente
-    _clientOnValue('menu', snap => {
+    _clientPush    = (path, data) => db.ref(path).push(data);
+    _clientOnValue = (path, cb)   => db.ref(path).on('value', cb);
+
+    // Ascolta il menu in tempo reale
+    db.ref('menu').on('value', snap => {
       const data = snap.val();
       if(!data || !data.settings) return;
       const localOrders = D ? (D.orders || []) : [];
       D = {...data, orders: localOrders};
       localStorage.setItem(LS_KEY, JSON.stringify(D));
-      // Se app già aperta → aggiorna tutto (nome, colori, font, piatti)
-      if(document.getElementById('app').style.display !== 'none'){
-        startApp();
-      } else {
-        ensureAppStarted();
-      }
+      // Aggiorna sempre tutto: nome, colori, font, piatti
+      _appStarted = true;
+      document.getElementById('splash').classList.add('hidden');
+      startApp();
       setSyncIndicator('ok');
     });
 
@@ -1972,7 +2004,6 @@ async function initApp(){
   if(urlBid||urlKey) window.history.replaceState({}, '', window.location.pathname);
 
   // ── PASSO 1: mostra subito i dati in cache (o demo) ──
-  // L'utente vede il menu istantaneamente
   const cached = localStorage.getItem(LS_KEY);
   if(cached){
     try{
@@ -1986,11 +2017,23 @@ async function initApp(){
     setSyncIndicator('demo');
   }
 
-  // ── PASSO 2: connetti Firebase in background (non blocca nulla) ──
-  const fbCfgRaw = localStorage.getItem('firebaseClientCfg');
-  let fbCfg = fbCfgRaw ? (() => { try{ return JSON.parse(fbCfgRaw); }catch(e){ return null; } })() : null;
+  // ── PASSO 2: trova config Firebase con priorità ──
+  // Priorità: 1) incorporata nell'HTML  2) localStorage  3) cache menu
+  let fbCfg = null;
 
-  // Anche dalla cache del menu stesso
+  // 1. Config incorporata direttamente nell'HTML (la più affidabile)
+  if(FIREBASE_CFG_EMBEDDED && FIREBASE_CFG_EMBEDDED.databaseURL){
+    fbCfg = FIREBASE_CFG_EMBEDDED;
+    localStorage.setItem('firebaseClientCfg', JSON.stringify(fbCfg));
+  }
+
+  // 2. localStorage (es. da visita precedente con ?cfg=)
+  if(!fbCfg){
+    const raw = localStorage.getItem('firebaseClientCfg');
+    if(raw){ try{ fbCfg = JSON.parse(raw); }catch(e){} }
+  }
+
+  // 3. Cache del menu (se il menu era già stato scaricato con Firebase)
   if(!fbCfg && D && D.settings && D.settings.firebaseDatabaseURL){
     fbCfg = {
       apiKey:      D.settings.firebaseApiKey,
@@ -1999,10 +2042,10 @@ async function initApp(){
       appId:       D.settings.firebaseAppId,
       databaseURL: D.settings.firebaseDatabaseURL
     };
+    localStorage.setItem('firebaseClientCfg', JSON.stringify(fbCfg));
   }
 
   if(fbCfg && fbCfg.databaseURL){
-    // Non awaittare — va in background
     initClientFirebase(fbCfg);
     return;
   }
