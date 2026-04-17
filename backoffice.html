@@ -652,6 +652,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);heigh
     </div>
     <div id="firebase-config-status" style="margin-top:.5rem;font-size:.75rem;color:var(--tx3);"></div>
     <div id="firebase-sync-status" style="margin-top:.35rem;font-size:.75rem;color:var(--tx3);"></div>
+    <!-- COPIA CONFIG PER MENU-APP -->
+    <div style="background:rgba(46,125,82,.06);border:1.5px solid rgba(46,125,82,.25);border-radius:10px;padding:.85rem 1rem;margin-top:.9rem;">
+      <div style="font-size:.78rem;font-weight:700;color:var(--green,#1B8A52);margin-bottom:.4rem;">📲 Sincronizzazione permanente su tutti i dispositivi</div>
+      <div style="font-size:.73rem;color:var(--tx2);line-height:1.65;margin-bottom:.65rem;">
+        Per far funzionare il menu su <strong>qualsiasi dispositivo senza link speciale</strong>, incolla la config Firebase direttamente nel file <code style="background:var(--sur2);padding:.1rem .35rem;border-radius:4px;">menu-app-leggimenu.html</code>.<br>
+        <strong>1.</strong> Clicca "📋 Copia config" qui sotto &nbsp;·&nbsp; <strong>2.</strong> Apri il file HTML &nbsp;·&nbsp; <strong>3.</strong> Trova la riga <code style="background:var(--sur2);padding:.1rem .35rem;border-radius:4px;">const FIREBASE_CFG_EMBEDDED = null;</code> &nbsp;·&nbsp; <strong>4.</strong> Sostituiscila con il testo copiato &nbsp;·&nbsp; <strong>5.</strong> Carica il file su GitHub
+      </div>
+      <button class="btn btn-gold btn-sm" onclick="copyFirebaseCfgForApp()" style="width:100%;">📋 Copia config da incollare nel menu-app.html</button>
+      <textarea id="firebase-cfg-output" readonly style="display:none;width:100%;margin-top:.5rem;height:120px;background:var(--sur2);border:1px solid var(--bdr2);border-radius:7px;padding:.6rem;font-family:monospace;font-size:.72rem;color:var(--tx);resize:none;"></textarea>
+    </div>
+
     <div style="background:rgba(240,192,64,.06);border:1px solid rgba(240,192,64,.18);border-radius:8px;padding:.7rem .9rem;margin-top:.75rem;font-size:.78rem;color:var(--tx2);line-height:1.65;">
       ⚡ <strong style="color:var(--tx);">Authentication:</strong> Firebase Console → Authentication → Sign-in method → abilita Email/Password.<br>
       🌐 <strong style="color:var(--tx);">Domini:</strong> Authentication → Settings → Domini autorizzati → aggiungi il tuo dominio.
@@ -1047,6 +1058,11 @@ function defaultData(){
     settings:{
       name:'Trattoria Da Mario',tagline:'Cucina italiana dal 1952',desc:'',
       logo:'🍽',logoImg:'',color:'#B8860B',bgColor:'#FDFAF4',
+      firebaseApiKey:'AIzaSyBTPz4YYV7cu7L2izmchFp5FTNWNhdUW7o',
+      firebaseAuthDomain:'menuwebsiba.firebaseapp.com',
+      firebaseProjectId:'menuwebsiba',
+      firebaseAppId:'1:575640959961:web:c55a7f0f542a57680977c8',
+      firebaseDatabaseURL:'https://menuwebsiba-default-rtdb.europe-west1.firebasedatabase.app',
       syncCode:'MENU-'+Math.random().toString(36).slice(2,8).toUpperCase()
     },
     categories:[
@@ -2652,6 +2668,29 @@ async function testEmailJs(){
 }
 
 // ── FIREBASE CONFIG ──
+function copyFirebaseCfgForApp(){
+  const s = D && D.settings;
+  if(!s || !s.firebaseApiKey || !s.firebaseDatabaseURL){
+    toast('Prima compila e salva la configurazione Firebase','err'); return;
+  }
+  const cfgBlock = `const FIREBASE_CFG_EMBEDDED = {
+  apiKey:      "${s.firebaseApiKey}",
+  authDomain:  "${s.firebaseAuthDomain}",
+  projectId:   "${s.firebaseProjectId}",
+  appId:       "${s.firebaseAppId}",
+  databaseURL: "${s.firebaseDatabaseURL}"
+};`;
+  const ta = document.getElementById('firebase-cfg-output');
+  ta.style.display = 'block';
+  ta.value = cfgBlock;
+  navigator.clipboard.writeText(cfgBlock).then(()=>{
+    toast('✅ Config copiata! Incollala nel menu-app.html sostituendo la riga FIREBASE_CFG_EMBEDDED = null','ok');
+  }).catch(()=>{
+    ta.select();
+    toast('Seleziona e copia il testo dalla casella','ok');
+  });
+}
+
 function saveFirebaseConfig(){
   const apiKey    = document.getElementById('s-fb-apikey').value.trim();
   const authDomain= document.getElementById('s-fb-authdomain').value.trim();
