@@ -1168,13 +1168,13 @@ let prevVisible=true,curDev='mobile',prevTimer=null;
 // Tutti i client scrivono ordini → backoffice legge in tempo reale
 // ══════════════════════════════════════════════════════════════
 
-let _rtdb = null;          // istanza Firebase Database
-let _rtdbRef = null;       // funzione ref()
-let _rtdbSet = null;       // funzione set()
-let _rtdbOnValue = null;   // funzione onValue()
-let _rtdbPush = null;      // funzione push()
-let _rtdbOff = null;       // funzione off()
+let _rtdb = null;
 let _rtdbConnected = false;
+let _rtdbRef   = null;
+let _rtdbSet   = null;
+let _rtdbPush  = null;
+let _rtdbOnValue = null;
+let _rtdbOff   = null;
 let _ordersListener = null;
 
 function getFirebaseRTDBConfig(){
@@ -1196,21 +1196,23 @@ async function initFirebaseRTDB(){
     const dbUrl = (cfg.databaseURL||'').replace(/\/+$/,'');
     if(!dbUrl){ updateSyncStatus('no-config'); return; }
 
-    // Funzioni REST (nessun SDK necessario)
+    // REST API — nessun SDK, funziona su GitHub Pages
     _rtdbConnected = true;
-    _rtdbRef   = (path) => `${dbUrl}/${path}.json`;
-    _rtdbSet   = async (url, data) => {
+    _rtdbRef     = (path) => `${dbUrl}/${path}.json`;
+    _rtdbSet     = async (url, data) => {
       const res = await fetch(url, {
         method:'PUT', body:JSON.stringify(data),
         headers:{'Content-Type':'application/json'}
       });
       if(!res.ok) throw new Error('HTTP '+res.status);
+      return res.json();
     };
-    _rtdbPush  = async (url, data) => {
-      await fetch(url, {
+    _rtdbPush    = async (url, data) => {
+      const res = await fetch(url, {
         method:'POST', body:JSON.stringify(data),
         headers:{'Content-Type':'application/json'}
       });
+      return res.json();
     };
     _rtdbOnValue = async (url, cb) => {
       try{
@@ -1218,28 +1220,13 @@ async function initFirebaseRTDB(){
         if(res.ok){ const val = await res.json(); cb({val:()=>val}); }
       }catch(e){}
     };
+    _rtdbOff = () => {}; // no-op con REST
 
-    // Ascolta ordini con polling ogni 5s
-    let lastOrderCount = 0;
-    async function pollOrders(){
-      try{
-        const res = await fetch(`${dbUrl}/orders.json`);
-        if(!res.ok) return;
-        const raw = await res.json();
-        if(!raw) return;
-        const orders = Array.isArray(raw) ? raw : Object.values(raw);
-        if(orders.length !== lastOrderCount){
-          lastOrderCount = orders.length;
-          orders.forEach(order => { if(order && order.id) onNewOrder(order); });
-        }
-      }catch(e){}
-    }
-    if(window._ordersInterval) clearInterval(window._ordersInterval);
-    window._ordersInterval = setInterval(pollOrders, 5000);
-
-    // Push menu subito
+    // Push menu subito al Firebase
     await pushMenuToRTDB();
     updateSyncStatus('connected');
+    // Avvia polling ordini
+    startOrdersListener();
     toast('🔥 Firebase REST — sync attivo', 'ok');
   } catch(e){
     console.error('Firebase REST error:', e);
@@ -1247,33 +1234,43 @@ async function initFirebaseRTDB(){
   }
 }
 
-function updateSyncStatus(state, msg=''){
-  const lbl = document.getElementById('sync-lbl');
-  const syncSt = document.getElementById('firebase-sync-status');
-  const cfg = {
-    'no-config':  {lbl:'Locale — configura Firebase per il sync', color:'var(--tx2)'},
-    'connected':  {lbl:'🔥 Firebase — sync in tempo reale', color:'var(--green)'},
-    'pushing':    {lbl:'⬆ Salvataggio su Firebase...', color:'var(--gold)'},
-    'pushed':     {lbl:'✅ Sincronizzato ' + new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}), color:'var(--green)'},
-    'error':      {lbl:'⚠ Firebase error: ' + msg, color:'var(--red)'},
-  };
-  const c = cfg[state] || cfg['no-config'];
-  if(lbl){ lbl.textContent = c.lbl; lbl.style.color = c.color; }
-  if(syncSt && state === 'connected'){
-    syncSt.innerHTML = '<span style="color:var(--green);">✅ Realtime Database attivo — menu e ordini sincronizzati automaticamente</span>';
+// ── POLLING ORDINI ogni 5 secondi ──
+function startOrdersListener(){
+  if(!_rtdbConnected || !_rtdbRef) return;
+  if(window._ordersInterval) clearInterval(window._ordersInterval);
+  let lastHash = '';
+  async function pollOrders(){
+    try{
+      const res = await fetch(_rtdbRef('orders'));
+      if(!res.ok) return;
+      const raw = await res.json();
+      if(!raw) return;
+      const hash = JSON.stringify(raw);
+      if(hash === lastHash) return;
+      lastHash = hash;
+      const orders = Array.isArray(raw) ? raw : Object.values(raw);
+      if(!D.orders) D.orders = [];
+      orders.forEach(fo => {
+        if(fo && fo.id && !D.orders.find(o => o.id === fo.id)){
+          D.orders.push(fo);
+          onNewOrder(fo);
+        }
+      });
+      renderOrders();
+    }catch(e){}
   }
+  window._ordersInterval = setInterval(pollOrders, 5000);
+  pollOrders(); // prima lettura immediata
 }
 
-// Scrive menu, categorie, piatti, prodotti, impostazioni su Firebase
-async async function pushMenuToRTDB(){
+// ── PUSH MENU A FIREBASE ──
+async function pushMenuToRTDB(){
   if(!_rtdbConnected || !_rtdbRef) return;
   try{
     updateSyncStatus('pushing');
-    // Strip base64 images da settings (troppo grandi per RTDB)
     const settingsClean = {...(D.settings||{})};
     if(settingsClean.logoImg && settingsClean.logoImg.startsWith('data:'))
-      settingsClean.logoImg = ''; // base64 logo: troppo grande per Firebase, usa URL
-    // Strip base64 da piatti
+      settingsClean.logoImg = '';
     const dishesClean = (D.dishes||[]).map(d=>{
       if(d.img && d.img.startsWith('data:')) return {...d, img:''};
       return d;
@@ -1298,30 +1295,41 @@ async async function pushMenuToRTDB(){
   }
 }
 
-// Ascolta nuovi ordini scritti dai clienti su Firebase
-function startOrdersListener(){
-  if(!_rtdbConnected || !_rtdbRef) return;
-  if(_ordersListener) _rtdbOff(_rtdbRef('orders'));
+// ── AGGIORNA STATO SYNC UI ──
+function updateSyncStatus(state, msg=''){
+  const lbl = document.getElementById('sync-lbl');
+  const syncSt = document.getElementById('firebase-sync-status');
+  const cfg = {
+    'no-config':  {lbl:'Locale — configura Firebase per il sync', color:'var(--tx2)'},
+    'connected':  {lbl:'🔥 Firebase REST — sync in tempo reale', color:'var(--green)'},
+    'pushing':    {lbl:'⬆ Salvataggio su Firebase...', color:'var(--gold)'},
+    'pushed':     {lbl:'✅ Salvato su Firebase', color:'var(--green)'},
+    'error':      {lbl:'⚠ Errore: '+(msg||''), color:'var(--red)'},
+  };
+  const s = cfg[state] || cfg['no-config'];
+  if(lbl) lbl.textContent = s.lbl;
+  if(syncSt){ syncSt.textContent = s.lbl; syncSt.style.color = s.color; }
+}
 
-  _ordersListener = _rtdbOnValue(_rtdbRef('orders'), snapshot => {
-    const data = snapshot.val();
-    if(!data) return;
-    // Converti da oggetto Firebase a array
-    const fbOrders = Object.entries(data).map(([k, v]) => ({...v, _fbKey: k}));
-    // Merge con ordini locali (evita duplicati per id)
-    if(!D.orders) D.orders = [];
-    fbOrders.forEach(fo => {
-      if(!D.orders.find(o => o.id === fo.id)){
-        D.orders.push(fo);
-        // Notifica visiva per nuovi ordini
-        const newEl = document.getElementById('cnt-orders');
-        if(newEl) newEl.style.animation = 'pulse-badge .5s ease';
-      }
-    });
-    localStorage.setItem('menuAppData', JSON.stringify(D));
-    renderOrders();
-    updateCounts();
-  });
+// ── NUOVO ORDINE IN ARRIVO ──
+function onNewOrder(order){
+  if(!order || !order.id) return;
+  // Notifica visiva
+  const badge = document.getElementById('orders-badge');
+  if(badge){
+    const current = parseInt(badge.textContent||'0');
+    badge.textContent = current + 1;
+    badge.style.display = 'inline';
+  }
+  // Suono notifica (opzionale)
+  try{
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.value = 880; gain.gain.value = 0.1;
+    osc.start(); osc.stop(ctx.currentTime + 0.15);
+  }catch(e){}
 }
 
 // Quando il backoffice salva → scrive su Firebase E su JSONBin (retrocompatibilità)
