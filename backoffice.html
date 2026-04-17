@@ -1244,10 +1244,23 @@ async function pushMenuToRTDB(){
   if(!_rtdbConnected || !_rtdbRef) return;
   try{
     updateSyncStatus('pushing');
+    // Strip base64 images da settings (troppo grandi per RTDB)
+    const settingsClean = {...(D.settings||{})};
+    if(settingsClean.logoImg && settingsClean.logoImg.startsWith('data:'))
+      settingsClean.logoImg = ''; // base64 logo: troppo grande per Firebase, usa URL
+    // Strip base64 da piatti
+    const dishesClean = (D.dishes||[]).map(d=>{
+      if(d.img && d.img.startsWith('data:')) return {...d, img:''};
+      return d;
+    });
+    const catsClean = (D.categories||[]).map(cat=>{
+      if(cat.img && cat.img.startsWith('data:')) return {...cat, img:''};
+      return cat;
+    });
     const payload = {
-      settings:   D.settings   || {},
-      categories: D.categories || [],
-      dishes:     D.dishes     || [],
+      settings:   settingsClean,
+      categories: catsClean,
+      dishes:     dishesClean,
       composites: D.composites || [],
       profiles:   D.profiles   || [],
       updatedAt:  Date.now()
